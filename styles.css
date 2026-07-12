@@ -1,11 +1,44 @@
+/* ==========================================================================
+   alex-markin.com — design system
+   Full spec: DESIGN-SYSTEM.md (read it before editing).
+   Everything derives from the tokens below. Never hard-code a color or
+   font-family in a rule — reference a token.
+   ========================================================================== */
+
 :root {
-  --bg: #000000;
-  --name: #e9e5dd;
-  --tagline: #8a8477;
-  --heading: #9c968a;
-  --link: #cec8bb;
-  --link-hover: #ffffff;
-  --radius: 8px;
+  /* color — warm greys on pure black, olive accent */
+  --bg:        #000000;  /* page background, always pure black */
+  --ink:       #ccc6b9;  /* default text + links */
+  --ink-bright:#eae5da;  /* display text (the name) */
+  --ink-hover: #ffffff;  /* link hover */
+  --muted:     #847e70;  /* descriptions, taglines, secondary text */
+  --faint:     #66614f;  /* mono tags, metadata */
+  --footnote:  #5c574a;  /* footer text */
+  --accent:    #7d8f5c;  /* olive — section headings only */
+  --hairline:  #35322a;  /* dotted leader lines */
+  --rule:      #24221d;  /* solid horizontal rules (footer) */
+  --border:    #2a2822;  /* borders on images / counter chip */
+  --chip-bg:   #131311;  /* visitor-counter chip background */
+
+  /* type */
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:  "IBM Plex Mono", "SF Mono", Menlo, monospace;
+
+  /* type scale */
+  --fs-display: 44px;    /* h1 name */
+  --fs-body:    16px;    /* default */
+  --fs-desc:    14.5px;  /* descriptions under links */
+  --fs-heading: 12px;    /* section headings (mono) */
+  --fs-tag:     11px;    /* leader-line tags (mono) */
+  --fs-meta:    11.5px;  /* header meta line (mono) */
+  --fs-footer:  10.5px;  /* footer (mono) */
+
+  /* layout */
+  --page-max:   1100px;
+  --col-min:    340px;   /* min column width before grid collapses */
+  --gap-col:    64px;
+  --gap-row:    44px;
+  --radius:     2px;     /* images only — everything else is square */
 }
 
 * { box-sizing: border-box; }
@@ -15,69 +48,117 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--link);
-  font-family: "Spectral", Georgia, "Times New Roman", serif;
-  font-size: 17px;
-  line-height: 1.5;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--fs-body);
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
+/* --------------------------------------------------------------------------
+   page shell
+   -------------------------------------------------------------------------- */
+
 .page {
-  max-width: 620px;
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 3rem 2rem 4rem;
+  padding: 64px 48px 48px;
 }
 
-.intro { margin-bottom: 1.8rem; }
-
-.name {
-  margin: 0;
-  font-weight: 500;
-  font-size: 2.6rem;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
-  color: var(--name);
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--col-min), 1fr));
+  gap: var(--gap-row) var(--gap-col);
+  margin-bottom: 48px;
 }
 
-.pronouns {
-  margin: 0.5rem 0 0;
-  font-size: 0.9rem;
-  color: var(--tagline);
-}
+/* --------------------------------------------------------------------------
+   header (identity block)
+   -------------------------------------------------------------------------- */
 
-.tagline {
-  margin: 0 0 0.3rem;
-  font-size: 1rem;
-  color: var(--tagline);
-  text-align: center;
+.intro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-start;
+  margin-bottom: 48px;
 }
 
 .photo {
   display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1400 / 933;
+  width: 148px;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
+  object-position: 60% 20%;
   border-radius: var(--radius);
-  margin: 0 0 0.75rem;
-  background: #14110c;
+  border: 1px solid var(--border);
+  filter: grayscale(0.25);
+  background: var(--chip-bg);
 }
 
-.location {
-  margin: 0 0 2.5rem;
-  font-size: 0.95rem;
-  color: var(--tagline);
-  text-align: center;
+.intro-text {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-top: 8px;
 }
 
-.block { margin-bottom: 2.2rem; }
+.name {
+  margin: 0;
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: var(--fs-display);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: lowercase;
+  color: var(--ink-bright);
+}
+
+.tagline {
+  margin: 0;
+  font-size: var(--fs-body);
+  color: var(--muted);
+}
+
+.meta {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   sections + headings
+   -------------------------------------------------------------------------- */
 
 .heading {
-  margin: 0 0 1rem;
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--heading);
+  margin: 0 0 14px;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: var(--fs-heading);
+  letter-spacing: 0.14em;
+  text-transform: lowercase;
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   links + leader lines (the core list pattern)
+   <li class="row"><a>title</a><span class="leader"></span><span class="tag">tag</span></li>
+   -------------------------------------------------------------------------- */
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--ink-hover);
 }
 
 .links {
@@ -86,32 +167,74 @@ body {
   padding: 0;
 }
 
-.links li { margin: 0.4rem 0; }
+.links li { margin: 8px 0; }
 
-.links a {
-  color: var(--link);
-  text-decoration: none;
-  transition: color 0.15s ease;
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
-.links a:hover,
-.links a:focus-visible {
-  color: var(--link-hover);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.row a { white-space: nowrap; }
+
+.leader {
+  flex: 1;
+  border-bottom: 1px dotted var(--hairline);
 }
 
-.links .desc {
-  color: var(--tagline);
+.tag {
+  font-family: var(--mono);
+  font-size: var(--fs-tag);
+  color: var(--faint);
 }
 
-/* placeholder links not yet wired up */
-.links a[href="#"] { cursor: default; }
+/* publications variant: title row + description line */
+.pubs { display: flex; flex-direction: column; gap: 18px; list-style: none; margin: 0; padding: 0; }
+
+.desc {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: var(--fs-desc);
+}
+
+.desc a { color: var(--accent); }
+
+/* --------------------------------------------------------------------------
+   footer
+   -------------------------------------------------------------------------- */
+
+.footer {
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: var(--fs-footer);
+  letter-spacing: 0.06em;
+  color: var(--footnote);
+}
+
+.counter-chip {
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  color: var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   mobile
+   -------------------------------------------------------------------------- */
 
 @media (max-width: 640px) {
-  body { font-size: 17px; }
-  .page { padding: 2rem 1.5rem 3rem; }
-  .name { font-size: 2.3rem; }
-  .tagline { font-size: 1rem; }
-  .photo { margin-bottom: 2.2rem; }
+  .page { padding: 40px 24px 36px; }
+  .name { font-size: 32px; }
+  .photo { width: 116px; }
+
+  /* long titles + tag can outgrow narrow viewports; let the title wrap
+     instead of forcing the tag to hug (or clip past) the edge */
+  .row { flex-wrap: wrap; row-gap: 2px; }
+  .row a { white-space: normal; }
+  .leader { min-width: 16px; }
 }
