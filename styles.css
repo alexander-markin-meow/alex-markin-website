@@ -40,9 +40,15 @@ body {
   color: var(--name);
 }
 
+.pronouns {
+  margin: 0.6rem 0 0;
+  font-size: 1.05rem;
+  color: var(--tagline);
+}
+
 .tagline {
-  margin: 1rem 0 0;
-  font-size: 1.35rem;
+  margin: 0 0 0.35rem;
+  font-size: 1.2rem;
   color: var(--tagline);
 }
 
