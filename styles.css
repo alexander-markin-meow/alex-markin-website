@@ -17,67 +17,67 @@ body {
   background: var(--bg);
   color: var(--link);
   font-family: "Spectral", Georgia, "Times New Roman", serif;
-  font-size: 20px;
+  font-size: 17px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 .page {
-  max-width: 720px;
+  max-width: 620px;
   margin: 0 auto;
-  padding: 9rem 2rem 6rem;
+  padding: 5.5rem 2rem 4rem;
 }
 
-.intro { margin-bottom: 2.5rem; }
+.intro { margin-bottom: 1.8rem; }
 
 .name {
   margin: 0;
   font-weight: 500;
-  font-size: 3.4rem;
+  font-size: 2.6rem;
   line-height: 1.05;
   letter-spacing: -0.01em;
   color: var(--name);
 }
 
 .pronouns {
-  margin: 0.6rem 0 0;
-  font-size: 1.05rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
   color: var(--tagline);
 }
 
 .tagline {
-  margin: 0 0 0.35rem;
-  font-size: 1.2rem;
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
   color: var(--tagline);
   text-align: center;
 }
 
 .photo {
   display: block;
-  width: 320px;
+  width: 260px;
   max-width: 100%;
   height: auto;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: var(--radius);
-  margin: 0 0 0.9rem;
+  margin: 0 0 0.75rem;
   background: #14110c;
 }
 
 .location {
-  margin: 0 0 3.5rem;
-  font-size: 1.1rem;
+  margin: 0 0 2.5rem;
+  font-size: 0.95rem;
   color: var(--tagline);
   text-align: center;
 }
 
-.block { margin-bottom: 3rem; }
+.block { margin-bottom: 2.2rem; }
 
 .heading {
-  margin: 0 0 1.25rem;
+  margin: 0 0 1rem;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: var(--heading);
 }
 
@@ -87,7 +87,7 @@ body {
   padding: 0;
 }
 
-.links li { margin: 0.55rem 0; }
+.links li { margin: 0.4rem 0; }
 
 .links a {
   color: var(--link);
@@ -110,9 +110,9 @@ body {
 .links a[href="#"] { cursor: default; }
 
 @media (max-width: 640px) {
-  body { font-size: 18px; }
-  .page { padding: 5rem 1.5rem 4rem; }
-  .name { font-size: 2.6rem; }
-  .tagline { font-size: 1.2rem; }
-  .photo { width: 260px; margin-bottom: 3rem; }
+  body { font-size: 17px; }
+  .page { padding: 3.5rem 1.5rem 3rem; }
+  .name { font-size: 2.3rem; }
+  .tagline { font-size: 1rem; }
+  .photo { width: 230px; margin-bottom: 2.2rem; }
 }
