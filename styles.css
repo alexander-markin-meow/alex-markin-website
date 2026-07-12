@@ -50,6 +50,7 @@ body {
   margin: 0 0 0.35rem;
   font-size: 1.2rem;
   color: var(--tagline);
+  text-align: center;
 }
 
 .photo {
@@ -68,6 +69,7 @@ body {
   margin: 0 0 3.5rem;
   font-size: 1.1rem;
   color: var(--tagline);
+  text-align: center;
 }
 
 .block { margin-bottom: 3rem; }
