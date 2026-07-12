@@ -88,6 +88,10 @@ body {
   text-underline-offset: 3px;
 }
 
+.links .desc {
+  color: var(--tagline);
+}
+
 /* placeholder links not yet wired up */
 .links a[href="#"] { cursor: default; }
 
