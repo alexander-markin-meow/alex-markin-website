@@ -54,8 +54,14 @@ body {
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: var(--radius);
-  margin: 0 0 3.5rem;
+  margin: 0 0 0.9rem;
   background: #14110c;
+}
+
+.location {
+  margin: 0 0 3.5rem;
+  font-size: 1.1rem;
+  color: var(--tagline);
 }
 
 .block { margin-bottom: 3rem; }
