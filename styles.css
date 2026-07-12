@@ -5,7 +5,7 @@
   --heading: #9c968a;
   --link: #cec8bb;
   --link-hover: #ffffff;
-  --radius: 14px;
+  --radius: 8px;
 }
 
 * { box-sizing: border-box; }
@@ -55,10 +55,9 @@ body {
 
 .photo {
   display: block;
-  width: 260px;
-  max-width: 100%;
+  width: 100%;
   height: auto;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1400 / 933;
   object-fit: cover;
   border-radius: var(--radius);
   margin: 0 0 0.75rem;
@@ -114,5 +113,5 @@ body {
   .page { padding: 3.5rem 1.5rem 3rem; }
   .name { font-size: 2.3rem; }
   .tagline { font-size: 1rem; }
-  .photo { width: 230px; margin-bottom: 2.2rem; }
+  .photo { margin-bottom: 2.2rem; }
 }
