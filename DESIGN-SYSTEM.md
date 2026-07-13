@@ -66,7 +66,7 @@ The signature pattern. Title left, dotted line fills the middle, lowercase mono 
 <li class="row"><a href="…">title of thing</a><span class="leader"></span><span class="tag">tag</span></li>
 ```
 
-- Tags are one lowercase word: `phone` `mail` `ig` `photos` `social` `reading` `work`
+- Tags are one lowercase word: `phone` `mail` `ig` `photos` `social` `books` `work`
   `code` `project` `press` `video` `film`. Reuse before inventing.
 - Links: no underline, `--ink`, hover to pure white. Nothing else changes on hover.
 
@@ -85,6 +85,17 @@ Inline links inside `.desc` render in `--accent`.
   <h2 class="heading">section name</h2>
   <ul class="links">…</ul>
 </section>
+```
+
+### stacked sections in one column
+Two short sections sharing a single grid cell (e.g. contact above social).
+Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between them.
+
+```html
+<div class="stack">
+  <section>…</section>
+  <section>…</section>
+</div>
 ```
 
 ### footer

@@ -73,6 +73,13 @@ body {
   margin-bottom: 48px;
 }
 
+/* stacked sections sharing one grid column (e.g. contact above social) */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+}
+
 /* --------------------------------------------------------------------------
    header (identity block)
    -------------------------------------------------------------------------- */
