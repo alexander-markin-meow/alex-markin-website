@@ -26,7 +26,8 @@ rather than hard-coding values or using inline styles.
 Served by **GitHub Pages** from the `main` branch of this repo. Every push to `main`
 redeploys automatically — no build step, no manual deploy.
 
-DNS (at Namecheap) points `alex-markin.com` and `www.alex-markin.com` at GitHub Pages.
+DNS (at Namecheap) points the apex `alex-markin.com` at GitHub Pages via four `A` records
+(`185.199.108–111.153`). The site is apex-only — there is intentionally no `www` record.
 
 ## Preview locally
 ```
