@@ -63,7 +63,7 @@ body {
 .page {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: 64px 48px 12px;
+  padding: 56px 48px 12px;
 }
 
 .columns {
@@ -292,7 +292,7 @@ a:focus-visible {
    -------------------------------------------------------------------------- */
 
 @media (max-width: 640px) {
-  .page { padding: 40px 24px 12px; }
+  .page { padding: 36px 24px 12px; }
   .name { font-size: 32px; }
   .photo { width: 116px; }
 

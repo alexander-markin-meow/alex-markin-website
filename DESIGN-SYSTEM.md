@@ -50,7 +50,7 @@ Scale (don't invent sizes; pick the closest):
 
 ## layout
 
-- `.page`: max-width 1100px, centered, padding 64px 48px 12px (40/24/12 mobile). The
+- `.page`: max-width 1100px, centered, padding 56px 48px 12px (36/24/12 mobile). The
   12px bottom padding mirrors the footer's 12px divider-to-text spacing.
 - `.columns`: CSS grid, `repeat(auto-fit, minmax(340px, 1fr))`, gap 44px 64px.
   Columns collapse to a single stack below ~750px automatically — no media query needed.
