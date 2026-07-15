@@ -54,7 +54,9 @@ Scale (don't invent sizes; pick the closest):
   12px bottom padding mirrors the footer's 12px divider-to-text spacing.
 - `.columns`: CSS grid, `repeat(auto-fit, minmax(340px, 1fr))`, gap 44px 64px.
   Columns collapse to a single stack below ~750px automatically — no media query needed.
-  New sections go inside `.columns` as another `<section>`; the grid handles placement.
+  The identity header is the first item in the left `.stack`, so the right column begins level
+  with it on desktop while the one-column reading order remains unchanged. New sections go
+  inside `.columns` as another `<section>`; the grid handles placement.
 - Spacing rhythm: 48px between major blocks, 14px after headings, 8px between list rows,
   18px between publication entries.
 
@@ -120,9 +122,12 @@ Allowed (subtle, typographic): dotted leaders, mono tags and timestamps,
 
 **Live "how long ago" timestamp (`.ago`)** — a mono `--faint` span placed inside a
 `.row` between the link and the `.leader`, filled from the GitHub API on load by the
-inline script at the end of `index.html`. Reads as machine annotation (e.g. `updated 3
+inline script at the end of `index.html`. Reads as machine annotation (e.g. `upd 3
 days ago`, `active 3 days ago`). Drive it with a data attribute, never hard-code the text:
 `data-repo="owner/name"` → repo `pushed_at`; `data-user="login"` → latest public event.
+Minute values use the compact `min` abbreviation for both singular and plural (e.g.
+`upd 1 min ago`, `active 3 min ago`), never `minute` or `minutes`. Live update statuses use
+the compact `upd` prefix, never `updated`; the footer keeps `last updated`.
 The span starts empty and `.ago:empty` hides it, so a failed or slow fetch leaves no gap.
 
 **Live local clock (`.clock`)** — an empty span at the end of the header `.meta` line,

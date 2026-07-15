@@ -89,7 +89,7 @@ body {
   flex-wrap: wrap;
   gap: 32px;
   align-items: flex-start;
-  margin-bottom: 48px;
+  margin-bottom: 4px;
 }
 
 .photo {
