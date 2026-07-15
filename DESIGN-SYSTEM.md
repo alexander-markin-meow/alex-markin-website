@@ -141,6 +141,13 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
    commented section, and document it in this file.
 4. Keep every page's footer format identical.
 
+## cache-busting
+
+`index.html` links the stylesheet as `styles.css?v=YYYYMMDD`. GitHub Pages serves
+`styles.css` with `Cache-Control: max-age=600`, so without the query a returning visitor
+can load new HTML against a stale cached stylesheet. **Bump the `?v=` date whenever you
+edit `styles.css`** (keep it in sync with the footer's "last updated" date).
+
 ## don'ts
 
 - No new fonts, hues, or font sizes outside the scale.
