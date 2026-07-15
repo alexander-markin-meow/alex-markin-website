@@ -47,7 +47,7 @@
       <div class="intro-text">
         <h1 class="name">alex markin</h1>
         <p class="tagline">artist · student · specialty coffee barista</p>
-        <p class="meta">he/they — copenhagen / berlin</p>
+        <p class="meta">he/they — copenhagen/berlin<span class="clock"></span></p>
       </div>
     </header>
 
@@ -66,12 +66,12 @@
           <ul class="links">
             <li class="row"><a href="https://www.instagram.com/murlexander/" target="_blank" rel="noopener">instagram (personal)</a><span class="leader"></span><span class="tag">ig</span></li>
             <li class="row"><a href="https://www.instagram.com/alex_munin/" target="_blank" rel="noopener">instagram (photography)</a><span class="leader"></span><span class="tag">ig</span></li>
-            <li class="row"><a href="https://www.flickr.com/photos/194911743@N06/" target="_blank" rel="noopener">flickr</a><span class="leader"></span><span class="tag">photos</span></li>
+            <li class="row"><a href="https://www.flickr.com/photos/194911743@N06/" target="_blank" rel="noopener">flickr</a><span class="ago" id="flickr-ago" data-flickr="194911743@N06"></span><span class="leader"></span><span class="tag">photos</span></li>
             <li class="row"><a href="https://www.linkedin.com/in/alex-markin-1b1b1b234/" target="_blank" rel="noopener">linkedin</a><span class="leader"></span><span class="tag">work</span></li>
             <li class="row"><a href="https://www.facebook.com/alex.markin.munin/" target="_blank" rel="noopener">facebook</a><span class="leader"></span><span class="tag">social</span></li>
             <li class="row"><a href="https://substack.com/@alexmarkin" target="_blank" rel="noopener">substack</a><span class="leader"></span><span class="tag">social</span></li>
             <li class="row"><a href="https://fable.co/fabler/alex-markin-115873104400" target="_blank" rel="noopener">fable</a><span class="leader"></span><span class="tag">books</span></li>
-            <li class="row"><a href="https://github.com/alexander-markin-meow" target="_blank" rel="noopener">github</a><span class="leader"></span><span class="tag">code</span></li>
+            <li class="row"><a href="https://github.com/alexander-markin-meow" target="_blank" rel="noopener">github</a><span class="ago" data-user="alexander-markin-meow"></span><span class="leader"></span><span class="tag">code</span></li>
           </ul>
         </section>
       </div>
@@ -80,19 +80,19 @@
         <h2 class="heading">publications and projects</h2>
         <ul class="pubs">
           <li>
-            <div class="row"><a href="https://github.com/alexander-markin-meow/louppe" target="_blank" rel="noopener">louppe</a><span class="leader"></span><span class="tag">project</span></div>
+            <div class="row"><a href="https://github.com/alexander-markin-meow/louppe" target="_blank" rel="noopener">louppe app</a><span class="ago" data-repo="alexander-markin-meow/louppe"></span><span class="leader"></span><span class="tag">project</span></div>
             <div class="desc">fast, keyboard-driven macOS app for culling photos</div>
           </li>
           <li>
-            <div class="row"><a href="https://www.nytimes.com/2025/06/24/learning/the-authoritarian-playbook-is-always-the-same-the-week-1-winner-of-our-summer-reading-contest.html" target="_blank" rel="noopener">authoritarian playbook is always the same</a><span class="leader"></span><span class="tag">press</span></div>
+            <div class="row"><a href="https://www.nytimes.com/2025/06/24/learning/the-authoritarian-playbook-is-always-the-same-the-week-1-winner-of-our-summer-reading-contest.html" target="_blank" rel="noopener">“authoritarian playbook is always the same”</a><span class="leader"></span><span class="tag">press</span></div>
             <div class="desc">new york times summer reading contest winner</div>
           </li>
           <li>
             <div class="row"><a href="https://youtu.be/SKE0fzSEpo8" target="_blank" rel="noopener">podcast on russian colonialism</a><span class="leader"></span><span class="tag">video</span></div>
-            <div class="desc">video editing for Echo (in rus; ep. <a href="https://youtu.be/SKE0fzSEpo8" target="_blank" rel="noopener">1</a>, <a href="https://youtu.be/cd32eTE6BUg" target="_blank" rel="noopener">2</a>, <a href="https://youtu.be/w-EogQhvdCQ" target="_blank" rel="noopener">3</a>)</div>
+            <div class="desc">video editing for radio echo (in rus; ep. <a href="https://youtu.be/SKE0fzSEpo8" target="_blank" rel="noopener">1</a>, <a href="https://youtu.be/cd32eTE6BUg" target="_blank" rel="noopener">2</a>, <a href="https://youtu.be/w-EogQhvdCQ" target="_blank" rel="noopener">3</a>)</div>
           </li>
           <li>
-            <div class="row"><a href="https://www.youtube.com/watch?v=pyVTY9q6JZA" target="_blank" rel="noopener">without feeling the country beneath us</a><span class="leader"></span><span class="tag">film</span></div>
+            <div class="row"><a href="https://www.youtube.com/watch?v=pyVTY9q6JZA" target="_blank" rel="noopener">“without feeling the country beneath us”</a><span class="leader"></span><span class="tag">film</span></div>
             <div class="desc">documentary on the first gulag (in rus)</div>
           </li>
         </ul>
@@ -100,9 +100,73 @@
     </div>
 
     <footer class="footer">
-      <span>✳ last updated 2026-07-14</span>
+      <span>✳ last updated 2026-07-15</span>
       <span>alex-markin.com</span>
     </footer>
   </main>
+
+  <!-- live "how long ago" timestamps, filled from the GitHub API on load.
+       any failure (rate limit, offline) leaves the span empty and hidden. -->
+  <script>
+    (function () {
+      function ago(iso) {
+        var s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+        var units = [
+          [31536000, "year"], [2592000, "month"], [604800, "week"],
+          [86400, "day"], [3600, "hour"], [60, "minute"]
+        ];
+        for (var i = 0; i < units.length; i++) {
+          var n = Math.floor(s / units[i][0]);
+          if (n >= 1) return n + " " + units[i][1] + (n > 1 ? "s" : "") + " ago";
+        }
+        return "just now";
+      }
+
+      function fill(el, url, prefix, pick) {
+        fetch(url)
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+          .then(function (data) {
+            var ts = pick(data);
+            if (ts) el.textContent = prefix + ago(ts);
+          })
+          .catch(function () { /* leave empty → hidden */ });
+      }
+
+      document.querySelectorAll(".ago").forEach(function (el) {
+        if (el.dataset.repo) {
+          fill(el, "https://api.github.com/repos/" + el.dataset.repo,
+            "updated ", function (d) { return d.pushed_at; });
+        } else if (el.dataset.user) {
+          fill(el, "https://api.github.com/users/" + el.dataset.user + "/events/public?per_page=1",
+            "active ", function (d) { return d.length ? d[0].created_at : null; });
+        }
+      });
+
+      // live local clock — copenhagen and berlin share one timezone
+      var clock = document.querySelector(".clock");
+      if (clock && window.Intl) {
+        var fmt = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Europe/Copenhagen", hour: "2-digit", minute: "2-digit", hour12: false
+        });
+        var tick = function () { clock.textContent = " · " + fmt.format(new Date()); };
+        tick();
+        setInterval(tick, 30000);
+      }
+
+      // latest flickr upload time via JSONP — the public feed sends no CORS
+      // header, so we load it as a script and let it call this global callback
+      var flickrAgo = document.getElementById("flickr-ago");
+      if (flickrAgo && flickrAgo.dataset.flickr) {
+        window.jsonFlickrFeed = function (data) {
+          var item = data && data.items && data.items[0];
+          if (item && item.published) flickrAgo.textContent = "updated " + ago(item.published);
+        };
+        var s = document.createElement("script");
+        s.src = "https://www.flickr.com/services/feeds/photos_public.gne?id=" +
+          encodeURIComponent(flickrAgo.dataset.flickr) + "&format=json&lang=en-us";
+        document.body.appendChild(s);
+      }
+    })();
+  </script>
 </body>
 </html>

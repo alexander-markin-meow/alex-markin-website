@@ -195,6 +195,17 @@ a:focus-visible {
   color: var(--faint);
 }
 
+/* live "how long ago" timestamp, mono machine-voice, populated by JS from the
+   GitHub API. hidden until (and unless) it has content so a failed/slow fetch
+   leaves no gap. see the timestamp note in DESIGN-SYSTEM.md. */
+.ago {
+  font-family: var(--mono);
+  font-size: var(--fs-tag);
+  color: var(--faint);
+  white-space: nowrap;
+}
+.ago:empty { display: none; }
+
 /* publications variant: title row + description line */
 .pubs { display: flex; flex-direction: column; gap: 18px; list-style: none; margin: 0; padding: 0; }
 

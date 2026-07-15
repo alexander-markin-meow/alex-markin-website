@@ -7,7 +7,7 @@ every visual decision below is deliberate.
 ## voice
 
 - **all lowercase, everywhere** — headings, name, links, tags, footer. The only exception is
-  proper nouns inside descriptions where lowercase would be confusing (e.g. "Echo").
+  proper nouns inside descriptions where lowercase would be confusing (e.g. "macOS").
 - Compact, understated, no exclamation marks, no emoji.
 
 ## color tokens (defined in `styles.css :root`)
@@ -112,6 +112,23 @@ the border + radius + grayscale treatment.
 Allowed (subtle, typographic): dotted leaders, mono tags and timestamps,
 "last updated" footer, the ✳ dingbat, optional visitor-counter chip
 (`<span class="counter-chip">004821</span>`).
+
+**Live "how long ago" timestamp (`.ago`)** — a mono `--faint` span placed inside a
+`.row` between the link and the `.leader`, filled from the GitHub API on load by the
+inline script at the end of `index.html`. Reads as machine annotation (e.g. `updated 3
+days ago`, `active 3 days ago`). Drive it with a data attribute, never hard-code the text:
+`data-repo="owner/name"` → repo `pushed_at`; `data-user="login"` → latest public event.
+The span starts empty and `.ago:empty` hides it, so a failed or slow fetch leaves no gap.
+
+**Live local clock (`.clock`)** — an empty span at the end of the header `.meta` line,
+filled by the same inline script with ` · HH:MM` in `Europe/Copenhagen` time (copenhagen
+and berlin share a timezone) and re-ticked every 30s. Inherits the meta line's mono olive;
+add no color. Empty (and invisible) if `Intl` is unavailable.
+
+The flickr `.ago` (id `flickr-ago`, `data-flickr="NSID"`) is a special case: its feed sends
+no CORS header, so it can't be `fetch`ed. The script loads the flickr public feed via JSONP
+(a `<script>` tag calling the global `jsonFlickrFeed`) and fills the span from the newest
+item's `published` date. Same `.ago` styling as the rest.
 Not allowed: bevels, marquees, animated gifs, table layouts, coloured link-visited states,
 under-construction banners. The nostalgia is a seasoning, not the dish.
 
