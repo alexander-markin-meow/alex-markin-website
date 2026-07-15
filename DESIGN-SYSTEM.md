@@ -71,6 +71,7 @@ The signature pattern. Title left, dotted line fills the middle, lowercase mono 
 
 - Tags are one lowercase word: `phone` `mail` `ig` `photos` `social` `books` `work`
   `code` `project` `press` `video` `film`. Reuse before inventing.
+- The first link's hit area covers the full row, including the dotted leader and tag.
 - Links: no underline, `--ink`, hover to pure white. Nothing else changes on hover.
 
 ### publication entry (row + description)

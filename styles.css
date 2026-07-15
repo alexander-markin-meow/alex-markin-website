@@ -97,7 +97,7 @@ body {
   width: 148px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  object-position: 60% 20%;
+  object-position: center;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   filter: grayscale(0.25);
@@ -177,12 +177,22 @@ a:focus-visible {
 .links li { margin: 8px 0; }
 
 .row {
+  position: relative;
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
 
 .row a { white-space: nowrap; }
+
+/* Extend the first link over its full leader row, so the title, dotted line,
+   and tag all share one click target without changing their visual treatment. */
+.row > a:first-child::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
 
 .leader {
   flex: 1;
