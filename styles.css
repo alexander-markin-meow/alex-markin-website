@@ -217,6 +217,25 @@ a:focus-visible {
 
 .desc a { color: var(--accent); }
 
+/* latest photo from the curated flickr album; the whole section stays hidden
+   until the feed has supplied a valid image and link */
+.flickr-photo { margin: 0; }
+
+.flickr-photo-link {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.flickr-photo-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  filter: grayscale(0.25);
+  background: var(--chip-bg);
+}
+
 /* --------------------------------------------------------------------------
    footer
    -------------------------------------------------------------------------- */
@@ -224,28 +243,26 @@ a:focus-visible {
 .footer {
   border-top: 1px solid var(--rule);
   padding-top: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 24px;
   font-family: var(--mono);
   font-size: var(--fs-footer);
   letter-spacing: 0.06em;
   color: var(--footnote);
 }
 
-.footer-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-}
+.footer-domain { justify-self: end; }
 
 .copy-markdown {
+  justify-self: center;
   margin: 0;
-  padding: 0;
-  border: 0;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: none;
-  color: inherit;
+  color: var(--muted);
   font: inherit;
   letter-spacing: inherit;
   text-transform: lowercase;
@@ -284,4 +301,9 @@ a:focus-visible {
   .row { flex-wrap: wrap; row-gap: 2px; }
   .row a { white-space: normal; }
   .leader { min-width: 16px; }
+
+  .footer { grid-template-columns: auto auto; justify-content: space-between; }
+  .copy-markdown { grid-column: 1 / -1; grid-row: 1; margin-bottom: 4px; }
+  .footer-date { grid-column: 1; grid-row: 2; }
+  .footer-domain { grid-column: 2; grid-row: 2; }
 }

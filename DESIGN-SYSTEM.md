@@ -99,11 +99,12 @@ Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between th
 ```
 
 ### footer
-Solid `--rule` top border, mono, space-between. Always contains
-`✳ last updated YYYY-MM-DD` (update the date when you ship a change) and the domain.
-Document-level utilities belong beside the domain in `.footer-actions`. The
-`copy page as markdown` control builds its output from the live semantic HTML at click
-time; do not add or maintain a separate Markdown copy of the page.
+Solid `--rule` top border and a three-column mono grid: `last updated YYYY-MM-DD` at left,
+the document utility centered, and the domain at right. Update the date when you ship a
+change. The `copy as markdown` control uses a thin `--border` outline with no fill; the
+outline, pointer cursor, and color-only hover make it legible as clickable without drawing
+focus. It builds its output from the live semantic HTML at click time; do not add or
+maintain a separate Markdown copy of the page.
 
 ### images
 1px `--border`, 2px radius, slight `grayscale(0.25)`. The portrait is a 148px square
@@ -113,7 +114,7 @@ the border + radius + grayscale treatment.
 ## web-1.0 flavor — the boundaries
 
 Allowed (subtle, typographic): dotted leaders, mono tags and timestamps,
-"last updated" footer, the ✳ dingbat, optional visitor-counter chip
+"last updated" footer, optional visitor-counter chip
 (`<span class="counter-chip">004821</span>`).
 
 **Live "how long ago" timestamp (`.ago`)** — a mono `--faint` span placed inside a
@@ -129,10 +130,17 @@ filled by the same inline script in compact 12-hour form (for example ` · 1:13p
 and berlin share a timezone) and re-ticked every 30s. Inherits the meta line's mono olive;
 add no color. Empty (and invisible) if `Intl` is unavailable.
 
-The flickr `.ago` (id `flickr-ago`, `data-flickr="NSID"`) is a special case: its feed sends
-no CORS header, so it can't be `fetch`ed. The script loads the flickr public feed via JSONP
-(a `<script>` tag calling the global `jsonFlickrFeed`) and fills the span from the newest
-item's `published` date. Same `.ago` styling as the rest.
+The flickr `.ago` (id `flickr-ago`, `data-flickr="NSID"`) remains tied to the general public
+photostream. Its JSONP callback fills the span from the newest public upload's `published`
+date.
+
+The `.flickr-latest` section is independent and uses the public album feed configured by
+`data-flickr-set` and `data-flickr-nsid`. A separate JSONP callback takes the first album-feed
+item and supplies the photo, link, and title. The entire section starts `hidden`, so an empty
+album or failed request leaves no broken UI. The displayed image follows the standard
+content-photo border, radius, and grayscale treatment. Keep this album-specific: adding a
+photo to the configured flickr album should be the only content action needed to update the
+displayed image.
 Not allowed: bevels, marquees, animated gifs, table layouts, coloured link-visited states,
 under-construction banners. The nostalgia is a seasoning, not the dish.
 
@@ -147,7 +155,8 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
 
 ## cache-busting
 
-`index.html` links the stylesheet as `styles.css?v=YYYYMMDD`. GitHub Pages serves
+`index.html` links the stylesheet as `styles.css?v=YYYYMMDD` (append `-N` for additional
+changes shipped on the same day). GitHub Pages serves
 `styles.css` with `Cache-Control: max-age=600`, so without the query a returning visitor
 can load new HTML against a stale cached stylesheet. **Bump the `?v=` date whenever you
 edit `styles.css`** (keep it in sync with the footer's "last updated" date).
