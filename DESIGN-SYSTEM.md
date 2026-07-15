@@ -7,7 +7,7 @@ every visual decision below is deliberate.
 ## voice
 
 - **all lowercase, everywhere** — headings, name, links, tags, footer. The only exception is
-  proper nouns inside descriptions where lowercase would be confusing (e.g. "macOS").
+  proper nouns inside descriptions where lowercase would be confusing.
 - Compact, understated, no exclamation marks, no emoji.
 
 ## color tokens (defined in `styles.css :root`)
