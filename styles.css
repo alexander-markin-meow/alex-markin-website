@@ -234,6 +234,35 @@ a:focus-visible {
   color: var(--footnote);
 }
 
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.copy-markdown {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.copy-markdown:hover,
+.copy-markdown:focus-visible {
+  color: var(--ink-hover);
+}
+
+.copy-source {
+  position: fixed;
+  inset: 0 auto auto -9999px;
+}
+
 .counter-chip {
   background: var(--chip-bg);
   border: 1px solid var(--border);

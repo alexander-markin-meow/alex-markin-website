@@ -49,7 +49,7 @@
       <div class="intro-text">
         <h1 class="name">alex markin</h1>
         <p class="tagline">artist · student · specialty coffee barista</p>
-        <p class="meta">he/they — copenhagen/berlin<span class="clock"></span></p>
+        <p class="meta">he/they · copenhagen/berlin<span class="clock"></span></p>
       </div>
     </header>
 
@@ -103,7 +103,10 @@
 
     <footer class="footer">
       <span>✳ last updated 2026-07-15</span>
-      <span>alex-markin.com</span>
+      <span class="footer-actions">
+        <button class="copy-markdown" type="button" data-copy-markdown aria-live="polite">copy page as markdown</button>
+        <span>alex-markin.com</span>
+      </span>
     </footer>
   </main>
 
@@ -147,10 +150,12 @@
       // live local clock — copenhagen and berlin share one timezone
       var clock = document.querySelector(".clock");
       if (clock && window.Intl) {
-        var fmt = new Intl.DateTimeFormat("en-GB", {
-          timeZone: "Europe/Copenhagen", hour: "2-digit", minute: "2-digit", hour12: false
+        var fmt = new Intl.DateTimeFormat("en-US", {
+          timeZone: "Europe/Copenhagen", hour: "numeric", minute: "2-digit", hour12: true
         });
-        var tick = function () { clock.textContent = " · " + fmt.format(new Date()); };
+        var tick = function () {
+          clock.textContent = " · " + fmt.format(new Date()).toLowerCase().replace(" ", "");
+        };
         tick();
         setInterval(tick, 30000);
       }
@@ -167,6 +172,97 @@
         s.src = "https://www.flickr.com/services/feeds/photos_public.gne?id=" +
           encodeURIComponent(flickrAgo.dataset.flickr) + "&format=json&lang=en-us";
         document.body.appendChild(s);
+      }
+
+      // Build the Markdown from the page's semantic HTML at click time, so edits
+      // to the page content are automatically reflected in the copied version.
+      var copyButton = document.querySelector("[data-copy-markdown]");
+      if (copyButton) {
+        function inlineMarkdown(el) {
+          return Array.from(el.childNodes).map(function (node) {
+            if (node.nodeType === Node.TEXT_NODE) return node.textContent;
+            if (node.nodeType !== Node.ELEMENT_NODE) return "";
+            if (node.matches(".leader, .ago, .clock")) return "";
+            if (node.tagName === "A") {
+              return "[" + node.textContent.trim() + "](" + node.href + ")";
+            }
+            if (node.tagName === "BR") return "  \n";
+            return inlineMarkdown(node);
+          }).join("").replace(/\s+/g, " ").trim();
+        }
+
+        function pageMarkdown() {
+          var lines = [];
+          var intro = document.querySelector(".intro");
+          var title = intro && intro.querySelector(".name");
+          var tagline = intro && intro.querySelector(".tagline");
+          var meta = intro && intro.querySelector(".meta");
+
+          if (title) lines.push("# " + title.textContent.trim());
+          if (tagline) lines.push("", tagline.textContent.trim());
+          if (meta) {
+            var metaCopy = meta.cloneNode(true);
+            metaCopy.querySelectorAll(".clock").forEach(function (el) { el.remove(); });
+            lines.push(metaCopy.textContent.trim());
+          }
+
+          document.querySelectorAll(".columns section").forEach(function (section) {
+            var heading = section.querySelector(".heading");
+            if (!heading) return;
+            lines.push("", "## " + heading.textContent.trim(), "");
+
+            section.querySelectorAll(":scope > ul > li").forEach(function (item) {
+              var row = item.matches(".row") ? item : item.querySelector(":scope > .row");
+              if (!row) return;
+              var link = row.querySelector("a");
+              var tag = row.querySelector(".tag");
+              var desc = item.querySelector(":scope > .desc");
+              var text = link
+                ? "[" + link.textContent.trim() + "](" + link.href + ")"
+                : inlineMarkdown(row);
+              if (tag) text += " — " + tag.textContent.trim();
+              lines.push("- " + text);
+              if (desc) lines.push("  " + inlineMarkdown(desc));
+            });
+          });
+
+          var updated = document.querySelector(".footer > span:first-child");
+          lines.push("", "---", "", "source: " + location.href);
+          if (updated) lines.push(updated.textContent.replace("✳", "").trim());
+          return lines.join("\n").replace(/\n{3,}/g, "\n\n") + "\n";
+        }
+
+        function fallbackCopy(text) {
+          var area = document.createElement("textarea");
+          area.value = text;
+          area.setAttribute("readonly", "");
+          area.className = "copy-source";
+          document.body.appendChild(area);
+          area.select();
+          var copied = document.execCommand("copy");
+          area.remove();
+          return copied ? Promise.resolve() : Promise.reject();
+        }
+
+        function writeClipboard(text) {
+          if (!navigator.clipboard || !window.isSecureContext) return fallbackCopy(text);
+          return navigator.clipboard.writeText(text).catch(function () {
+            return fallbackCopy(text);
+          });
+        }
+
+        copyButton.addEventListener("click", function () {
+          var text = pageMarkdown();
+          writeClipboard(text).then(function () {
+            copyButton.textContent = "copied as markdown";
+          }).catch(function () {
+            copyButton.textContent = "copy failed";
+          }).finally(function () {
+            window.setTimeout(function () {
+              copyButton.textContent = "copy page as markdown";
+            }, 1800);
+          });
+        });
       }
     })();
   </script>

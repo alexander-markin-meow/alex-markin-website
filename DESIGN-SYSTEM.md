@@ -101,6 +101,9 @@ Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between th
 ### footer
 Solid `--rule` top border, mono, space-between. Always contains
 `✳ last updated YYYY-MM-DD` (update the date when you ship a change) and the domain.
+Document-level utilities belong beside the domain in `.footer-actions`. The
+`copy page as markdown` control builds its output from the live semantic HTML at click
+time; do not add or maintain a separate Markdown copy of the page.
 
 ### images
 1px `--border`, 2px radius, slight `grayscale(0.25)`. The portrait is a 148px square
@@ -121,7 +124,8 @@ days ago`, `active 3 days ago`). Drive it with a data attribute, never hard-code
 The span starts empty and `.ago:empty` hides it, so a failed or slow fetch leaves no gap.
 
 **Live local clock (`.clock`)** — an empty span at the end of the header `.meta` line,
-filled by the same inline script with ` · HH:MM` in `Europe/Copenhagen` time (copenhagen
+filled by the same inline script in compact 12-hour form (for example ` · 1:13pm`) in
+`Europe/Copenhagen` time (copenhagen
 and berlin share a timezone) and re-ticked every 30s. Inherits the meta line's mono olive;
 add no color. Empty (and invisible) if `Intl` is unavailable.
 
