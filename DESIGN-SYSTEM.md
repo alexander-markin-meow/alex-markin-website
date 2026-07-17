@@ -103,7 +103,7 @@ Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between th
 ```
 
 ### footer
-Solid `--rule` top border and a three-column mono grid: `last updated YYYY-MM-DD` at left,
+Solid `--rule` top border and a three-column mono grid: `last upd YYYY-MM-DD` at left,
 the document utility centered, and the domain at right. Update the date when you ship a
 change. The `copy as markdown` control uses a thin `--border` outline with no fill; the
 outline, pointer cursor, and color-only hover make it legible as clickable without drawing
@@ -118,7 +118,7 @@ the border + radius + grayscale treatment.
 ## web-1.0 flavor — the boundaries
 
 Allowed (subtle, typographic): dotted leaders, mono tags and timestamps,
-"last updated" footer, optional visitor-counter chip
+"last upd" footer, optional visitor-counter chip
 (`<span class="counter-chip">004821</span>`).
 
 **Live "how long ago" timestamp (`.ago`)** — a mono `--faint` span placed inside a
@@ -128,7 +128,7 @@ days ago`, `active 3 days ago`). Drive it with a data attribute, never hard-code
 `data-repo="owner/name"` → repo `pushed_at`; `data-user="login"` → latest public event.
 Minute values use the compact `min` abbreviation for both singular and plural (e.g.
 `upd 1 min ago`, `active 3 min ago`), never `minute` or `minutes`. Live update statuses use
-the compact `upd` prefix, never `updated`; the footer keeps `last updated`.
+the compact `upd` prefix, never `updated`; the footer reads `last upd`.
 The span starts empty and `.ago:empty` hides it, so a failed or slow fetch leaves no gap.
 
 **Live local clock (`.clock`)** — an empty span at the end of the header `.meta` line,
