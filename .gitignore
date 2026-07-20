@@ -1,1 +1,5 @@
 .DS_Store
+
+# local preview scaffolding (not part of the published site)
+.claude/launch.json
+.claude/serve.py

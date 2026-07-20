@@ -104,6 +104,20 @@ body {
   background: var(--chip-bg);
 }
 
+/* on pages other than the homepage, the portrait and the name link home.
+   the anchor is layout-neutral: the image keeps its own treatment, and the
+   name keeps --ink-bright, hovering to white like any other link. */
+.photo-link {
+  display: block;
+  flex: none;
+  line-height: 0;
+}
+
+.name a { color: inherit; }
+
+.name a:hover,
+.name a:focus-visible { color: var(--ink-hover); }
+
 .intro-text {
   flex: 1;
   min-width: 260px;
@@ -216,8 +230,10 @@ a:focus-visible {
 }
 .ago:empty { display: none; }
 
-/* publications variant: title row + description line */
-.pubs { display: flex; flex-direction: column; gap: 18px; list-style: none; margin: 0; padding: 0; }
+/* publications variant: title row + description line.
+   .entries (cv experience/education) shares the same rhythm */
+.pubs,
+.entries { display: flex; flex-direction: column; gap: 18px; list-style: none; margin: 0; padding: 0; }
 
 .desc {
   margin-top: 3px;
@@ -226,6 +242,31 @@ a:focus-visible {
 }
 
 .desc a { color: var(--accent); }
+
+/* --------------------------------------------------------------------------
+   cv entries (cv.html)
+   -------------------------------------------------------------------------- */
+
+/* date range sitting in a .row's right-hand slot. same machine voice as .tag,
+   but free-form text rather than a one-word tag, so it must not wrap. */
+.dates {
+  font-family: var(--mono);
+  font-size: var(--fs-tag);
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+/* detail lines under an entry — .desc voice, one point per line, no bullets.
+   the extra top margin keeps them from merging with the place line above. */
+.notes {
+  list-style: none;
+  margin: 7px 0 0;
+  padding: 0;
+  color: var(--muted);
+  font-size: var(--fs-desc);
+}
+
+.notes li { margin: 2px 0; }
 
 /* latest photo from the curated flickr album; the whole section stays hidden
    until the feed has supplied a valid image and link */

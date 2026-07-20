@@ -70,7 +70,8 @@ The signature pattern. Title left, dotted line fills the middle, lowercase mono 
 ```
 
 - Tags are one lowercase word: `phone` `mail` `ig` `photos` `social` `books` `work`
-  `code` `project` `press` `video` `film`. Reuse before inventing.
+  `code` `project` `press` `video` `film` `cv` `bar` `brew` `service` `guests`
+  `photo`. Reuse before inventing.
 - The first link's hit area covers the full row, including the dotted leader and tag.
 - Links: no underline, `--ink`, hover to pure white. Nothing else changes on hover.
 
@@ -82,6 +83,42 @@ The signature pattern. Title left, dotted line fills the middle, lowercase mono 
 </li>
 ```
 Inline links inside `.desc` render in `--accent`.
+
+### home link (pages other than `/`)
+On any page but the homepage, the portrait and the name link back to `/`. This is the
+only navigation a subpage gets — no nav bar, no back link in the body.
+
+```html
+<a class="photo-link" href="/"><img class="photo" src="photo.jpg" alt="…" /></a>
+<h1 class="name"><a href="/">alex markin</a></h1>
+```
+
+The anchors are layout-neutral: `.photo-link` is `display: block; flex: none; line-height: 0`
+so the portrait keeps its square, and `.name a` inherits `--ink-bright` rather than the
+default link `--ink`, hovering to white like everything else. The portrait itself gets no
+hover treatment — its grayscale and border are unchanged.
+
+### cv entry (`cv.html`)
+Role on the left, dotted leader, date range on the right; the workplace on the line
+below, then optional detail lines. Used by both `experience` and `education`.
+
+```html
+<li>
+  <div class="row"><span>barista</span><span class="leader"></span><span class="dates">jun 2025 – present</span></div>
+  <div class="desc">darcy's kaffe, copenhagen</div>
+  <ul class="notes">
+    <li>one lowercase point per line</li>
+  </ul>
+</li>
+```
+
+- `.dates` occupies the `.tag` slot and shares its mono `--faint` voice, but holds
+  free-form text instead of a one-word tag, so it never wraps. Use it only for date
+  ranges — a categorical label is still a `.tag`.
+- `.entries` shares the `.pubs` 18px rhythm; the two are one rule in `styles.css`.
+- `.notes` are `.desc` voice with no bullet markers. Keep each to one line where possible.
+- A `.row` does not need a link. Without one it simply loses the full-row hit area —
+  used by the cv `skills` list, where the row is a statement, not a destination.
 
 ### section
 ```html
@@ -151,9 +188,30 @@ displayed image.
 Not allowed: bevels, marquees, animated gifs, table layouts, coloured link-visited states,
 under-construction banners. The nostalgia is a seasoning, not the dish.
 
+## pages
+
+- `/` → `index.html` — the identity page.
+- `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
+  `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
+  `contact` list via the `cv` tag.
+
+## shared behaviour (`site.js`)
+
+All page behaviour lives in one file loaded by every page: the live `.ago` timestamps,
+the header clock, both flickr feeds, and `copy as markdown`. Each block no-ops when its
+elements are absent, so the same file is safe on any page — a page without a flickr
+section simply skips it. Do not re-inline this script into a page; add to `site.js`
+instead, and bump its `?v=` alongside the stylesheet's.
+
+`copy as markdown` walks the live semantic HTML, so a new page is handled automatically
+provided it uses the documented patterns. It reads a row's right-hand annotation from
+either `.tag` or `.dates`, renders `.notes` as nested bullets, and picks up a
+`section > .desc` as prose.
+
 ## adding a new page
 
-1. Copy `index.html`'s `<head>` (fonts + `styles.css`) and `.page` shell.
+1. Copy `index.html`'s `<head>` (fonts + `styles.css`) and `.page` shell, and load
+   `site.js` at the end of `<body>`.
 2. Reuse `.intro` / `.columns` / `.heading` / `.row` patterns — do not write new CSS
    unless a pattern is genuinely missing.
 3. If a new pattern is needed: build it from tokens only, add it to `styles.css` under a
