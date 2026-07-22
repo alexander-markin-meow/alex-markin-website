@@ -103,11 +103,20 @@
         // machine-voice annotations are re-attached by the caller, never inlined
         if (node.matches(".leader, .ago, .clock, .tag, .dates")) return "";
         if (node.tagName === "A") {
-          return "[" + node.textContent.trim() + "](" + node.href + ")";
+          var label = node.textContent.trim();
+          // an anchor without href resolves to the current page, which would
+          // silently link the row to itself
+          return node.getAttribute("href") ? "[" + label + "](" + node.href + ")" : label;
         }
         if (node.tagName === "BR") return "  \n";
         return inlineMarkdown(node);
       }).join("").replace(/\s+/g, " ").trim();
+    }
+
+    // an element that renders as nothing (empty, or only machine-voice spans)
+    // must not leave a bullet or an indented blank behind
+    function push(lines, prefix, text) {
+      if (text) lines.push(prefix + text);
     }
 
     function pageMarkdown() {
@@ -117,12 +126,12 @@
       var tagline = intro && intro.querySelector(".tagline");
       var meta = intro && intro.querySelector(".meta");
 
-      if (title) lines.push("# " + title.textContent.trim());
-      if (tagline) lines.push("", tagline.textContent.trim());
+      if (title) push(lines, "# ", title.textContent.trim());
+      if (tagline) push(lines, "\n", tagline.textContent.trim());
       if (meta) {
         var metaCopy = meta.cloneNode(true);
         metaCopy.querySelectorAll(".clock").forEach(function (el) { el.remove(); });
-        lines.push(metaCopy.textContent.trim());
+        push(lines, "", metaCopy.textContent.trim());
       }
 
       document.querySelectorAll(".columns section:not([hidden])").forEach(function (section) {
@@ -132,15 +141,16 @@
 
         var flickrPhoto = section.querySelector("[data-flickr-photo]");
         var flickrPhotoLink = section.querySelector("[data-flickr-photo-link]");
-        if (flickrPhoto && flickrPhoto.src && flickrPhotoLink && flickrPhotoLink.href) {
-          lines.push("[![" + flickrPhoto.alt + "](" + flickrPhoto.src + ")]" +
+        if (flickrPhoto && flickrPhoto.src && flickrPhotoLink && flickrPhotoLink.getAttribute("href")) {
+          // the feed can hand us an untitled photo, so alt may still be empty
+          lines.push("[![" + (flickrPhoto.alt || "photo") + "](" + flickrPhoto.src + ")]" +
             "(" + flickrPhotoLink.href + ")");
           return;
         }
 
         // standalone prose (e.g. the cv profile) has no list to walk
         section.querySelectorAll(":scope > .desc").forEach(function (prose) {
-          lines.push(inlineMarkdown(prose));
+          push(lines, "", inlineMarkdown(prose));
         });
 
         section.querySelectorAll(":scope > ul > li").forEach(function (item) {
@@ -151,15 +161,16 @@
           var tag = row.querySelector(".tag") || row.querySelector(".dates");
           var desc = item.querySelector(":scope > .desc");
           var notes = item.querySelector(":scope > .notes");
-          var text = link
+          var text = link && link.getAttribute("href")
             ? "[" + link.textContent.trim() + "](" + link.href + ")"
             : inlineMarkdown(row);
-          if (tag) text += " — " + tag.textContent.trim();
+          if (!text) return;
+          if (tag && tag.textContent.trim()) text += " — " + tag.textContent.trim();
           lines.push("- " + text);
-          if (desc) lines.push("  " + inlineMarkdown(desc));
+          if (desc) push(lines, "  ", inlineMarkdown(desc));
           if (notes) {
             notes.querySelectorAll("li").forEach(function (note) {
-              lines.push("  - " + inlineMarkdown(note));
+              push(lines, "  - ", inlineMarkdown(note));
             });
           }
         });
@@ -171,15 +182,31 @@
       return lines.join("\n").replace(/\n{3,}/g, "\n\n") + "\n";
     }
 
+    // execCommand copies whatever is currently selected, so text the visitor has
+    // highlighted on the page wins over the textarea unless we drop that selection
+    // first and take focus. Without this the button reports success while the
+    // clipboard holds the visitor's own selection.
     function fallbackCopy(text) {
       var area = document.createElement("textarea");
+      var previous = document.activeElement;
       area.value = text;
       area.setAttribute("readonly", "");
       area.className = "copy-source";
       document.body.appendChild(area);
+      var selection = document.getSelection();
+      if (selection) selection.removeAllRanges();
+      // the textarea sits off-screen, so focus must not scroll to it
+      area.focus({ preventScroll: true });
       area.select();
-      var copied = document.execCommand("copy");
-      area.remove();
+      // .select() alone is unreliable on ios safari
+      area.setSelectionRange(0, area.value.length);
+      var copied = false;
+      try {
+        copied = document.execCommand("copy");
+      } finally {
+        area.remove();
+        if (previous && previous.focus) previous.focus({ preventScroll: true });
+      }
       return copied ? Promise.resolve() : Promise.reject();
     }
 
@@ -190,16 +217,26 @@
       });
     }
 
+    // the label is the only confirmation, so each click owns the full 1800ms:
+    // an earlier click's pending timer would otherwise clear a later click's
+    // "copied" while the visitor is still reading it
+    var defaultLabel = copyButton.textContent;
+    var resetTimer;
+
+    function flash(label) {
+      copyButton.textContent = label;
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(function () {
+        copyButton.textContent = defaultLabel;
+      }, 1800);
+    }
+
     copyButton.addEventListener("click", function () {
       var text = pageMarkdown();
       writeClipboard(text).then(function () {
-        copyButton.textContent = "copied as markdown";
+        flash("copied as markdown");
       }).catch(function () {
-        copyButton.textContent = "copy failed";
-      }).finally(function () {
-        window.setTimeout(function () {
-          copyButton.textContent = "copy as markdown";
-        }, 1800);
+        flash("copy failed");
       });
     });
   }
