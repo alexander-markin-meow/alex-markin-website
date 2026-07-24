@@ -182,6 +182,16 @@ a:focus-visible {
   color: var(--ink-hover);
 }
 
+/* external destinations receive a compact machine-voice marker. Photo links
+   are already visibly interactive through their image treatment. */
+a[target="_blank"]:not(.flickr-photo-link)::after {
+  content: "↗";
+  margin-left: 0.15em;
+  font-family: var(--mono);
+  font-size: var(--fs-tag);
+  letter-spacing: 0;
+}
+
 .links {
   list-style: none;
   margin: 0;
@@ -201,7 +211,7 @@ a:focus-visible {
 
 /* Extend the first link over its full leader row, so the title, dotted line,
    and tag all share one click target without changing their visual treatment. */
-.row > a:first-child::after {
+.row > a:first-child::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -305,6 +315,11 @@ a:focus-visible {
 }
 
 .footer-domain { justify-self: end; }
+
+.footer a { color: inherit; }
+
+.footer a:hover,
+.footer a:focus-visible { color: var(--ink-hover); }
 
 .copy-markdown {
   justify-self: center;

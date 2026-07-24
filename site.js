@@ -34,7 +34,7 @@
         "upd ", function (d) { return d.pushed_at; });
     } else if (el.dataset.user) {
       fill(el, "https://api.github.com/users/" + el.dataset.user + "/events/public?per_page=1",
-        "active ", function (d) { return d.length ? d[0].created_at : null; });
+        "upd ", function (d) { return d.length ? d[0].created_at : null; });
     }
   });
 
@@ -176,7 +176,7 @@
         });
       });
 
-      var updated = document.querySelector(".footer > span:first-child");
+      var updated = document.querySelector(".footer > .footer-date");
       lines.push("", "---", "", "source: " + location.href);
       if (updated) lines.push(updated.textContent.trim());
       return lines.join("\n").replace(/\n{3,}/g, "\n\n") + "\n";

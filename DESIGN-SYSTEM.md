@@ -73,7 +73,9 @@ The signature pattern. Title left, dotted line fills the middle, lowercase mono 
   `code` `project` `press` `video` `film` `cv` `bar` `brew` `service` `guests`
   `photo`. Reuse before inventing.
 - The first link's hit area covers the full row, including the dotted leader and tag.
-- Links: no underline, `--ink`, hover to pure white. Nothing else changes on hover.
+- Links: no underline, `--ink`, hover to pure white. Nothing else changes on hover. External
+  links append a compact mono `↗` marker with a narrow gap; photo links are the exception
+  because the image already signals that it is interactive.
 
 ### publication entry (row + description)
 ```html
@@ -140,12 +142,13 @@ Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between th
 ```
 
 ### footer
-Solid `--rule` top border and a three-column mono grid: `last upd YYYY-MM-DD` at left,
-the document utility centered, and the domain at right. Update the date when you ship a
-change. The `copy as markdown` control uses a thin `--border` outline with no fill; the
-outline, pointer cursor, and color-only hover make it legible as clickable without drawing
-focus. It builds its output from the live semantic HTML at click time; do not add or
-maintain a separate Markdown copy of the page.
+Solid `--rule` top border and a three-column mono grid: a `last upd YYYY-MM-DD` link to the
+site repository at left, the document utility centered, and an optional affiliation link at
+right (currently `part of syndicate m`). Update the date when you ship a change. Footer links
+inherit the muted footer color and turn white on hover. The `copy as markdown` control uses a
+thin `--border` outline with no fill; the outline, pointer cursor, and color-only hover make it
+legible as clickable without drawing focus. It builds its output from the live semantic HTML at
+click time; do not add or maintain a separate Markdown copy of the page.
 
 ### images
 1px `--border`, 2px radius, slight `grayscale(0.25)`. The portrait is a 148px square
@@ -161,10 +164,10 @@ Allowed (subtle, typographic): dotted leaders, mono tags and timestamps,
 **Live "how long ago" timestamp (`.ago`)** — a mono `--faint` span placed inside a
 `.row` between the link and the `.leader`, filled from the GitHub API on load by the
 inline script at the end of `index.html`. Reads as machine annotation (e.g. `upd 3
-days ago`, `active 3 days ago`). Drive it with a data attribute, never hard-code the text:
+days ago`). Drive it with a data attribute, never hard-code the text:
 `data-repo="owner/name"` → repo `pushed_at`; `data-user="login"` → latest public event.
 Minute values use the compact `min` abbreviation for both singular and plural (e.g.
-`upd 1 min ago`, `active 3 min ago`), never `minute` or `minutes`. Live update statuses use
+`upd 1 min ago`, `upd 3 min ago`), never `minute` or `minutes`. Live update statuses use
 the compact `upd` prefix, never `updated`; the footer reads `last upd`.
 The span starts empty and `.ago:empty` hides it, so a failed or slow fetch leaves no gap.
 
