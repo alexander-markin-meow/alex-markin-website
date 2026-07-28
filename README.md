@@ -5,6 +5,10 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 ## Files
 - `index.html` — page content and structure
 - `styles.css` — all styling; everything derives from the tokens at the top
+- `robots.txt` — crawler permissions and sitemap discovery
+- `sitemap.xml` — canonical, indexable pages submitted to search engines
+- `llms.txt` — concise identity and work index for answer engines
+- `2c7267903a2bdde7663e587ea92e8d3f.txt` — IndexNow ownership key
 - `DESIGN-SYSTEM.md` — the design source of truth: color/type tokens, layout, and the
   reusable patterns. Read this before any UI change.
 - `CLAUDE.md` — instructs any editor (human or LLM) to read `DESIGN-SYSTEM.md` first.

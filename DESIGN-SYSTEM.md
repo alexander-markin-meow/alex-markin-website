@@ -183,11 +183,12 @@ date.
 
 The `.flickr-latest` section is independent and uses the public album feed configured by
 `data-flickr-set` and `data-flickr-nsid`. A separate JSONP callback takes the first album-feed
-item and supplies the photo, link, and title. The entire section starts `hidden`, so an empty
-album or failed request leaves no broken UI. The displayed image follows the standard
-content-photo border, radius, and grayscale treatment. Keep this album-specific: adding a
-photo to the configured flickr album should be the only content action needed to update the
-displayed image.
+item and refreshes the photo, link, and title. The HTML includes the newest known album item
+as a crawlable fallback, so a feed failure still leaves a working image and non-JavaScript
+crawlers can understand the photography. Refresh that fallback whenever the site itself is
+updated; adding a photo to the configured album remains the only action needed to update the
+displayed image for visitors. The displayed image follows the standard content-photo border,
+radius, and grayscale treatment.
 Not allowed: bevels, marquees, animated gifs, table layouts, coloured link-visited states,
 under-construction banners. The nostalgia is a seasoning, not the dish.
 
