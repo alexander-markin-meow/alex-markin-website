@@ -52,6 +52,8 @@ Scale (don't invent sizes; pick the closest):
 
 - `.page`: max-width 1100px, centered, padding 56px 48px 12px (36/24/12 mobile). The
   12px bottom padding mirrors the footer's 12px divider-to-text spacing.
+- The identity header keeps its side-by-side desktop layout, then centers the portrait,
+  name, tagline, and meta line as one stacked block at 640px and below.
 - `.columns`: CSS grid, `repeat(auto-fit, minmax(340px, 1fr))`, gap 44px 64px.
   Columns collapse to a single stack below ~750px automatically — no media query needed.
   The identity header is the first item in the left `.stack`, so the right column begins level

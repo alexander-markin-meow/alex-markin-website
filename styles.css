@@ -359,6 +359,16 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
 
 @media (max-width: 640px) {
   .page { padding: 36px 24px 12px; }
+  .intro {
+    justify-content: center;
+    text-align: center;
+  }
+  .intro-text {
+    flex-basis: 100%;
+    min-width: 0;
+    align-items: center;
+    padding-top: 0;
+  }
   .name { font-size: 32px; }
   .photo { width: 116px; }
 
