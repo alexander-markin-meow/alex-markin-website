@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mouse responsive — Webdesign Trials</title>
+<meta name="description" content="A field of dashes that turns to plus signs around the pointer.">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #000000;
+    --fg: #f0eee8;
+    --muted: #7d7b73;
+    --line: #262624;
+    --accent: #e0794f;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 18px/1.65 "Times New Roman", Times, serif;
+    text-transform: lowercase;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  /* the field carries its own pointer, so hide the real one — but only where
+     there is a real one to hide */
+  @media (hover: hover) and (pointer: fine) {
+    body { cursor: none; }
+    .chrome a { cursor: none; }
+  }
+
+  #field {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* --- chrome --- */
+  .chrome {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem clamp(1.5rem, 5vw, 3.5rem);
+    pointer-events: none;
+  }
+  .chrome a { pointer-events: auto; }
+  .top, .bottom { display: flex; justify-content: space-between; align-items: baseline; gap: 1.5rem; }
+  /* keep the text legible over the field */
+  .top    { text-shadow: 0 0 12px var(--bg), 0 0 4px var(--bg); }
+  .bottom { text-shadow: 0 0 16px var(--bg), 0 0 6px var(--bg), 0 0 2px var(--bg); }
+  .back, .trial, .hint {
+    font-family: var(--mono);
+    font-size: .85rem;
+    letter-spacing: .06em;
+    color: var(--muted);
+  }
+  .back { text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  .hint { font-size: .8rem; letter-spacing: .1em; white-space: nowrap; }
+  h1 {
+    margin: 0;
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+  }
+  .note {
+    margin: .35rem 0 0;
+    color: var(--muted);
+    max-width: 32rem;
+  }
+  @media (max-width: 34rem) {
+    .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+  <canvas id="field"></canvas>
+
+  <div class="chrome">
+    <div class="top">
+      <a class="back" href="../../">← trials</a>
+      <span class="trial">mouse responsive</span>
+    </div>
+    <div class="bottom">
+      <div>
+        <h1>glyph field</h1>
+        <p class="note" id="note">24px grid of dashes. inside 170px of the pointer they become plus signs, brightening toward the centre.</p>
+      </div>
+      <span class="hint">move the pointer</span>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const CELL = 24;    // grid pitch, px
+  const FONT = 15;    // glyph size, px
+  const R    = 170;   // influence radius, px
+
+  const canvas = document.getElementById("field");
+  const ctx = canvas.getContext("2d");
+
+  let w = 0, h = 0, dpr = 1;
+  let px = -1e4, py = -1e4;       // current pointer
+  let lastX = -1e4, lastY = -1e4; // where we last painted, for the dirty rect
+  let queued = false;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.font = FONT + "px " + getComputedStyle(document.documentElement).getPropertyValue("--mono");
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    if (px < -1e3) { px = w / 2; py = h / 2; }   // sit in the middle until the pointer arrives
+    paint(0, 0, w, h);
+    lastX = px; lastY = py;
+  }
+
+  // paint every cell the given rect touches. the clear is snapped out to whole
+  // cells first: clearing the raw rect would leave the fringe cells getting a
+  // second, additive pass, which paints a brighter trail behind the pointer.
+  function paint(x0, y0, x1, y1) {
+    const c0 = Math.max(0, Math.floor(x0 / CELL));
+    const c1 = Math.min(Math.floor(w / CELL), Math.ceil(x1 / CELL));
+    const r0 = Math.max(0, Math.floor(y0 / CELL));
+    const r1 = Math.min(Math.floor(h / CELL), Math.ceil(y1 / CELL));
+    ctx.clearRect(c0 * CELL, r0 * CELL, (c1 - c0 + 1) * CELL, (r1 - r0 + 1) * CELL);
+
+    for (let r = r0; r <= r1; r++) {
+      const cy = r * CELL + CELL / 2;
+      for (let c = c0; c <= c1; c++) {
+        const cx = c * CELL + CELL / 2;
+        const dx = cx - px, dy = cy - py;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d > R) {
+          ctx.fillStyle = "rgba(240,238,232,.15)";
+          ctx.fillText("-", cx, cy);
+        } else {
+          // ease so the edge of the field is soft rather than a hard disc
+          const t = 1 - d / R;
+          const e = t * t;
+          ctx.fillStyle = "rgba(" +
+            Math.round(240 + (224 - 240) * e) + "," +
+            Math.round(238 + (121 - 238) * e) + "," +
+            Math.round(232 + (79 - 232) * e) + "," +
+            (0.22 + 0.78 * e).toFixed(3) + ")";
+          ctx.fillText("+", cx, cy);
+        }
+      }
+    }
+  }
+
+  // the pointer: the ring shows the reach, the crosshair marks the exact spot
+  function drawPointer() {
+    ctx.beginPath();
+    ctx.arc(px, py, R, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(224,121,79,.16)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(px - 9, py); ctx.lineTo(px - 3, py);
+    ctx.moveTo(px + 3, py); ctx.lineTo(px + 9, py);
+    ctx.moveTo(px, py - 9); ctx.lineTo(px, py - 3);
+    ctx.moveTo(px, py + 3); ctx.lineTo(px, py + 9);
+    ctx.strokeStyle = "rgba(224,121,79,.9)";
+    ctx.stroke();
+  }
+
+  // only repaint the union of where the field was and where it is now —
+  // roughly 400 cells a frame instead of the whole grid
+  function flush() {
+    queued = false;
+    const pad = R + CELL * 2;
+    const x0 = Math.max(0, Math.min(px, lastX) - pad);
+    const y0 = Math.max(0, Math.min(py, lastY) - pad);
+    const x1 = Math.min(w, Math.max(px, lastX) + pad);
+    const y1 = Math.min(h, Math.max(py, lastY) + pad);
+    paint(x0, y0, x1, y1);
+    drawPointer();
+    lastX = px; lastY = py;
+  }
+
+  function move(e) {
+    px = e.clientX; py = e.clientY;
+    if (!queued) { queued = true; requestAnimationFrame(flush); }
+  }
+
+  window.addEventListener("pointermove", move, { passive: true });
+  window.addEventListener("pointerdown", move, { passive: true });
+  window.addEventListener("resize", resize);
+  resize();
+  drawPointer();
+})();
+</script>
+</body>
+</html>
