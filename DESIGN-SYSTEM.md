@@ -204,6 +204,9 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
+- `/louppe/` → `louppe/index.html` — a compact landing page for the louppe app. It keeps
+  the standard identity header, uses the two-column shell for its pitch, actions, features,
+  and demo, and links the homepage project entry here rather than straight to GitHub.
 - `/trials/` → `trials/index.html` — a standalone, one-column catalogue of interactive
   webdesign experiments. It omits the portrait and personal identity block so the trials
   remain the page's only subject. It uses the narrow page shell, one muted explanatory line,
@@ -241,7 +244,8 @@ instead, and bump its `?v=` alongside the stylesheet's.
 `copy as markdown` walks the live semantic HTML, so a new page is handled automatically
 provided it uses the documented patterns. It reads a row's right-hand annotation from
 either `.tag` or `.dates`, renders `.notes` as nested bullets, and picks up a
-`section > .desc` as prose.
+`section > .tagline` or `section > .desc` as prose. A product section may use `.name`
+instead of `.heading` for its display-sized subject; the copier recognizes either.
 
 Immersive experiments are the exception: their shared panel construction lives in
 `trials/_shared/trial-ui.js`, which is never loaded by standard site pages.
@@ -255,6 +259,10 @@ Immersive experiments are the exception: their shared panel construction lives i
 3. If a new pattern is needed: build it from tokens only, add it to `styles.css` under a
    commented section, and document it in this file.
 4. Keep every page's footer format identical.
+
+Until a project demo asset is ready, use `.demo-placeholder` for its media slot. It uses
+only the standard image border, inset background, mono annotation voice, and existing type
+scale. Replace the element with the real content image rather than preserving the placeholder.
 
 ## cache-busting
 

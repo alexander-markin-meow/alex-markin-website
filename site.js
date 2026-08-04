@@ -135,7 +135,9 @@
       }
 
       document.querySelectorAll(".columns section:not([hidden])").forEach(function (section) {
-        var heading = section.querySelector(".heading");
+        // Product landing sections may use the display-sized .name treatment
+        // for their subject instead of the smaller machine-voice heading.
+        var heading = section.querySelector(".heading, .name");
         if (!heading) return;
         lines.push("", "## " + heading.textContent.trim(), "");
 
@@ -149,7 +151,7 @@
         }
 
         // standalone prose (e.g. the cv profile) has no list to walk
-        section.querySelectorAll(":scope > .desc").forEach(function (prose) {
+        section.querySelectorAll(":scope > .tagline, :scope > .desc").forEach(function (prose) {
           push(lines, "", inlineMarkdown(prose));
         });
 
