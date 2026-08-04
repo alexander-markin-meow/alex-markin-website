@@ -16,7 +16,6 @@
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Courier New", monospace;
   }
   * { box-sizing: border-box; }
-  html, body { height: 100%; }
   body {
     margin: 0;
     background: var(--bg);
@@ -24,28 +23,33 @@
     font: 18px/1.65 "Times New Roman", Times, serif;
     text-transform: lowercase;
     -webkit-font-smoothing: antialiased;
-    overflow: hidden;
-    cursor: pointer;
   }
 
-  /* --- the signal: a test card, so there is something for the mask to chew on --- */
-  .stage { position: fixed; inset: 0; background: var(--bg); }
-  .screen {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    padding: 7vh 1.5rem 20vh;
+  /* --- the signal: subjects for the mask to chew on --- */
+  .page {
+    max-width: 58rem;
+    margin: 0 auto;
+    padding: 0 clamp(1.5rem, 5vw, 3.5rem) 14vh;
   }
-  .card {
-    width: min(64vw, 82vh);
-    filter: saturate(1.2) contrast(1.06);
+  figure { margin: 0 0 9vh; }
+  .card, figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .card { filter: saturate(1.2) contrast(1.06); }
+  figcaption {
+    font-family: var(--mono);
+    font-size: .78rem;
+    letter-spacing: .04em;
+    color: var(--muted);
+    margin-top: .9rem;
   }
 
   /* --- crt overlay --- *
-     four fixed layers above everything — including .chrome, so the ui is
-     scanned too. each is gradient-painted once; only .crt-roll animates,
-     and only on transform.
+     four layers fixed to the viewport, above everything — the mask belongs to
+     the screen, so the page scrolls behind it while the mask stays put. each
+     is gradient-painted once; only .crt-roll animates, and only on transform.
        lines   horizontal beam gaps, 3.2px pitch, soft-edged to limit moire
        grille  vertical rgb phosphor triads, 3px, multiplied like a real mask
        roll    the refresh band
@@ -60,9 +64,8 @@
   }
   body[data-crt] .crt-layer { opacity: 1; }
   /* the mask eats ~half the light, so drive the beam harder underneath it */
-  .stage, .chrome { transition: filter 600ms ease; }
-  body[data-crt] .stage,
-  body[data-crt] .chrome { filter: brightness(1.85) saturate(1.15); }
+  .page { transition: filter 600ms ease; }
+  body[data-crt] .page { filter: brightness(1.85) saturate(1.15); }
 
   .crt-lines {
     mix-blend-mode: multiply;
@@ -108,26 +111,36 @@
   }
 
   /* --- chrome --- */
-  .chrome {
-    position: relative;
-    height: 100%;
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    padding: 2rem clamp(1.5rem, 5vw, 3.5rem);
-    pointer-events: none;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding: 1.6rem 0 1.2rem;
+    background: linear-gradient(to bottom, var(--bg) 62%, transparent);
   }
-  .chrome a { pointer-events: auto; }
-  .top, .bottom { display: flex; justify-content: space-between; align-items: baseline; gap: 1.5rem; }
   .back, .state {
     font-family: var(--mono);
     font-size: .85rem;
-    color: var(--muted);
     letter-spacing: .06em;
+    color: var(--muted);
   }
   .back { text-decoration: none; }
-  .back:hover { color: var(--accent); }
-  .state { color: var(--accent); }
+  .back:hover, .state:hover { color: var(--accent); }
+  .state {
+    appearance: none;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: .3rem .7rem;
+    color: var(--accent);
+    text-transform: lowercase;
+    cursor: pointer;
+  }
+  .intro { padding: 8vh 0 7vh; }
   h1 {
     margin: 0;
     font-family: var(--mono);
@@ -142,20 +155,10 @@
     color: var(--muted);
     max-width: 34rem;
   }
-  .hint {
-    font-family: var(--mono);
-    color: var(--muted);
-    font-size: .8rem;
-    letter-spacing: .1em;
-    white-space: nowrap;
-  }
-  @media (max-width: 34rem) {
-    .hint { display: none; }
-  }
   /* nothing off-screen should be animating */
   body:not([data-crt]) .crt-layer { animation-play-state: paused; }
   @media (prefers-reduced-motion: reduce) {
-    .crt-layer, .crt-roll, .stage, .chrome {
+    .crt-layer, .crt-roll, .page {
       animation: none !important;
       transition: none !important;
     }
@@ -163,8 +166,18 @@
 </style>
 </head>
 <body data-crt>
-  <div class="stage">
-    <div class="screen">
+  <div class="page">
+    <header class="top">
+      <a class="back" href="../../">← trials</a>
+      <button class="state" id="state" type="button">crt on</button>
+    </header>
+
+    <section class="intro">
+      <h1>scanline</h1>
+      <p class="note">3.2px beam gaps over a 3px rgb triad, both multiplied; 1.85 brightness under the mask. svg bloom + 0.5px horizontal smear on the card, 7s roll. the mask is fixed to the viewport — scroll, and the picture moves behind it.</p>
+    </section>
+
+    <figure>
       <!-- test card: vector, ~1kb -->
       <svg class="card" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="crt test card">
         <defs>
@@ -219,21 +232,21 @@
           </g>
         </g>
       </svg>
-    </div>
-  </div>
+      <figcaption>test card — flat fields and fine pitch. the wedge on the left beats against the 3px triad; the staircase shows where the mask crushes the low end.</figcaption>
+    </figure>
 
-  <div class="chrome">
-    <div class="top">
-      <a class="back" href="../../">← trials</a>
-      <span class="state" id="state">crt on</span>
-    </div>
-    <div class="bottom">
-      <div>
-        <h1>scanline</h1>
-        <p class="note">3.2px beam gaps over a 3px rgb triad, both multiplied; 1.85 brightness under the mask. svg bloom + 0.5px horizontal smear on the card, 7s roll.</p>
-      </div>
-      <span class="hint">click to toggle</span>
-    </div>
+    <figure>
+      <img src="img/red.jpg" width="1200" height="1600" loading="lazy" decoding="async"
+           alt="a ribbed white garment hanging in the dark, lit hard by a red lamp">
+      <figcaption>photograph — one saturated hue against deep black. the grille has almost no green or blue to filter, so the triads read as red dashes and the falloff bands break up.</figcaption>
+    </figure>
+
+    <!-- second photo (brick wall + meadow) goes here once the file exists:
+    <figure>
+      <img src="img/wall.jpg" width="…" height="…" loading="lazy" decoding="async" alt="…">
+      <figcaption>photograph — broadband colour and fine detail …</figcaption>
+    </figure>
+    -->
   </div>
 
   <div class="crt-layer crt-lines"></div>
@@ -249,14 +262,9 @@
     stateEl.textContent = on ? "crt on" : "crt off";
   }
 
-  document.body.addEventListener("click", (e) => {
-    if (e.target.closest("a")) return;
-    toggle();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); }
-  });
+  // the button only: on a scrolling page, click-anywhere fires on stray
+  // clicks and text selection, and space/arrows belong to the scroller
+  stateEl.addEventListener("click", toggle);
 </script>
 </body>
 </html>
