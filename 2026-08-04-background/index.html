@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>2026.08.04 background — Webdesign Trials</title>
-<meta name="description" content="Six ways to make pure black stop being flat.">
+<meta name="description" content="Five ways to make pure black stop being flat.">
 <style>
   :root {
     color-scheme: dark;
@@ -37,16 +37,12 @@
     transition: opacity 900ms ease;
   }
   .layer[data-active] { opacity: 1; }
+  /* effects are stacked inside a layer, so they can be combined */
+  .fx { position: absolute; inset: 0; }
 
-  /* 01 — void: nothing at all, the control case */
+  /* void: nothing at all, the control case */
 
-  /* 02 — glow: a single off-centre radial */
-  .glow {
-    background:
-      radial-gradient(60% 55% at 50% 42%, #241a12 0%, #0d0a08 45%, #000 78%);
-  }
-
-  /* 03 — mesh: overlapping radials, slowly drifting */
+  /* mesh: overlapping radials, slowly drifting */
   .mesh::before, .mesh::after {
     content: "";
     position: absolute;
@@ -68,10 +64,7 @@
     to   { transform: translate3d(5%, 4%, 0) scale(1.14); }
   }
 
-  /* 04 — grain: fractal noise over black */
-  .grain {
-    background-color: #000;
-  }
+  /* grain: fractal noise; transparent, so it can sit on top of the mesh */
   .grain::before {
     content: "";
     position: absolute;
@@ -88,17 +81,10 @@
     100% { transform: translate3d(3%, 1%, 0); }
   }
 
-  /* 05 — grid: hairline rules, faded at the edges */
-  .grid {
-    background-image:
-      linear-gradient(to right, rgba(240,238,232,.10) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(240,238,232,.10) 1px, transparent 1px);
-    background-size: 68px 68px;
-    -webkit-mask-image: radial-gradient(70% 70% at 50% 50%, #000 25%, transparent 100%);
-    mask-image: radial-gradient(70% 70% at 50% 50%, #000 25%, transparent 100%);
-  }
+  /* mesh + grain: the two above, stacked — grain last, so it sits on top */
+  .meshgrain .grain::before { opacity: .13; }
 
-  /* 06 — scan: horizontal lines, drifting downward */
+  /* scan: horizontal lines, drifting downward */
   .scan::before {
     content: "";
     position: absolute;
@@ -184,18 +170,17 @@
 </head>
 <body>
   <div class="stage" id="stage">
-    <div class="layer void" data-active></div>
-    <div class="layer glow"></div>
-    <div class="layer mesh"></div>
-    <div class="layer grain"></div>
-    <div class="layer grid"></div>
-    <div class="layer scan"></div>
+    <div class="layer" data-active></div>
+    <div class="layer"><div class="fx mesh"></div></div>
+    <div class="layer"><div class="fx grain"></div></div>
+    <div class="layer meshgrain"><div class="fx mesh"></div><div class="fx grain"></div></div>
+    <div class="layer"><div class="fx scan"></div></div>
   </div>
 
   <div class="chrome">
     <div class="top">
       <a class="back" href="../../">← trials</a>
-      <span class="count" id="count">01 / 06</span>
+      <span class="count" id="count">01 / 05</span>
     </div>
     <div class="bottom">
       <div>
@@ -208,12 +193,11 @@
 
 <script>
   const treatments = [
-    ["void",  "Pure #000, untouched. The control case — flat, depthless, and the thing every treatment below is arguing with."],
-    ["glow",  "One off-centre radial lifting the middle a few percent. Enough to imply a light source without ever leaving near-black."],
-    ["mesh",  "Three blurred radials drifting against each other. Colour arrives slowly and never resolves into a shape."],
-    ["grain", "Fractal noise at 16% over black, resampled a few times a second. Fixes the banding that kills large dark gradients."],
-    ["grid",  "68px hairlines at 10% opacity, masked to fade at the edges. Structure you read as texture, not as a table."],
-    ["scan",  "1px rules every 5px, creeping downward. A CRT tell — cheap, and it makes flat black feel like a surface."]
+    ["void",         "Pure #000, untouched. The control case — flat, depthless, and the thing every treatment below is arguing with."],
+    ["mesh",         "Three blurred radials drifting against each other. Colour arrives slowly and never resolves into a shape."],
+    ["grain",        "Fractal noise at 16% over black, resampled a few times a second. Fixes the banding that kills large dark gradients."],
+    ["mesh + grain", "Both at once, noise on top. The grain eats the mesh's banding and the mesh gives the grain something to sit on — together they read as film stock rather than as CSS."],
+    ["scan",         "1px rules every 5px, creeping downward. A CRT tell — cheap, and it makes flat black feel like a surface."]
   ];
 
   const layers = [...document.querySelectorAll(".layer")];
