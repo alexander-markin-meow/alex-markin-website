@@ -49,14 +49,25 @@
   body { --note-width: 30rem; overflow: hidden; }
 
   /* --- the stage: independently controlled effects over pure black --- */
-  .stage { position: fixed; inset: 0; background: var(--bg); }
+  .stage {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    contain: paint;
+    background: var(--bg);
+  }
   .fx {
     position: absolute;
     inset: 0;
     opacity: 1;
-    transition: opacity 600ms ease;
+    visibility: visible;
+    transition: opacity 600ms ease, visibility 0s;
   }
-  .fx[data-disabled] { opacity: 0; }
+  .fx[data-disabled] {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 600ms ease, visibility 0s 600ms;
+  }
 
   /* mesh: overlapping radials, slowly drifting */
   .mesh::before, .mesh::after {
@@ -88,7 +99,9 @@
   .grain::before {
     content: "";
     position: absolute;
-    inset: -100%;
+    /* 20% is enough overscan for the 3% stepped translations. The previous
+       100% inset made this composited surface nine times the viewport area. */
+    inset: -20%;
     background-image: var(--grain-url);
     opacity: var(--grain-alpha);
     animation: shift var(--grain-rate) steps(1) infinite;

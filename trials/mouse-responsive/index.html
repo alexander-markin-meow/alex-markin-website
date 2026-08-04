@@ -211,11 +211,21 @@
     ctx.stroke();
   }
 
-  // only repaint the union of where the field was and where it is now
+  // repaint only the old and new influence regions
   function flush() {
     const pad = CFG.reach + CFG.cell * 2;
-    paint(Math.max(0, Math.min(px, lastX) - pad), Math.max(0, Math.min(py, lastY) - pad),
-          Math.min(w, Math.max(px, lastX) + pad), Math.min(h, Math.max(py, lastY) + pad));
+    const separated = Math.abs(px - lastX) > pad * 2 || Math.abs(py - lastY) > pad * 2;
+    if (separated) {
+      // A large pointer jump creates two small dirty regions. Painting the
+      // corridor between them can otherwise approach a full-canvas repaint.
+      paint(Math.max(0, lastX - pad), Math.max(0, lastY - pad),
+            Math.min(w, lastX + pad), Math.min(h, lastY + pad));
+      paint(Math.max(0, px - pad), Math.max(0, py - pad),
+            Math.min(w, px + pad), Math.min(h, py + pad));
+    } else {
+      paint(Math.max(0, Math.min(px, lastX) - pad), Math.max(0, Math.min(py, lastY) - pad),
+            Math.min(w, Math.max(px, lastX) + pad), Math.min(h, Math.max(py, lastY) + pad));
+    }
     drawPointer();
     lastX = px; lastY = py;
   }
@@ -312,6 +322,15 @@
   window.addEventListener("resize", scheduleResize);
   syncUI();
   resize();
+
+  // Canvas text does not redraw itself when a web font finishes loading.
+  // Repaint once so the field always settles on the same mono face as the UI.
+  if (document.fonts) {
+    document.fonts.ready.then(() => {
+      setFont();
+      scheduleFull();
+    });
+  }
 })();
 </script>
 </body>

@@ -52,7 +52,11 @@
     margin: 0 auto;
     padding: 0 clamp(1.5rem, 5vw, 3.5rem) 14vh;
   }
-  figure { margin: 0 0 9vh; }
+  figure {
+    margin: 0 0 9vh;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 52rem;
+  }
   .card, figure img {
     display: block;
     width: 100%;
