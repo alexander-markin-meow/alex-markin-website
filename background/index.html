@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>2026.08.04 background — Webdesign Trials</title>
+<title>background — Webdesign Trials</title>
 <meta name="description" content="Five ways to make pure black stop being flat.">
 <style>
   :root {
@@ -184,8 +184,8 @@
     </div>
     <div class="bottom">
       <div>
-        <h1>2026.08.04 <span class="name" id="name">void</span></h1>
-        <p class="note" id="note">Pure #000, untouched. The control case — flat, depthless, and the thing every treatment below is arguing with.</p>
+        <h1><span class="name" id="name">void</span></h1>
+        <p class="note" id="note">#000, nothing over it.</p>
       </div>
       <span class="hint">click · ← →</span>
     </div>
@@ -193,11 +193,11 @@
 
 <script>
   const treatments = [
-    ["void",         "Pure #000, untouched. The control case — flat, depthless, and the thing every treatment below is arguing with."],
-    ["mesh",         "Three blurred radials drifting against each other. Colour arrives slowly and never resolves into a shape."],
-    ["grain",        "Fractal noise at 16% over black, resampled a few times a second. Fixes the banding that kills large dark gradients."],
-    ["mesh + grain", "Both at once, noise on top. The grain eats the mesh's banding and the mesh gives the grain something to sit on — together they read as film stock rather than as CSS."],
-    ["scan",         "1px rules every 5px, creeping downward. A CRT tell — cheap, and it makes flat black feel like a surface."]
+    ["void",         "#000, nothing over it."],
+    ["mesh",         "3 radial gradients, 28px blur, drifting 26s / 37s counter-phase."],
+    ["grain",        "feTurbulence fractalNoise, baseFrequency 0.85, 16%, resampled every 700ms."],
+    ["mesh + grain", "Mesh under noise, noise dropped to 13%."],
+    ["scan",         "1px rules every 5px at 7.5%, 4.5s loop."]
   ];
 
   const layers = [...document.querySelectorAll(".layer")];
