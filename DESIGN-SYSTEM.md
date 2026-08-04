@@ -200,6 +200,27 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
+- `/trials/` → `trials/index.html` — the site-native index of interactive webdesign
+  experiments. It uses the standard identity header, content patterns, and footer.
+- `/trials/<name>/` → an immersive experiment. These pages use the scoped
+  `trials/_shared/` layer described below.
+
+## immersive experiment pages
+
+Experiments are artwork presented by the site, not alternate site shells. Their chrome
+uses the site's black, warm-grey, olive, Source Serif, and IBM Plex Mono tokens, while the
+rendered effect may introduce whatever colors, gradients, or motion its concept requires.
+
+To protect the experiment and the rest of the site from each other:
+
+- Load only `trials/_shared/trial.css` and `trial-ui.js`; never load them on `/`, `/cv`,
+  or `/trials/`, and never load the main `styles.css` inside an immersive experiment.
+- Keep experiment-specific CSS and rendering JavaScript in that experiment's page.
+- Use the minimal `← trials` link back to the collection. The standard identity header
+  and footer are intentionally omitted on these full-screen or effect-led pages.
+- Use the main favicon, fonts, analytics id, canonical metadata, and lowercase voice.
+- Keep experimental colors inside the effect. Site chrome and controls stay within the
+  main palette.
 
 ## shared behaviour (`site.js`)
 
@@ -213,6 +234,9 @@ instead, and bump its `?v=` alongside the stylesheet's.
 provided it uses the documented patterns. It reads a row's right-hand annotation from
 either `.tag` or `.dates`, renders `.notes` as nested bullets, and picks up a
 `section > .desc` as prose.
+
+Immersive experiments are the exception: their shared panel construction lives in
+`trials/_shared/trial-ui.js`, which is never loaded by standard site pages.
 
 ## adding a new page
 
@@ -232,6 +256,9 @@ changes shipped on the same day). GitHub Pages serves
 can load new HTML against a stale cached stylesheet. **Bump the `?v=` date whenever you
 edit `styles.css`** (keep it in sync with the footer's "last updated" date).
 
+Apply the same dated `?v=` convention to `trials/_shared/trial.css` and `trial-ui.js` on
+every immersive experiment page whenever either shared trial asset changes.
+
 ## don'ts
 
 - No new fonts, hues, or font sizes outside the scale.
@@ -239,3 +266,5 @@ edit `styles.css`** (keep it in sync with the footer's "last updated" date).
 - No rounded corners beyond `--radius: 2px`, no shadows, no gradients.
 - No uppercase anywhere.
 - Don't restyle with inline `style=""` attributes — extend `styles.css` via tokens.
+- Experimental gradients, colors, and motion are allowed only inside the rendered effect;
+  the experiment's surrounding chrome still follows the main tokens.

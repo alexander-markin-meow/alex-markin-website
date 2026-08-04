@@ -4,6 +4,7 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 
 ## Files
 - `index.html` — page content and structure
+- `trials/` — the site-native trials index and immersive webdesign experiments
 - `styles.css` — all styling; everything derives from the tokens at the top
 - `robots.txt` — crawler permissions and sitemap discovery
 - `sitemap.xml` — canonical, indexable pages submitted to search engines
@@ -25,6 +26,10 @@ All the specifics — color tokens, type scale, layout grid, and the signature l
 pattern (title, dotted leader, mono tag) — live in `DESIGN-SYSTEM.md`. Don't add new
 fonts, hues, or font sizes outside that spec, and extend `styles.css` via its tokens
 rather than hard-coding values or using inline styles.
+
+The trials index uses the main site system. Individual experiments use the scoped
+`trials/_shared/trial.css` and `trial-ui.js` layer so their full-screen rendering and
+controls cannot affect the homepage or CV. The site remains build-free.
 
 ## Hosting
 Served by **GitHub Pages** from the `main` branch of this repo. Every push to `main`
