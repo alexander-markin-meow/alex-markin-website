@@ -11,24 +11,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>mouse responsive — webdesign trials — alex markin</title>
-<meta name="description" content="a tunable field of dashes that turns to plus signs around the pointer.">
+<meta name="description" content="a glyph grid that shifts shape and glow around the pointer.">
 <meta name="author" content="alex markin">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://alex-markin.com/trials/mouse-responsive/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:title" content="mouse responsive — webdesign trials">
-<meta property="og:description" content="a tunable field of dashes that turns to plus signs around the pointer.">
+<meta property="og:description" content="a glyph grid that shifts shape and glow around the pointer.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://alex-markin.com/trials/mouse-responsive/">
 <meta property="og:site_name" content="alex markin">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mouse responsive — webdesign trials">
-<meta name="twitter:description" content="a tunable field of dashes that turns to plus signs around the pointer.">
+<meta name="twitter:description" content="a glyph grid that shifts shape and glow around the pointer.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../_shared/trial.css?v=20260804">
+<link rel="stylesheet" href="../_shared/trial.css?v=20260804-1">
 <style>
   html, body { height: 100%; }
   body { --note-width: 32rem; overflow: hidden; }
@@ -87,7 +87,7 @@
     <div class="bottom">
       <div>
         <h1 class="trial-heading">glyph field</h1>
-        <p class="note">a grid of dashes that becomes plus signs inside the pointer's reach, warming toward the centre. the panel holds every number — including both glyphs, so the pair is yours to pick.</p>
+        <p class="note">a glyph grid that shifts shape and glow around the pointer.</p>
       </div>
       <span class="hint">move the pointer</span>
     </div>
@@ -102,7 +102,7 @@
     <div class="panel-body" id="panelBody"></div>
   </aside>
 
-<script src="../_shared/trial-ui.js?v=20260804"></script>
+<script src="../_shared/trial-ui.js?v=20260804-1"></script>
 <script>
 (() => {
   // ---- parameters -------------------------------------------------------
@@ -113,9 +113,11 @@
     { g:"field",   k:"fall",  l:"falloff",    min:.4, max:4,   step:.1,  def:2,   u:""   },
     { g:"field",   k:"rest",  l:"rest alpha", min:0,  max:.6,  step:.01, def:.15, u:""   },
     { g:"field",   k:"peak",  l:"peak alpha", min:.2, max:1,   step:.02, def:1,   u:""   },
-    { g:"field",   k:"warm",  l:"warmth",     min:0,  max:1,   step:.02, def:1,   u:""   },
-    { g:"pointer", k:"ring",  l:"ring",       min:0,  max:.6,  step:.02, def:.16, u:""   }
+    { g:"glow",    k:"warm",  l:"amount",     min:0,  max:1,   step:.02, def:1,   u:""   },
+    { g:"pointer", k:"ring",  l:"ring",       min:0,  max:.6,  step:.02, def:0,   u:""   }
   ];
+  const GLOW_TOGGLE = { k:"glowOn", l:"enabled", def:true };
+  const GLOW_COLOR = { k:"glowColor", l:"color", def:"#e0794f" };
   const GLYPHS = [
     { k:"far",  l:"at rest",  def:"-" },
     { k:"near", l:"in reach", def:"+" }
@@ -123,10 +125,16 @@
 
   const CFG = {};
   for (const p of PARAMS) CFG[p.k] = p.def;
+  CFG[GLOW_TOGGLE.k] = GLOW_TOGGLE.def;
+  CFG[GLOW_COLOR.k] = GLOW_COLOR.def;
   for (const g of GLYPHS) CFG[g.k] = g.def;
 
   const REST_RGB = [240, 238, 232];   // the dash colour, matches --fg
-  const NEAR_RGB = [224, 121, 79];    // the accent it warms toward
+  function hexToRgb(hex) {
+    const value = Number.parseInt(hex.slice(1), 16);
+    return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
+  }
+  let glowRGB = hexToRgb(CFG.glowColor);
 
   // ---- canvas -----------------------------------------------------------
   const canvas = document.getElementById("field");
@@ -180,11 +188,11 @@
         } else {
           // ease so the edge of the field dissolves instead of ending on a disc
           const e = Math.pow(1 - Math.sqrt(d2) / R, CFG.fall);
-          const m = e * CFG.warm;
+          const m = e * CFG.warm * (CFG.glowOn ? 1 : 0);
           ctx.fillStyle = "rgba(" +
-            Math.round(REST_RGB[0] + (NEAR_RGB[0] - REST_RGB[0]) * m) + "," +
-            Math.round(REST_RGB[1] + (NEAR_RGB[1] - REST_RGB[1]) * m) + "," +
-            Math.round(REST_RGB[2] + (NEAR_RGB[2] - REST_RGB[2]) * m) + "," +
+            Math.round(REST_RGB[0] + (glowRGB[0] - REST_RGB[0]) * m) + "," +
+            Math.round(REST_RGB[1] + (glowRGB[1] - REST_RGB[1]) * m) + "," +
+            Math.round(REST_RGB[2] + (glowRGB[2] - REST_RGB[2]) * m) + "," +
             (CFG.rest + (CFG.peak - CFG.rest) * e).toFixed(3) + ")";
           ctx.fillText(CFG.near, cx, cy);
         }
@@ -194,10 +202,12 @@
 
   // the pointer: the ring shows the reach, the crosshair marks the exact spot
   function drawPointer() {
+    const pointerRGB = CFG.glowOn ? glowRGB : REST_RGB;
+    const pointerColor = pointerRGB.join(",");
     if (CFG.ring > 0) {
       ctx.beginPath();
       ctx.arc(px, py, CFG.reach, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(224,121,79," + CFG.ring + ")";
+      ctx.strokeStyle = "rgba(" + pointerColor + "," + CFG.ring + ")";
       ctx.lineWidth = 1;
       ctx.stroke();
     }
@@ -206,7 +216,7 @@
     ctx.moveTo(px + 3, py); ctx.lineTo(px + 9, py);
     ctx.moveTo(px, py - 9); ctx.lineTo(px, py - 3);
     ctx.moveTo(px, py + 3); ctx.lineTo(px, py + 9);
-    ctx.strokeStyle = "rgba(224,121,79,.9)";
+    ctx.strokeStyle = "rgba(" + pointerColor + ",.9)";
     ctx.lineWidth = 1;
     ctx.stroke();
   }
@@ -278,6 +288,18 @@
     if (p.g !== lastGroup) {
       TrialUI.addGroup(body, p.g);
       lastGroup = p.g;
+      if (p.g === "glow") {
+        ui[GLOW_TOGGLE.k] = TrialUI.addToggle(body, GLOW_TOGGLE, value => {
+          CFG[GLOW_TOGGLE.k] = value;
+          setGlowAvailability();
+          scheduleFull();
+        });
+        ui[GLOW_COLOR.k] = TrialUI.addColor(body, GLOW_COLOR, value => {
+          CFG[GLOW_COLOR.k] = value;
+          glowRGB = hexToRgb(value);
+          scheduleFull();
+        });
+      }
     }
     ui[p.k] = TrialUI.addRange(body, p, value => {
       CFG[p.k] = value;
@@ -298,15 +320,28 @@
   // push CFG back into the widgets. browsers restore form state on reload and
   // bfcache, which would otherwise leave the sliders showing one thing while
   // the field is drawn from another.
+  function setGlowAvailability() {
+    for (const control of [ui[GLOW_COLOR.k], ui.warm]) {
+      control.input.disabled = !CFG[GLOW_TOGGLE.k];
+      control.wrap.toggleAttribute("data-disabled", !CFG[GLOW_TOGGLE.k]);
+    }
+  }
+
   function syncUI() {
     for (const p of PARAMS) {
       TrialUI.setRange(ui[p.k], CFG[p.k]);
     }
+    TrialUI.setToggle(ui[GLOW_TOGGLE.k], CFG[GLOW_TOGGLE.k]);
+    TrialUI.setColor(ui[GLOW_COLOR.k], CFG[GLOW_COLOR.k]);
+    glowRGB = hexToRgb(CFG[GLOW_COLOR.k]);
+    setGlowAvailability();
     for (const g of GLYPHS) TrialUI.setText(ui[g.k], CFG[g.k]);
   }
 
   document.getElementById("reset").addEventListener("click", () => {
     for (const p of PARAMS) CFG[p.k] = p.def;
+    CFG[GLOW_TOGGLE.k] = GLOW_TOGGLE.def;
+    CFG[GLOW_COLOR.k] = GLOW_COLOR.def;
     for (const g of GLYPHS) CFG[g.k] = g.def;
     syncUI();
     setFont();

@@ -119,6 +119,8 @@ body {
 
 .ctrl { margin-bottom: .55rem; }
 
+.ctrl[data-disabled] { opacity: .42; }
+
 .ctrl .row {
   display: flex;
   align-items: center;
@@ -184,6 +186,14 @@ body {
 
 .ctrl input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
 .ctrl input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 1px; }
+
+.ctrl input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
 
 .ctrl input[type="text"] {
   width: 3.2rem;

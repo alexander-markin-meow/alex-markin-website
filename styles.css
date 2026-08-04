@@ -35,6 +35,7 @@
 
   /* layout */
   --page-max:   1100px;
+  --page-narrow: 780px;
   --col-min:    340px;   /* min column width before grid collapses */
   --gap-col:    64px;
   --gap-row:    44px;
@@ -66,6 +67,8 @@ body {
   padding: 36px 48px 12px;
 }
 
+.page--narrow { max-width: var(--page-narrow); }
+
 .columns {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--col-min), 1fr));
@@ -83,6 +86,12 @@ body {
 /* --------------------------------------------------------------------------
    header (identity block)
    -------------------------------------------------------------------------- */
+
+.catalogue-header {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
 
 .intro {
   display: flex;
@@ -186,6 +195,16 @@ a:focus-visible {
    are already visibly interactive through their image treatment. */
 a[target="_blank"]:not(.flickr-photo-link)::after {
   content: "↗";
+  margin-left: 0.15em;
+  font-family: var(--mono);
+  font-size: var(--fs-tag);
+  letter-spacing: 0;
+}
+
+/* Deliberate navigation within alex-markin.com uses a level arrow. Identity,
+   image, and back links stay unmarked because their direction is already clear. */
+.internal-link::after {
+  content: "→";
   margin-left: 0.15em;
   font-family: var(--mono);
   font-size: var(--fs-tag);

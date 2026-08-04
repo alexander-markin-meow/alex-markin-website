@@ -52,6 +52,8 @@ Scale (don't invent sizes; pick the closest):
 
 - `.page`: max-width 1100px, centered, padding 36px 48px 12px (36/24/12 mobile). The
   12px bottom padding mirrors the footer's 12px divider-to-text spacing.
+- `.page--narrow`: max-width 780px with the same padding and mobile behaviour. Use it for
+  a single reading or catalogue column that should not stretch across a wide display.
 - The identity header keeps its side-by-side desktop layout, then centers the portrait,
   name, tagline, and meta line as one stacked block at 640px and below.
 - `.columns`: CSS grid, `repeat(auto-fit, minmax(340px, 1fr))`, gap 44px 64px.
@@ -76,8 +78,9 @@ The signature pattern. Title left, dotted line fills the middle, lowercase mono 
   `photo`. Reuse before inventing.
 - The first link's hit area covers the full row, including the dotted leader and tag.
 - Links: no underline, `--ink`, hover to pure white. Nothing else changes on hover. External
-  links append a compact mono `↗` marker with a narrow gap; photo links are the exception
-  because the image already signals that it is interactive.
+  links append a compact mono `↗` marker with a narrow gap. Deliberate internal navigation uses
+  `.internal-link` and a mono `→`; identity, image, and back links remain unmarked because their
+  direction is already clear. Photo links are also unmarked because the image signals interaction.
 
 ### publication entry (row + description)
 ```html
@@ -145,8 +148,9 @@ Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between th
 
 ### footer
 Solid `--rule` top border and a three-column mono grid: a `last upd YYYY-MM-DD` link to the
-site repository at left, the document utility centered, and an optional affiliation link at
-right (currently `part of syndicate m`). Update the date when you ship a change. Footer links
+site repository at left, the document utility centered, and an optional affiliation or return
+link at right. The trials catalogue uses `alex-markin.com` to return home. Update the date when
+you ship a change. Footer links
 inherit the muted footer color and turn white on hover. The `copy as markdown` control uses a
 thin `--border` outline with no fill; the outline, pointer cursor, and color-only hover make it
 legible as clickable without drawing focus. It builds its output from the live semantic HTML at
@@ -202,8 +206,8 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
   `contact` list via the `cv` tag.
 - `/trials/` → `trials/index.html` — a standalone, one-column catalogue of interactive
   webdesign experiments. It omits the portrait and personal identity block so the trials
-  remain the page's only subject, while retaining the standard title, publication rows,
-  palette, typography, page shell, and footer.
+  remain the page's only subject. It uses the narrow page shell, one muted explanatory line,
+  standard publication rows, and an `alex-markin.com` footer link back to the homepage.
 - `/trials/<name>/` → an immersive experiment. These pages use the scoped
   `trials/_shared/` layer described below.
 
@@ -218,6 +222,8 @@ To protect the experiment and the rest of the site from each other:
 - Load only `trials/_shared/trial.css` and `trial-ui.js`; never load them on `/`, `/cv`,
   or `/trials/`, and never load the main `styles.css` inside an immersive experiment.
 - Keep experiment-specific CSS and rendering JavaScript in that experiment's page.
+- Build panel ranges, color pickers, text fields, and toggles through `TrialUI` so labels,
+  reset syncing, keyboard focus, and disabled states remain consistent across experiments.
 - Use the minimal `← trials` link back to the collection. The standard identity header
   and footer are intentionally omitted on these full-screen or effect-led pages.
 - Use the main favicon, fonts, analytics id, canonical metadata, and lowercase voice.

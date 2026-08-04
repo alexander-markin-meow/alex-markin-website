@@ -90,6 +90,37 @@
     control.input.value = value;
   }
 
+  function addToggle(container, config, onInput, ariaPrefix = "") {
+    const wrap = document.createElement("div");
+    wrap.className = "ctrl";
+
+    const row = document.createElement("div");
+    row.className = "row";
+
+    const label = document.createElement("label");
+    label.htmlFor = "c_" + config.k;
+    label.textContent = config.l;
+
+    const input = document.createElement("input");
+    input.id = label.htmlFor;
+    input.type = "checkbox";
+    input.autocomplete = "off";
+    input.checked = config.def;
+    if (ariaPrefix) input.setAttribute("aria-label", ariaPrefix + " " + config.l);
+
+    row.append(label, input);
+    wrap.appendChild(row);
+    container.appendChild(wrap);
+
+    const control = { input, config, wrap };
+    input.addEventListener("input", () => onInput(input.checked, control));
+    return control;
+  }
+
+  function setToggle(control, value) {
+    control.input.checked = value;
+  }
+
   function addText(container, config, onInput, ariaPrefix = "") {
     const wrap = document.createElement("div");
     wrap.className = "ctrl";
@@ -135,10 +166,12 @@
     addGroup,
     addRange,
     addText,
+    addToggle,
     bindPanelFold,
     formatValue,
     setColor,
     setRange,
-    setText
+    setText,
+    setToggle
   });
 })();
