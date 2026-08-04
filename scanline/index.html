@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scanline — Webdesign Trials</title>
+<meta name="description" content="A CRT mask laid over the whole page — beam gaps, phosphor triads, bloom.">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #000000;
+    --fg: #f0eee8;
+    --muted: #7d7b73;
+    --line: #262624;
+    --accent: #e0794f;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 18px/1.65 "Times New Roman", Times, serif;
+    text-transform: lowercase;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  /* --- the signal: a test card, so there is something for the mask to chew on --- */
+  .stage { position: fixed; inset: 0; background: var(--bg); }
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 7vh 1.5rem 20vh;
+  }
+  .card {
+    width: min(64vw, 82vh);
+    filter: saturate(1.2) contrast(1.06);
+  }
+
+  /* --- crt overlay --- *
+     four fixed layers above everything — including .chrome, so the ui is
+     scanned too. each is gradient-painted once; only .crt-roll animates,
+     and only on transform.
+       lines   horizontal beam gaps, 3.2px pitch, soft-edged to limit moire
+       grille  vertical rgb phosphor triads, 3px, multiplied like a real mask
+       roll    the refresh band
+       tube    edge falloff, standing in for curvature                       */
+  .crt-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 600ms ease;
+  }
+  body[data-crt] .crt-layer { opacity: 1; }
+  /* the mask eats ~half the light, so drive the beam harder underneath it */
+  .stage, .chrome { transition: filter 600ms ease; }
+  body[data-crt] .stage,
+  body[data-crt] .chrome { filter: brightness(1.85) saturate(1.15); }
+
+  .crt-lines {
+    mix-blend-mode: multiply;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      #fff 0px,
+      #fff .8px,
+      #3d3d3d 1.8px,
+      #3d3d3d 2.2px,
+      #fff 3.2px
+    );
+  }
+  .crt-grille {
+    mix-blend-mode: multiply;
+    opacity: .38;
+    background-image: repeating-linear-gradient(
+      to right,
+      #ff4d4d 0px, #ff4d4d 1px,
+      #4dff4d 1px, #4dff4d 2px,
+      #4d4dff 2px, #4d4dff 3px
+    );
+  }
+  .crt-roll {
+    bottom: auto;
+    height: 26vh;
+    mix-blend-mode: screen;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(255,255,255,.035) 55%,
+      rgba(255,255,255,.06) 72%,
+      transparent
+    );
+    animation: roll 7s linear infinite;
+    will-change: transform;
+  }
+  @keyframes roll {
+    from { transform: translate3d(0, -30vh, 0); }
+    to   { transform: translate3d(0, 105vh, 0); }
+  }
+  .crt-tube {
+    background: radial-gradient(125% 105% at 50% 50%, transparent 52%, rgba(0,0,0,.62) 100%);
+  }
+
+  /* --- chrome --- */
+  .chrome {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem clamp(1.5rem, 5vw, 3.5rem);
+    pointer-events: none;
+  }
+  .chrome a { pointer-events: auto; }
+  .top, .bottom { display: flex; justify-content: space-between; align-items: baseline; gap: 1.5rem; }
+  .back, .state {
+    font-family: var(--mono);
+    font-size: .85rem;
+    color: var(--muted);
+    letter-spacing: .06em;
+  }
+  .back { text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  .state { color: var(--accent); }
+  h1 {
+    margin: 0;
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+  }
+  .note {
+    margin: .35rem 0 0;
+    color: var(--muted);
+    max-width: 34rem;
+  }
+  .hint {
+    font-family: var(--mono);
+    color: var(--muted);
+    font-size: .8rem;
+    letter-spacing: .1em;
+    white-space: nowrap;
+  }
+  @media (max-width: 34rem) {
+    .hint { display: none; }
+  }
+  /* nothing off-screen should be animating */
+  body:not([data-crt]) .crt-layer { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) {
+    .crt-layer, .crt-roll, .stage, .chrome {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body data-crt>
+  <div class="stage">
+    <div class="screen">
+      <!-- test card: vector, ~1kb -->
+      <svg class="card" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="crt test card">
+        <defs>
+          <!-- halation + horizontal phosphor smear. static, so it rasterises once. -->
+          <filter id="bloom" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.5 0" result="smear"/>
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b"/>
+            <feComponentTransfer in="b" result="g"><feFuncA type="linear" slope=".65"/></feComponentTransfer>
+            <feMerge><feMergeNode in="g"/><feMergeNode in="smear"/></feMerge>
+          </filter>
+        </defs>
+        <rect width="400" height="300" fill="#000"/>
+        <g filter="url(#bloom)">
+          <!-- colour bars -->
+          <rect x="0"      y="0" width="57.2" height="146" fill="#ffffff"/>
+          <rect x="57.14"  y="0" width="57.2" height="146" fill="#ffff00"/>
+          <rect x="114.29" y="0" width="57.2" height="146" fill="#00ffff"/>
+          <rect x="171.43" y="0" width="57.2" height="146" fill="#00ff00"/>
+          <rect x="228.57" y="0" width="57.2" height="146" fill="#ff00ff"/>
+          <rect x="285.71" y="0" width="57.2" height="146" fill="#ff0000"/>
+          <rect x="342.86" y="0" width="57.2" height="146" fill="#0000ff"/>
+          <!-- luminance staircase -->
+          <rect x="0"   y="146" width="50" height="30" fill="#000000"/>
+          <rect x="50"  y="146" width="50" height="30" fill="#242424"/>
+          <rect x="100" y="146" width="50" height="30" fill="#484848"/>
+          <rect x="150" y="146" width="50" height="30" fill="#6c6c6c"/>
+          <rect x="200" y="146" width="50" height="30" fill="#909090"/>
+          <rect x="250" y="146" width="50" height="30" fill="#b4b4b4"/>
+          <rect x="300" y="146" width="50" height="30" fill="#d8d8d8"/>
+          <rect x="350" y="146" width="50" height="30" fill="#ffffff"/>
+          <!-- resolution wedge: pitches the mask can beat against -->
+          <g fill="#ffffff">
+            <rect x="20" y="200" width="1" height="68"/><rect x="22" y="200" width="1" height="68"/>
+            <rect x="24" y="200" width="1" height="68"/><rect x="26" y="200" width="1" height="68"/>
+            <rect x="28" y="200" width="1" height="68"/><rect x="30" y="200" width="1" height="68"/>
+            <rect x="44" y="200" width="1" height="68"/><rect x="47" y="200" width="1" height="68"/>
+            <rect x="50" y="200" width="1" height="68"/><rect x="53" y="200" width="1" height="68"/>
+            <rect x="56" y="200" width="1" height="68"/><rect x="59" y="200" width="1" height="68"/>
+            <rect x="74" y="200" width="2" height="68"/><rect x="78" y="200" width="2" height="68"/>
+            <rect x="82" y="200" width="2" height="68"/><rect x="86" y="200" width="2" height="68"/>
+            <rect x="102" y="200" width="3" height="68"/><rect x="108" y="200" width="3" height="68"/>
+            <rect x="114" y="200" width="3" height="68"/><rect x="120" y="200" width="3" height="68"/>
+          </g>
+          <!-- convergence circle -->
+          <circle cx="200" cy="234" r="40" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+          <path d="M200 186v96M152 234h96" stroke="#ffffff" stroke-width="1" opacity=".55"/>
+          <!-- readout -->
+          <g fill="#4dffd0" font-family="ui-monospace, Menlo, monospace" font-size="11">
+            <text x="272" y="212">h 15.734 khz</text>
+            <text x="272" y="230">v 59.94 hz</text>
+            <text x="272" y="248">triad 3px</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="chrome">
+    <div class="top">
+      <a class="back" href="../../">← trials</a>
+      <span class="state" id="state">crt on</span>
+    </div>
+    <div class="bottom">
+      <div>
+        <h1>scanline</h1>
+        <p class="note">3.2px beam gaps over a 3px rgb triad, both multiplied; 1.85 brightness under the mask. svg bloom + 0.5px horizontal smear on the card, 7s roll.</p>
+      </div>
+      <span class="hint">click to toggle</span>
+    </div>
+  </div>
+
+  <div class="crt-layer crt-lines"></div>
+  <div class="crt-layer crt-grille"></div>
+  <div class="crt-layer crt-roll"></div>
+  <div class="crt-layer crt-tube"></div>
+
+<script>
+  const stateEl = document.getElementById("state");
+
+  function toggle() {
+    const on = document.body.toggleAttribute("data-crt");
+    stateEl.textContent = on ? "crt on" : "crt off";
+  }
+
+  document.body.addEventListener("click", (e) => {
+    if (e.target.closest("a")) return;
+    toggle();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); }
+  });
+</script>
+</body>
+</html>
