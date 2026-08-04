@@ -200,8 +200,10 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
-- `/trials/` → `trials/index.html` — the site-native index of interactive webdesign
-  experiments. It uses the standard identity header, content patterns, and footer.
+- `/trials/` → `trials/index.html` — a standalone, one-column catalogue of interactive
+  webdesign experiments. It omits the portrait and personal identity block so the trials
+  remain the page's only subject, while retaining the standard title, publication rows,
+  palette, typography, page shell, and footer.
 - `/trials/<name>/` → an immersive experiment. These pages use the scoped
   `trials/_shared/` layer described below.
 
