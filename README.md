@@ -35,6 +35,9 @@ controls cannot affect the homepage or CV. The site remains build-free.
 Served by **GitHub Pages** from the `main` branch of this repo. Every push to `main`
 redeploys automatically — no build step, no manual deploy.
 
+The root `.nojekyll` marker publishes the static tree verbatim. Keep it in place so
+underscore-prefixed asset directories such as `trials/_shared/` are not omitted.
+
 DNS (at Namecheap) points the apex `alex-markin.com` at GitHub Pages via four `A` records
 (`185.199.108–111.153`). The site is apex-only — there is intentionally no `www` record.
 
