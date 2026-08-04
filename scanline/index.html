@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>scanline — Webdesign Trials</title>
-<meta name="description" content="A CRT mask laid over the whole page — beam gaps, phosphor triads, bloom.">
+<meta name="description" content="A tunable CRT mask laid over the whole page — beam gaps, phosphor triads, bloom, convergence.">
 <style>
   :root {
     color-scheme: dark;
@@ -14,6 +14,20 @@
     --line: #262624;
     --accent: #e0794f;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Courier New", monospace;
+
+    /* --- every number the mask is made of. the panel writes these. --- */
+    --pitch: 3.2px;   /* beam gap spacing            */
+    --depth: 76;      /* how black the gap goes, %   */
+    --p1: .27;        /* gradient stops, as a        */
+    --p2: .57;        /* fraction of the pitch —     */
+    --p3: .67;        /* derived from softness       */
+    --triad: 3px;     /* rgb phosphor triad width    */
+    --grille: .38;    /* mask strength               */
+    --bright: 1.85;   /* beam boost under the mask   */
+    --sat: 1.15;      /* saturation under the mask   */
+    --vig: .62;       /* tube edge falloff           */
+    --roll: 7s;       /* refresh band period         */
+    --gap: color-mix(in srgb, #000 calc(var(--depth) * 1%), #fff);
   }
   * { box-sizing: border-box; }
   body {
@@ -37,7 +51,6 @@
     width: 100%;
     height: auto;
   }
-  .card { filter: saturate(1.2) contrast(1.06); }
   figcaption {
     font-family: var(--mono);
     font-size: .78rem;
@@ -45,15 +58,12 @@
     color: var(--muted);
     margin-top: .9rem;
   }
+  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
   /* --- crt overlay --- *
-     four layers fixed to the viewport, above everything — the mask belongs to
-     the screen, so the page scrolls behind it while the mask stays put. each
-     is gradient-painted once; only .crt-roll animates, and only on transform.
-       lines   horizontal beam gaps, 3.2px pitch, soft-edged to limit moire
-       grille  vertical rgb phosphor triads, 3px, multiplied like a real mask
-       roll    the refresh band
-       tube    edge falloff, standing in for curvature                       */
+     four layers fixed to the viewport, above the page — the mask belongs to
+     the screen, so the picture scrolls behind it while the mask stays put.
+     each is gradient-painted once; only .crt-roll animates, on transform. */
   .crt-layer {
     position: fixed;
     inset: 0;
@@ -63,29 +73,49 @@
     transition: opacity 600ms ease;
   }
   body[data-crt] .crt-layer { opacity: 1; }
-  /* the mask eats ~half the light, so drive the beam harder underneath it */
-  .page { transition: filter 600ms ease; }
-  body[data-crt] .page { filter: brightness(1.85) saturate(1.15); }
+
+  /* The mask eats roughly half the light, so drive the beam harder under it.
+     These filters are deliberately applied per element rather than to .page:
+     one filter on the whole column forces the entire document to re-rasterise
+     on every slider move, which costs hundreds of ms a frame. Scoped this way
+     only the visible element repaints. It also means "crt off" is a genuinely
+     unfiltered source to compare against. */
+  .card, figure img, .top, .intro, figcaption { transition: filter 600ms ease; }
+  body[data-crt] .top,
+  body[data-crt] .intro,
+  body[data-crt] figcaption { filter: brightness(var(--bright)) saturate(var(--sat)); }
+  body[data-crt] .card,
+  body[data-crt] figure img {
+    /* phosphor optics — bloom, smear, convergence — then the beam boost */
+    filter: url(#optics) brightness(var(--bright)) saturate(var(--sat));
+  }
+  body[data-crt][data-conv] .card,
+  body[data-crt][data-conv] figure img {
+    filter: url(#optics-x) brightness(var(--bright)) saturate(var(--sat));
+  }
 
   .crt-lines {
     mix-blend-mode: multiply;
     background-image: repeating-linear-gradient(
       to bottom,
       #fff 0px,
-      #fff .8px,
-      #3d3d3d 1.8px,
-      #3d3d3d 2.2px,
-      #fff 3.2px
+      #fff calc(var(--pitch) * var(--p1)),
+      var(--gap) calc(var(--pitch) * var(--p2)),
+      var(--gap) calc(var(--pitch) * var(--p3)),
+      #fff var(--pitch)
     );
   }
   .crt-grille {
     mix-blend-mode: multiply;
-    opacity: .38;
+    opacity: var(--grille);
     background-image: repeating-linear-gradient(
       to right,
-      #ff4d4d 0px, #ff4d4d 1px,
-      #4dff4d 1px, #4dff4d 2px,
-      #4d4dff 2px, #4d4dff 3px
+      #ff4d4d 0px,
+      #ff4d4d calc(var(--triad) / 3),
+      #4dff4d calc(var(--triad) / 3),
+      #4dff4d calc(var(--triad) / 3 * 2),
+      #4d4dff calc(var(--triad) / 3 * 2),
+      #4d4dff var(--triad)
     );
   }
   .crt-roll {
@@ -99,7 +129,7 @@
       rgba(255,255,255,.06) 72%,
       transparent
     );
-    animation: roll 7s linear infinite;
+    animation: roll var(--roll) linear infinite;
     will-change: transform;
   }
   @keyframes roll {
@@ -107,7 +137,7 @@
     to   { transform: translate3d(0, 105vh, 0); }
   }
   .crt-tube {
-    background: radial-gradient(125% 105% at 50% 50%, transparent 52%, rgba(0,0,0,.62) 100%);
+    background: radial-gradient(125% 105% at 50% 50%, transparent 52%, rgba(0,0,0,var(--vig)) 100%);
   }
 
   /* --- chrome --- */
@@ -155,6 +185,107 @@
     color: var(--muted);
     max-width: 34rem;
   }
+
+  /* --- the panel: sits above the mask, so it stays readable while you tune --- */
+  .panel {
+    position: fixed;
+    z-index: 10;
+    right: 1rem;
+    bottom: 1rem;
+    width: 16.5rem;
+    max-height: min(78vh, 40rem);
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,.93);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .02em;
+    text-transform: lowercase;
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .6rem .7rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .panel-head .title { flex: 1; color: var(--accent); }
+  .panel button {
+    appearance: none;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--muted);
+    font: inherit;
+    padding: .18rem .45rem;
+    cursor: pointer;
+  }
+  .panel button:hover { color: var(--accent); border-color: var(--accent); }
+  .panel-body {
+    overflow-y: auto;
+    padding: .5rem .7rem .8rem;
+  }
+  .panel[data-folded] .panel-body { display: none; }
+  .group {
+    color: var(--muted);
+    opacity: .65;
+    margin: .7rem 0 .35rem;
+    letter-spacing: .14em;
+  }
+  .group:first-child { margin-top: .2rem; }
+  .ctrl { margin-bottom: .55rem; }
+  .ctrl .row {
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+    color: var(--fg);
+  }
+  .ctrl output { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .ctrl input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 1rem;
+    margin: .1rem 0 0;
+    background: none;
+    cursor: pointer;
+  }
+  .ctrl input[type=range]::-webkit-slider-runnable-track {
+    height: 1px;
+    background: var(--line);
+  }
+  .ctrl input[type=range]::-moz-range-track {
+    height: 1px;
+    background: var(--line);
+  }
+  .ctrl input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 9px;
+    height: 9px;
+    margin-top: -4px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .ctrl input[type=range]::-moz-range-thumb {
+    width: 9px;
+    height: 9px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  @media (max-width: 46rem) {
+    .panel {
+      right: .75rem;
+      left: .75rem;
+      bottom: .75rem;
+      width: auto;
+      max-height: 45vh;
+    }
+  }
+
   /* nothing off-screen should be animating */
   body:not([data-crt]) .crt-layer { animation-play-state: paused; }
   @media (prefers-reduced-motion: reduce) {
@@ -166,6 +297,36 @@
 </style>
 </head>
 <body data-crt>
+  <!-- phosphor optics. convergence splits the channels and offsets them, then
+       one pass smears horizontally and one blooms; both are merged back. -->
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <!-- cheap path: no convergence, so no channel split. this is what runs
+         unless the convergence slider is off zero. -->
+    <filter id="optics" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+      <feGaussianBlur id="smearA" in="SourceGraphic" stdDeviation="0.5 0" result="smear"/>
+      <feGaussianBlur id="bloomA" in="SourceGraphic" stdDeviation="3.5" result="b"/>
+      <feComponentTransfer in="b" result="glow"><feFuncA type="linear" slope=".65"/></feComponentTransfer>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="smear"/></feMerge>
+    </filter>
+    <!-- full path: split the channels, pull red and blue apart, recombine -->
+    <filter id="optics-x" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" result="R" type="matrix"
+        values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+      <feColorMatrix in="SourceGraphic" result="G" type="matrix"
+        values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+      <feColorMatrix in="SourceGraphic" result="B" type="matrix"
+        values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+      <feOffset id="convR" in="R" dx="0" result="Ro"/>
+      <feOffset id="convB" in="B" dx="0" result="Bo"/>
+      <feBlend in="Ro" in2="G" mode="screen" result="RG"/>
+      <feBlend in="RG" in2="Bo" mode="screen" result="conv"/>
+      <feGaussianBlur id="smearB" in="conv" stdDeviation="0.5 0" result="smear"/>
+      <feGaussianBlur id="bloomB" in="conv" stdDeviation="3.5" result="b"/>
+      <feComponentTransfer in="b" result="glow"><feFuncA type="linear" slope=".65"/></feComponentTransfer>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="smear"/></feMerge>
+    </filter>
+  </svg>
+
   <div class="page">
     <header class="top">
       <a class="back" href="../../">← trials</a>
@@ -174,79 +335,73 @@
 
     <section class="intro">
       <h1>scanline</h1>
-      <p class="note">3.2px beam gaps over a 3px rgb triad, both multiplied; 1.85 brightness under the mask. svg bloom + 0.5px horizontal smear on the card, 7s roll. the mask is fixed to the viewport — scroll, and the picture moves behind it.</p>
+      <p class="note">a crt mask over the whole page: horizontal beam gaps crossed with vertical rgb phosphor triads, both multiplied, with the beam driven harder underneath to pay for what the mask absorbs. every number is in the panel — pull them apart and see which one is doing the work. the mask is fixed to the viewport, so the picture scrolls behind it.</p>
     </section>
 
     <figure>
       <!-- test card: vector, ~1kb -->
       <svg class="card" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="crt test card">
-        <defs>
-          <!-- halation + horizontal phosphor smear. static, so it rasterises once. -->
-          <filter id="bloom" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="0.5 0" result="smear"/>
-            <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b"/>
-            <feComponentTransfer in="b" result="g"><feFuncA type="linear" slope=".65"/></feComponentTransfer>
-            <feMerge><feMergeNode in="g"/><feMergeNode in="smear"/></feMerge>
-          </filter>
-        </defs>
         <rect width="400" height="300" fill="#000"/>
-        <g filter="url(#bloom)">
-          <!-- colour bars -->
-          <rect x="0"      y="0" width="57.2" height="146" fill="#ffffff"/>
-          <rect x="57.14"  y="0" width="57.2" height="146" fill="#ffff00"/>
-          <rect x="114.29" y="0" width="57.2" height="146" fill="#00ffff"/>
-          <rect x="171.43" y="0" width="57.2" height="146" fill="#00ff00"/>
-          <rect x="228.57" y="0" width="57.2" height="146" fill="#ff00ff"/>
-          <rect x="285.71" y="0" width="57.2" height="146" fill="#ff0000"/>
-          <rect x="342.86" y="0" width="57.2" height="146" fill="#0000ff"/>
-          <!-- luminance staircase -->
-          <rect x="0"   y="146" width="50" height="30" fill="#000000"/>
-          <rect x="50"  y="146" width="50" height="30" fill="#242424"/>
-          <rect x="100" y="146" width="50" height="30" fill="#484848"/>
-          <rect x="150" y="146" width="50" height="30" fill="#6c6c6c"/>
-          <rect x="200" y="146" width="50" height="30" fill="#909090"/>
-          <rect x="250" y="146" width="50" height="30" fill="#b4b4b4"/>
-          <rect x="300" y="146" width="50" height="30" fill="#d8d8d8"/>
-          <rect x="350" y="146" width="50" height="30" fill="#ffffff"/>
-          <!-- resolution wedge: pitches the mask can beat against -->
-          <g fill="#ffffff">
-            <rect x="20" y="200" width="1" height="68"/><rect x="22" y="200" width="1" height="68"/>
-            <rect x="24" y="200" width="1" height="68"/><rect x="26" y="200" width="1" height="68"/>
-            <rect x="28" y="200" width="1" height="68"/><rect x="30" y="200" width="1" height="68"/>
-            <rect x="44" y="200" width="1" height="68"/><rect x="47" y="200" width="1" height="68"/>
-            <rect x="50" y="200" width="1" height="68"/><rect x="53" y="200" width="1" height="68"/>
-            <rect x="56" y="200" width="1" height="68"/><rect x="59" y="200" width="1" height="68"/>
-            <rect x="74" y="200" width="2" height="68"/><rect x="78" y="200" width="2" height="68"/>
-            <rect x="82" y="200" width="2" height="68"/><rect x="86" y="200" width="2" height="68"/>
-            <rect x="102" y="200" width="3" height="68"/><rect x="108" y="200" width="3" height="68"/>
-            <rect x="114" y="200" width="3" height="68"/><rect x="120" y="200" width="3" height="68"/>
-          </g>
-          <!-- convergence circle -->
-          <circle cx="200" cy="234" r="40" fill="none" stroke="#ffffff" stroke-width="1.5"/>
-          <path d="M200 186v96M152 234h96" stroke="#ffffff" stroke-width="1" opacity=".55"/>
-          <!-- readout -->
-          <g fill="#4dffd0" font-family="ui-monospace, Menlo, monospace" font-size="11">
-            <text x="272" y="212">h 15.734 khz</text>
-            <text x="272" y="230">v 59.94 hz</text>
-            <text x="272" y="248">triad 3px</text>
-          </g>
+        <!-- colour bars -->
+        <rect x="0"      y="0" width="57.2" height="146" fill="#ffffff"/>
+        <rect x="57.14"  y="0" width="57.2" height="146" fill="#ffff00"/>
+        <rect x="114.29" y="0" width="57.2" height="146" fill="#00ffff"/>
+        <rect x="171.43" y="0" width="57.2" height="146" fill="#00ff00"/>
+        <rect x="228.57" y="0" width="57.2" height="146" fill="#ff00ff"/>
+        <rect x="285.71" y="0" width="57.2" height="146" fill="#ff0000"/>
+        <rect x="342.86" y="0" width="57.2" height="146" fill="#0000ff"/>
+        <!-- luminance staircase -->
+        <rect x="0"   y="146" width="50" height="30" fill="#000000"/>
+        <rect x="50"  y="146" width="50" height="30" fill="#242424"/>
+        <rect x="100" y="146" width="50" height="30" fill="#484848"/>
+        <rect x="150" y="146" width="50" height="30" fill="#6c6c6c"/>
+        <rect x="200" y="146" width="50" height="30" fill="#909090"/>
+        <rect x="250" y="146" width="50" height="30" fill="#b4b4b4"/>
+        <rect x="300" y="146" width="50" height="30" fill="#d8d8d8"/>
+        <rect x="350" y="146" width="50" height="30" fill="#ffffff"/>
+        <!-- resolution wedge: pitches the mask can beat against -->
+        <g fill="#ffffff">
+          <rect x="20" y="200" width="1" height="68"/><rect x="22" y="200" width="1" height="68"/>
+          <rect x="24" y="200" width="1" height="68"/><rect x="26" y="200" width="1" height="68"/>
+          <rect x="28" y="200" width="1" height="68"/><rect x="30" y="200" width="1" height="68"/>
+          <rect x="44" y="200" width="1" height="68"/><rect x="47" y="200" width="1" height="68"/>
+          <rect x="50" y="200" width="1" height="68"/><rect x="53" y="200" width="1" height="68"/>
+          <rect x="56" y="200" width="1" height="68"/><rect x="59" y="200" width="1" height="68"/>
+          <rect x="74" y="200" width="2" height="68"/><rect x="78" y="200" width="2" height="68"/>
+          <rect x="82" y="200" width="2" height="68"/><rect x="86" y="200" width="2" height="68"/>
+          <rect x="102" y="200" width="3" height="68"/><rect x="108" y="200" width="3" height="68"/>
+          <rect x="114" y="200" width="3" height="68"/><rect x="120" y="200" width="3" height="68"/>
+        </g>
+        <!-- convergence circle -->
+        <circle cx="200" cy="234" r="40" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+        <path d="M200 186v96M152 234h96" stroke="#ffffff" stroke-width="1" opacity=".55"/>
+        <!-- readout -->
+        <g fill="#4dffd0" font-family="ui-monospace, Menlo, monospace" font-size="11">
+          <text x="272" y="212">h 15.734 khz</text>
+          <text x="272" y="230">v 59.94 hz</text>
+          <text x="272" y="248">triad 3px</text>
         </g>
       </svg>
-      <figcaption>test card — flat fields and fine pitch. the wedge on the left beats against the 3px triad; the staircase shows where the mask crushes the low end.</figcaption>
+      <figcaption>test card — flat fields and fine pitch. the wedge beats against the triad; the staircase shows where the mask crushes the low end. push convergence to see the channels separate.</figcaption>
     </figure>
 
     <figure>
       <img src="img/red.jpg" width="1200" height="1600" loading="lazy" decoding="async"
            alt="a ribbed white garment hanging in the dark, lit hard by a red lamp">
-      <figcaption>photograph — one saturated hue against deep black. the grille has almost no green or blue to filter, so the triads read as red dashes and the falloff bands break up.</figcaption>
+      <figcaption>one saturated hue against deep black. the grille has almost no green or blue to filter, so the triads read as red dashes and the falloff bands break up.</figcaption>
     </figure>
 
-    <!-- second photo (brick wall + meadow) goes here once the file exists:
     <figure>
-      <img src="img/wall.jpg" width="…" height="…" loading="lazy" decoding="async" alt="…">
-      <figcaption>photograph — broadband colour and fine detail …</figcaption>
+      <img src="img/rose.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+           alt="a wet pink rose in close-up against dark green foliage">
+      <figcaption>two hues far apart on the wheel. the magenta lands between two phosphors and the dark foliage sits where gap depth decides whether detail survives at all.</figcaption>
     </figure>
-    -->
+
+    <figure>
+      <img src="img/wall.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+           alt="a brick wall in low sun with tree shadows, wild grass and cow parsley in front">
+      <figcaption>broadband colour and fine detail. the grass is finer than the line pitch — the worst case for a mask, and where softness earns its keep.</figcaption>
+    </figure>
   </div>
 
   <div class="crt-layer crt-lines"></div>
@@ -254,17 +409,140 @@
   <div class="crt-layer crt-roll"></div>
   <div class="crt-layer crt-tube"></div>
 
-<script>
-  const stateEl = document.getElementById("state");
+  <aside class="panel" id="panel">
+    <div class="panel-head">
+      <span class="title">mask</span>
+      <button id="reset" type="button">reset</button>
+      <button id="fold" type="button" aria-expanded="true">hide</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+  </aside>
 
-  function toggle() {
-    const on = document.body.toggleAttribute("data-crt");
-    stateEl.textContent = on ? "crt on" : "crt off";
+<script>
+  // every knob: css custom properties, except the three that drive the svg
+  // filter primitives (those have no css-variable equivalent).
+  const PARAMS = [
+    { g:"mask",   k:"pitch",  l:"line pitch",    min:1.5, max:12,  step:.1,  def:3.2,  u:"px" },
+    { g:"mask",   k:"depth",  l:"gap depth",     min:0,   max:100, step:1,   def:76,   u:"%"  },
+    { g:"mask",   k:"soft",   l:"line softness", min:0,   max:100, step:1,   def:92,   u:"%"  },
+    { g:"mask",   k:"triad",  l:"triad width",   min:1.5, max:15,  step:.5,  def:3,    u:"px" },
+    { g:"mask",   k:"grille", l:"mask strength", min:0,   max:1,   step:.02, def:.38,  u:""   },
+    { g:"beam",   k:"bright", l:"beam boost",    min:1,   max:3,   step:.05, def:1.85, u:"×"  },
+    { g:"beam",   k:"sat",    l:"saturation",    min:.4,  max:2.2, step:.05, def:1.15, u:"×"  },
+    { g:"optics", k:"bloom",  l:"bloom",         min:0,   max:12,  step:.25, def:3.5,  u:"px" },
+    { g:"optics", k:"smear",  l:"h smear",       min:0,   max:4,   step:.05, def:.5,   u:"px" },
+    { g:"optics", k:"conv",   l:"convergence",   min:0,   max:4,   step:.05, def:0,    u:"px" },
+    { g:"tube",   k:"vig",    l:"tube falloff",  min:0,   max:1,   step:.02, def:.62,  u:""   },
+    { g:"tube",   k:"roll",   l:"roll period",   min:1,   max:24,  step:.5,  def:7,    u:"s"  }
+  ];
+
+  const root    = document.documentElement;
+  const body    = document.getElementById("panelBody");
+  const stateEl = document.getElementById("state");
+  const panel   = document.getElementById("panel");
+  const el      = id => document.getElementById(id);
+  const inputs  = {};
+
+  // svg primitive attributes are the expensive writes — every referencing
+  // element re-renders. coalesce them to one write per frame.
+  const pendingSvg = new Map();
+  let svgQueued = false;
+  function writeSvg(node, attr, value) {
+    pendingSvg.set(node.id + "|" + attr, [node, attr, value]);
+    if (svgQueued) return;
+    svgQueued = true;
+    requestAnimationFrame(() => {
+      for (const [node, attr, value] of pendingSvg.values()) node.setAttribute(attr, value);
+      pendingSvg.clear();
+      svgQueued = false;
+    });
   }
+
+  function apply(k, v) {
+    switch (k) {
+      case "pitch":  root.style.setProperty("--pitch", v + "px"); break;
+      case "triad":  root.style.setProperty("--triad", v + "px"); break;
+      case "roll":   root.style.setProperty("--roll",  v + "s");  break;
+      case "depth":  root.style.setProperty("--depth", v); break;
+      case "grille": root.style.setProperty("--grille", v); break;
+      case "bright": root.style.setProperty("--bright", v); break;
+      case "sat":    root.style.setProperty("--sat", v); break;
+      case "vig":    root.style.setProperty("--vig", v); break;
+      // softness reshapes the gradient: a wide hard band at 0, a narrow
+      // feathered one at 100. p1..p3 are fractions of the pitch.
+      case "soft": {
+        const s = v / 100;
+        const half = .05 + (1 - s) * .25;
+        const p2 = .62 - half, p3 = .62 + half;
+        root.style.setProperty("--p1", Math.max(0, p2 - s * .30).toFixed(3));
+        root.style.setProperty("--p2", p2.toFixed(3));
+        root.style.setProperty("--p3", p3.toFixed(3));
+        break;
+      }
+      case "bloom":
+        writeSvg(el("bloomA"), "stdDeviation", v);
+        writeSvg(el("bloomB"), "stdDeviation", v);
+        break;
+      case "smear":
+        writeSvg(el("smearA"), "stdDeviation", v + " 0");
+        writeSvg(el("smearB"), "stdDeviation", v + " 0");
+        break;
+      case "conv":
+        // at zero, drop to the filter without the channel-split chain
+        document.body.toggleAttribute("data-conv", v > 0);
+        writeSvg(el("convR"), "dx", -v);
+        writeSvg(el("convB"), "dx", v);
+        break;
+    }
+  }
+
+  function render(p, v) {
+    inputs[p.k].input.value = v;
+    inputs[p.k].out.textContent = (p.step < 1 ? (+v).toFixed(2).replace(/\.?0+$/, "") : v) + p.u;
+  }
+
+  // build the panel
+  let lastGroup = null;
+  for (const p of PARAMS) {
+    if (p.g !== lastGroup) {
+      const h = document.createElement("div");
+      h.className = "group";
+      h.textContent = p.g;
+      body.appendChild(h);
+      lastGroup = p.g;
+    }
+    const wrap = document.createElement("div");
+    wrap.className = "ctrl";
+    wrap.innerHTML =
+      '<div class="row"><label for="c_' + p.k + '">' + p.l + '</label><output></output></div>' +
+      '<input id="c_' + p.k + '" type="range" min="' + p.min + '" max="' + p.max +
+      '" step="' + p.step + '" value="' + p.def + '">';
+    body.appendChild(wrap);
+
+    const input = wrap.querySelector("input");
+    inputs[p.k] = { input, out: wrap.querySelector("output") };
+    input.addEventListener("input", () => { apply(p.k, +input.value); render(p, +input.value); });
+
+    apply(p.k, p.def);
+    render(p, p.def);
+  }
+
+  document.getElementById("reset").addEventListener("click", () => {
+    for (const p of PARAMS) { apply(p.k, p.def); render(p, p.def); }
+  });
+
+  document.getElementById("fold").addEventListener("click", (e) => {
+    const folded = panel.toggleAttribute("data-folded");
+    e.target.textContent = folded ? "show" : "hide";
+    e.target.setAttribute("aria-expanded", String(!folded));
+  });
 
   // the button only: on a scrolling page, click-anywhere fires on stray
   // clicks and text selection, and space/arrows belong to the scroller
-  stateEl.addEventListener("click", toggle);
+  stateEl.addEventListener("click", () => {
+    const on = document.body.toggleAttribute("data-crt");
+    stateEl.textContent = on ? "crt on" : "crt off";
+  });
 </script>
 </body>
 </html>
