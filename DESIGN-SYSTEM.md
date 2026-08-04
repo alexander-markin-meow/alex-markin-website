@@ -21,7 +21,7 @@ every visual decision below is deliberate.
 | `--muted` | `#847e70` | descriptions, taglines, secondary text |
 | `--faint` | `#66614f` | mono tags, metadata |
 | `--footnote` | `#5c574a` | footer text |
-| `--accent` | `#7d8f5c` | olive. section headings and the header meta line ONLY. never for body text or backgrounds |
+| `--accent` | `#7d8f5c` | olive. section headings and compact meta/subheader lines ONLY. never for body text or backgrounds |
 | `--hairline` | `#35322a` | dotted leader lines |
 | `--rule` | `#24221d` | solid horizontal rules |
 | `--border` | `#2a2822` | 1px borders on images and chips |
@@ -30,7 +30,7 @@ every visual decision below is deliberate.
 Rules:
 - The palette is warm grey on black plus one olive accent. Do not introduce new hues.
 - Need a new shade? Stay between `--footnote` and `--ink-bright` on the same warm axis.
-- Accent is scarce by design — if more than headings + meta line are olive, it's wrong.
+- Accent is scarce by design — if more than headings + compact meta lines are olive, it's wrong.
 
 ## type tokens
 
@@ -54,13 +54,11 @@ Scale (don't invent sizes; pick the closest):
   12px bottom padding mirrors the footer's 12px divider-to-text spacing.
 - `.page--narrow`: max-width 780px with the same padding and mobile behaviour. Use it for
   a single reading or catalogue column that should not stretch across a wide display.
-- The identity header keeps its side-by-side desktop layout, then centers the portrait,
-  name, tagline, and meta line as one stacked block at 640px and below.
+- On the homepage and cv, the identity header keeps its side-by-side desktop layout, then
+  centers the portrait, name, tagline, and meta line as one stacked block at 640px and below.
 - `.columns`: CSS grid, `repeat(auto-fit, minmax(340px, 1fr))`, gap 44px 64px.
   Columns collapse to a single stack below ~750px automatically — no media query needed.
-  The identity header is the first item in the left `.stack`, so the right column begins level
-  with it on desktop while the one-column reading order remains unchanged. New sections go
-  inside `.columns` as another `<section>`; the grid handles placement.
+  New sections go inside `.columns` as another `<section>`; the grid handles placement.
 - Spacing rhythm: 48px between major blocks, 14px after headings, 8px between list rows,
   18px between publication entries.
 
@@ -91,9 +89,10 @@ The signature pattern. Title left, dotted line fills the middle, lowercase mono 
 ```
 Inline links inside `.desc` render in `--accent`.
 
-### home link (pages other than `/`)
-On any page but the homepage, the portrait and the name link back to `/`. This is the
-only navigation a subpage gets — no nav bar, no back link in the body.
+### identity header (`/` and `/cv` only)
+The portrait-and-name identity block belongs only on the homepage and cv. On the cv, the
+portrait and name link back to `/`. Product and catalogue pages omit the identity block and
+use the footer's `alex-markin.com` link as their route home.
 
 ```html
 <a class="photo-link" href="/"><img class="photo" src="photo.jpg" alt="…" /></a>
@@ -204,9 +203,9 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
-- `/louppe/` → `louppe/index.html` — a compact landing page for the louppe app. It keeps
-  the standard identity header, uses the two-column shell for its pitch, actions, features,
-  and demo, and links the homepage project entry here rather than straight to GitHub.
+- `/louppe/` → `louppe/index.html` — a compact landing page for the louppe app. Louppe is
+  the page's sole identity; the two-column shell holds its pitch, actions, features, and demo,
+  and the homepage project entry links here rather than straight to GitHub.
 - `/trials/` → `trials/index.html` — a standalone, one-column catalogue of interactive
   webdesign experiments. It omits the portrait and personal identity block so the trials
   remain the page's only subject. It uses the narrow page shell, one muted explanatory line,
@@ -244,8 +243,9 @@ instead, and bump its `?v=` alongside the stylesheet's.
 `copy as markdown` walks the live semantic HTML, so a new page is handled automatically
 provided it uses the documented patterns. It reads a row's right-hand annotation from
 either `.tag` or `.dates`, renders `.notes` as nested bullets, and picks up a
-`section > .tagline` or `section > .desc` as prose. A product section may use `.name`
-instead of `.heading` for its display-sized subject; the copier recognizes either.
+`section > .tagline`, `section > .meta`, or `section > .desc` as prose. A product
+section may use `.name` instead of `.heading` for its display-sized subject; the copier
+recognizes either.
 
 Immersive experiments are the exception: their shared panel construction lives in
 `trials/_shared/trial-ui.js`, which is never loaded by standard site pages.
@@ -254,8 +254,8 @@ Immersive experiments are the exception: their shared panel construction lives i
 
 1. Copy `index.html`'s `<head>` (fonts + `styles.css`) and `.page` shell, and load
    `site.js` at the end of `<body>`.
-2. Reuse `.intro` / `.columns` / `.heading` / `.row` patterns — do not write new CSS
-   unless a pattern is genuinely missing.
+2. Reuse `.columns` / `.heading` / `.row` patterns, and `.intro` only for identity pages —
+   do not write new CSS unless a pattern is genuinely missing.
 3. If a new pattern is needed: build it from tokens only, add it to `styles.css` under a
    commented section, and document it in this file.
 4. Keep every page's footer format identical.

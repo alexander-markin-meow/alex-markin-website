@@ -122,7 +122,7 @@
     function pageMarkdown() {
       var lines = [];
       var intro = document.querySelector(".intro");
-      var title = intro && intro.querySelector(".name");
+      var title = intro ? intro.querySelector(".name") : document.querySelector(".columns h1");
       var tagline = intro && intro.querySelector(".tagline");
       var meta = intro && intro.querySelector(".meta");
 
@@ -139,7 +139,7 @@
         // for their subject instead of the smaller machine-voice heading.
         var heading = section.querySelector(".heading, .name");
         if (!heading) return;
-        lines.push("", "## " + heading.textContent.trim(), "");
+        if (heading !== title) lines.push("", "## " + heading.textContent.trim(), "");
 
         var flickrPhoto = section.querySelector("[data-flickr-photo]");
         var flickrPhotoLink = section.querySelector("[data-flickr-photo-link]");
@@ -151,7 +151,7 @@
         }
 
         // standalone prose (e.g. the cv profile) has no list to walk
-        section.querySelectorAll(":scope > .tagline, :scope > .desc").forEach(function (prose) {
+        section.querySelectorAll(":scope > .tagline, :scope > .meta, :scope > .desc").forEach(function (prose) {
           push(lines, "", inlineMarkdown(prose));
         });
 
