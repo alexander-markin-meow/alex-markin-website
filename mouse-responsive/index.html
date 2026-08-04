@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>mouse responsive — Webdesign Trials</title>
-<meta name="description" content="A field of dashes that turns to plus signs around the pointer.">
+<meta name="description" content="A tunable field of dashes that turns to plus signs around the pointer.">
 <style>
   :root {
     color-scheme: dark;
@@ -27,10 +27,12 @@
     overflow: hidden;
   }
   /* the field carries its own pointer, so hide the real one — but only where
-     there is a real one to hide */
+     there is a real one to hide, and never over the panel, where you need it */
   @media (hover: hover) and (pointer: fine) {
-    body { cursor: none; }
-    .chrome a { cursor: none; }
+    body, .chrome a { cursor: none; }
+    .panel, .panel * { cursor: auto; }
+    .panel input, .panel button { cursor: pointer; }
+    .panel input[type=text] { cursor: text; }
   }
 
   #field {
@@ -82,6 +84,96 @@
   @media (max-width: 34rem) {
     .hint { display: none; }
   }
+
+  /* --- the panel --- */
+  .panel {
+    position: fixed;
+    z-index: 10;
+    right: 1rem;
+    bottom: 1rem;
+    width: 16.5rem;
+    max-height: min(78vh, 40rem);
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,.93);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .02em;
+    text-transform: lowercase;
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .6rem .7rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .panel-head .title { flex: 1; color: var(--accent); }
+  .panel button {
+    appearance: none;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--muted);
+    font: inherit;
+    padding: .18rem .45rem;
+  }
+  .panel button:hover { color: var(--accent); border-color: var(--accent); }
+  .panel-body { overflow-y: auto; padding: .5rem .7rem .8rem; }
+  .panel[data-folded] .panel-body { display: none; }
+  .group {
+    color: var(--muted);
+    opacity: .65;
+    margin: .7rem 0 .35rem;
+    letter-spacing: .14em;
+  }
+  .group:first-child { margin-top: .2rem; }
+  .ctrl { margin-bottom: .55rem; }
+  .ctrl .row {
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+    align-items: center;
+    color: var(--fg);
+  }
+  .ctrl output { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .ctrl input[type=text] {
+    width: 3.2rem;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--accent);
+    font: inherit;
+    text-align: center;
+    padding: .15rem 0;
+    text-transform: none;
+  }
+  .ctrl input[type=text]:focus { outline: 1px solid var(--accent); }
+  .ctrl input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 1rem;
+    margin: .1rem 0 0;
+    background: none;
+  }
+  .ctrl input[type=range]::-webkit-slider-runnable-track { height: 1px; background: var(--line); }
+  .ctrl input[type=range]::-moz-range-track { height: 1px; background: var(--line); }
+  .ctrl input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 9px; height: 9px; margin-top: -4px;
+    border-radius: 50%; background: var(--accent);
+  }
+  .ctrl input[type=range]::-moz-range-thumb {
+    width: 9px; height: 9px; border: 0;
+    border-radius: 50%; background: var(--accent);
+  }
+  @media (max-width: 46rem) {
+    .panel { right: .75rem; left: .75rem; bottom: .75rem; width: auto; max-height: 45vh; }
+  }
 </style>
 </head>
 <body>
@@ -95,25 +187,57 @@
     <div class="bottom">
       <div>
         <h1>glyph field</h1>
-        <p class="note" id="note">24px grid of dashes. inside 170px of the pointer they become plus signs, brightening toward the centre.</p>
+        <p class="note">a grid of dashes that becomes plus signs inside the pointer's reach, warming toward the centre. the panel holds every number — including both glyphs, so the pair is yours to pick.</p>
       </div>
       <span class="hint">move the pointer</span>
     </div>
   </div>
 
+  <aside class="panel" id="panel">
+    <div class="panel-head">
+      <span class="title">field</span>
+      <button id="reset" type="button">reset</button>
+      <button id="fold" type="button" aria-expanded="true">hide</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+  </aside>
+
 <script>
 (() => {
-  const CELL = 24;    // grid pitch, px
-  const FONT = 15;    // glyph size, px
-  const R    = 170;   // influence radius, px
+  // ---- parameters -------------------------------------------------------
+  const PARAMS = [
+    { g:"grid",    k:"cell",  l:"cell size",  min:10, max:60,  step:1,   def:24,  u:"px" },
+    { g:"grid",    k:"font",  l:"glyph size", min:5,  max:36,  step:1,   def:15,  u:"px" },
+    { g:"field",   k:"reach", l:"reach",      min:30, max:600, step:10,  def:170, u:"px" },
+    { g:"field",   k:"fall",  l:"falloff",    min:.4, max:4,   step:.1,  def:2,   u:""   },
+    { g:"field",   k:"rest",  l:"rest alpha", min:0,  max:.6,  step:.01, def:.15, u:""   },
+    { g:"field",   k:"peak",  l:"peak alpha", min:.2, max:1,   step:.02, def:1,   u:""   },
+    { g:"field",   k:"warm",  l:"warmth",     min:0,  max:1,   step:.02, def:1,   u:""   },
+    { g:"pointer", k:"ring",  l:"ring",       min:0,  max:.6,  step:.02, def:.16, u:""   }
+  ];
+  const GLYPHS = [
+    { k:"far",  l:"at rest",  def:"-" },
+    { k:"near", l:"in reach", def:"+" }
+  ];
 
+  const CFG = {};
+  for (const p of PARAMS) CFG[p.k] = p.def;
+  for (const g of GLYPHS) CFG[g.k] = g.def;
+
+  const REST_RGB = [240, 238, 232];   // the dash colour, matches --fg
+  const NEAR_RGB = [224, 121, 79];    // the accent it warms toward
+
+  // ---- canvas -----------------------------------------------------------
   const canvas = document.getElementById("field");
   const ctx = canvas.getContext("2d");
+  const monoStack = getComputedStyle(document.documentElement).getPropertyValue("--mono");
 
   let w = 0, h = 0, dpr = 1;
-  let px = -1e4, py = -1e4;       // current pointer
-  let lastX = -1e4, lastY = -1e4; // where we last painted, for the dirty rect
-  let queued = false;
+  let px = -1e4, py = -1e4;         // current pointer
+  let lastX = -1e4, lastY = -1e4;   // where we last painted, for the dirty rect
+  let moveQueued = false, fullQueued = false;
+
+  function setFont() { ctx.font = CFG.font + "px " + monoStack; ctx.textAlign = "center"; ctx.textBaseline = "middle"; }
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -122,43 +246,42 @@
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.font = FONT + "px " + getComputedStyle(document.documentElement).getPropertyValue("--mono");
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    setFont();
     if (px < -1e3) { px = w / 2; py = h / 2; }   // sit in the middle until the pointer arrives
-    paint(0, 0, w, h);
-    lastX = px; lastY = py;
+    full();
   }
 
   // paint every cell the given rect touches. the clear is snapped out to whole
   // cells first: clearing the raw rect would leave the fringe cells getting a
   // second, additive pass, which paints a brighter trail behind the pointer.
   function paint(x0, y0, x1, y1) {
-    const c0 = Math.max(0, Math.floor(x0 / CELL));
-    const c1 = Math.min(Math.floor(w / CELL), Math.ceil(x1 / CELL));
-    const r0 = Math.max(0, Math.floor(y0 / CELL));
-    const r1 = Math.min(Math.floor(h / CELL), Math.ceil(y1 / CELL));
-    ctx.clearRect(c0 * CELL, r0 * CELL, (c1 - c0 + 1) * CELL, (r1 - r0 + 1) * CELL);
+    const cell = CFG.cell, R = CFG.reach;
+    const c0 = Math.max(0, Math.floor(x0 / cell));
+    const c1 = Math.min(Math.floor(w / cell), Math.ceil(x1 / cell));
+    const r0 = Math.max(0, Math.floor(y0 / cell));
+    const r1 = Math.min(Math.floor(h / cell), Math.ceil(y1 / cell));
+    ctx.clearRect(c0 * cell, r0 * cell, (c1 - c0 + 1) * cell, (r1 - r0 + 1) * cell);
 
+    const restStyle = "rgba(" + REST_RGB.join(",") + "," + CFG.rest + ")";
     for (let r = r0; r <= r1; r++) {
-      const cy = r * CELL + CELL / 2;
+      const cy = r * cell + cell / 2;
       for (let c = c0; c <= c1; c++) {
-        const cx = c * CELL + CELL / 2;
+        const cx = c * cell + cell / 2;
         const dx = cx - px, dy = cy - py;
         const d = Math.sqrt(dx * dx + dy * dy);
         if (d > R) {
-          ctx.fillStyle = "rgba(240,238,232,.15)";
-          ctx.fillText("-", cx, cy);
+          ctx.fillStyle = restStyle;
+          ctx.fillText(CFG.far, cx, cy);
         } else {
-          // ease so the edge of the field is soft rather than a hard disc
-          const t = 1 - d / R;
-          const e = t * t;
+          // ease so the edge of the field dissolves instead of ending on a disc
+          const e = Math.pow(1 - d / R, CFG.fall) * 1;
+          const m = e * CFG.warm;
           ctx.fillStyle = "rgba(" +
-            Math.round(240 + (224 - 240) * e) + "," +
-            Math.round(238 + (121 - 238) * e) + "," +
-            Math.round(232 + (79 - 232) * e) + "," +
-            (0.22 + 0.78 * e).toFixed(3) + ")";
-          ctx.fillText("+", cx, cy);
+            Math.round(REST_RGB[0] + (NEAR_RGB[0] - REST_RGB[0]) * m) + "," +
+            Math.round(REST_RGB[1] + (NEAR_RGB[1] - REST_RGB[1]) * m) + "," +
+            Math.round(REST_RGB[2] + (NEAR_RGB[2] - REST_RGB[2]) * m) + "," +
+            (CFG.rest + (CFG.peak - CFG.rest) * e).toFixed(3) + ")";
+          ctx.fillText(CFG.near, cx, cy);
         }
       }
     }
@@ -166,45 +289,140 @@
 
   // the pointer: the ring shows the reach, the crosshair marks the exact spot
   function drawPointer() {
-    ctx.beginPath();
-    ctx.arc(px, py, R, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(224,121,79,.16)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
+    if (CFG.ring > 0) {
+      ctx.beginPath();
+      ctx.arc(px, py, CFG.reach, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(224,121,79," + CFG.ring + ")";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
     ctx.beginPath();
     ctx.moveTo(px - 9, py); ctx.lineTo(px - 3, py);
     ctx.moveTo(px + 3, py); ctx.lineTo(px + 9, py);
     ctx.moveTo(px, py - 9); ctx.lineTo(px, py - 3);
     ctx.moveTo(px, py + 3); ctx.lineTo(px, py + 9);
     ctx.strokeStyle = "rgba(224,121,79,.9)";
+    ctx.lineWidth = 1;
     ctx.stroke();
   }
 
-  // only repaint the union of where the field was and where it is now —
-  // roughly 400 cells a frame instead of the whole grid
+  // only repaint the union of where the field was and where it is now
   function flush() {
-    queued = false;
-    const pad = R + CELL * 2;
-    const x0 = Math.max(0, Math.min(px, lastX) - pad);
-    const y0 = Math.max(0, Math.min(py, lastY) - pad);
-    const x1 = Math.min(w, Math.max(px, lastX) + pad);
-    const y1 = Math.min(h, Math.max(py, lastY) + pad);
-    paint(x0, y0, x1, y1);
+    moveQueued = false;
+    const pad = CFG.reach + CFG.cell * 2;
+    paint(Math.max(0, Math.min(px, lastX) - pad), Math.max(0, Math.min(py, lastY) - pad),
+          Math.min(w, Math.max(px, lastX) + pad), Math.min(h, Math.max(py, lastY) + pad));
     drawPointer();
     lastX = px; lastY = py;
   }
 
+  // a parameter changed, so the whole grid is stale
+  function full() {
+    fullQueued = false;
+    paint(0, 0, w, h);
+    drawPointer();
+    lastX = px; lastY = py;
+  }
+  function scheduleFull() {
+    if (fullQueued) return;
+    fullQueued = true;
+    requestAnimationFrame(full);
+  }
+
   function move(e) {
     px = e.clientX; py = e.clientY;
-    if (!queued) { queued = true; requestAnimationFrame(flush); }
+    if (!moveQueued) { moveQueued = true; requestAnimationFrame(flush); }
   }
+
+  // ---- panel ------------------------------------------------------------
+  const body = document.getElementById("panelBody");
+  const panel = document.getElementById("panel");
+  const ui = {};
+  let lastGroup = null;
+
+  const fmt = (p, v) => (p.step < 1 ? (+v).toFixed(2).replace(/\.?0+$/, "") : v) + p.u;
+
+  for (const p of PARAMS) {
+    if (p.g !== lastGroup) {
+      const head = document.createElement("div");
+      head.className = "group";
+      head.textContent = p.g;
+      body.appendChild(head);
+      lastGroup = p.g;
+    }
+    const wrap = document.createElement("div");
+    wrap.className = "ctrl";
+    wrap.innerHTML =
+      '<div class="row"><label for="c_' + p.k + '">' + p.l + '</label><output></output></div>' +
+      '<input id="c_' + p.k + '" type="range" autocomplete="off" min="' + p.min + '" max="' + p.max +
+      '" step="' + p.step + '" value="' + p.def + '">';
+    body.appendChild(wrap);
+
+    const input = wrap.querySelector("input");
+    const out = wrap.querySelector("output");
+    ui[p.k] = { input, out, p };
+    out.textContent = fmt(p, p.def);
+    input.addEventListener("input", () => {
+      CFG[p.k] = +input.value;
+      out.textContent = fmt(p, +input.value);
+      if (p.k === "font") setFont();
+      scheduleFull();
+    });
+  }
+
+  const glyphHead = document.createElement("div");
+  glyphHead.className = "group";
+  glyphHead.textContent = "glyphs";
+  body.appendChild(glyphHead);
+
+  for (const g of GLYPHS) {
+    const wrap = document.createElement("div");
+    wrap.className = "ctrl";
+    wrap.innerHTML =
+      '<div class="row"><label for="c_' + g.k + '">' + g.l + '</label>' +
+      '<input id="c_' + g.k + '" type="text" autocomplete="off" maxlength="2" value="' + g.def + '"></div>';
+    body.appendChild(wrap);
+
+    const input = wrap.querySelector("input");
+    ui[g.k] = { input, g };
+    input.addEventListener("input", () => {
+      CFG[g.k] = input.value === "" ? " " : input.value;
+      scheduleFull();
+    });
+  }
+
+  // push CFG back into the widgets. browsers restore form state on reload and
+  // bfcache, which would otherwise leave the sliders showing one thing while
+  // the field is drawn from another.
+  function syncUI() {
+    for (const p of PARAMS) {
+      ui[p.k].input.value = CFG[p.k];
+      ui[p.k].out.textContent = fmt(p, CFG[p.k]);
+    }
+    for (const g of GLYPHS) ui[g.k].input.value = CFG[g.k];
+  }
+
+  document.getElementById("reset").addEventListener("click", () => {
+    for (const p of PARAMS) CFG[p.k] = p.def;
+    for (const g of GLYPHS) CFG[g.k] = g.def;
+    syncUI();
+    setFont();
+    scheduleFull();
+  });
+
+  window.addEventListener("pageshow", syncUI);
+
+  document.getElementById("fold").addEventListener("click", (e) => {
+    const folded = panel.toggleAttribute("data-folded");
+    e.target.textContent = folded ? "show" : "hide";
+    e.target.setAttribute("aria-expanded", String(!folded));
+  });
 
   window.addEventListener("pointermove", move, { passive: true });
   window.addEventListener("pointerdown", move, { passive: true });
   window.addEventListener("resize", resize);
+  syncUI();
   resize();
-  drawPointer();
 })();
 </script>
 </body>
