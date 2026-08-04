@@ -1,11 +1,12 @@
 :root {
   color-scheme: dark;
   --bg: #000000;
-  --fg: #f0eee8;
-  --muted: #7d7b73;
-  --line: #262624;
-  --accent: #e0794f;
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Courier New", monospace;
+  --fg: #ccc6b9;
+  --muted: #847e70;
+  --line: #2a2822;
+  --accent: #7d8f5c;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -14,16 +15,19 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font: 18px/1.65 "Times New Roman", Times, serif;
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.55;
   text-transform: lowercase;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .back {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: .85rem;
-  letter-spacing: .06em;
+  font-size: 11.5px;
+  letter-spacing: .08em;
   text-decoration: none;
 }
 
@@ -33,16 +37,17 @@ body {
   margin: 0;
   color: var(--accent);
   font-family: var(--mono);
-  font-size: clamp(1.5rem, 5vw, 2.5rem);
-  font-weight: 400;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
 }
 
 .note {
   max-width: var(--note-width, 34rem);
   margin: .35rem 0 0;
   color: var(--muted);
+  font-size: 14.5px;
 }
 
 .panel {
@@ -55,10 +60,10 @@ body {
   max-height: min(78vh, 40rem);
   flex-direction: column;
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: 2px;
   background: rgba(0, 0, 0, .93);
   font-family: var(--mono);
-  font-size: .7rem;
+  font-size: 11px;
   letter-spacing: .02em;
   text-transform: lowercase;
 }
@@ -198,6 +203,8 @@ body {
 }
 
 @media (max-width: 46rem) {
+  .trial-heading { font-size: 32px; }
+
   .panel {
     right: .75rem;
     bottom: .75rem;

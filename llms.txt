@@ -8,6 +8,7 @@
 
 ## selected work
 
+- [webdesign trials](https://alex-markin.com/trials/): interactive studies in texture, motion, display effects, and pointer response
 - [louppe app](https://github.com/alexander-markin-meow/louppe): fast, keyboard-driven mac app for culling photos
 - [new york times summer reading contest winner](https://www.nytimes.com/2025/06/24/learning/the-authoritarian-playbook-is-always-the-same-the-week-1-winner-of-our-summer-reading-contest.html): “the authoritarian playbook is always the same”
 - [podcast on russian colonialism](https://youtu.be/SKE0fzSEpo8): video editing for radio echo
