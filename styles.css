@@ -14,7 +14,7 @@
   --muted:     #847e70;  /* descriptions, taglines, secondary text */
   --faint:     #66614f;  /* mono tags, metadata */
   --footnote:  #5c574a;  /* footer text */
-  --accent:    #7d8f5c;  /* olive — section headings only */
+  --accent:    #7d8f5c;  /* olive — headings and compact meta lines only */
   --hairline:  #35322a;  /* dotted leader lines */
   --rule:      #24221d;  /* solid horizontal rules (footer) */
   --border:    #2a2822;  /* borders on images / counter chip */
@@ -314,23 +314,6 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
   border-radius: var(--radius);
   filter: grayscale(0.25);
   background: var(--chip-bg);
-}
-
-/* Media slot for project pages whose screenshot or demo is not published yet.
-   Replace the placeholder element with the real image while keeping the
-   standard content-image treatment above. */
-.demo-placeholder {
-  display: grid;
-  place-items: center;
-  min-height: 180px;
-  padding: 24px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--chip-bg);
-  color: var(--faint);
-  font-family: var(--mono);
-  font-size: var(--fs-tag);
-  text-align: center;
 }
 
 /* --------------------------------------------------------------------------

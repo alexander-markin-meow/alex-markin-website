@@ -203,9 +203,8 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
-- `/louppe/` → `louppe/index.html` — a compact landing page for the louppe app. Louppe is
-  the page's sole identity; the two-column shell holds its pitch, actions, features, and demo,
-  and the homepage project entry links here rather than straight to GitHub.
+- `/louppe/` → `louppe/index.html` — legacy redirect to the standalone louppe site at
+  `https://louppe.eu/`. The homepage project entry links directly to the new domain.
 - `/trials/` → `trials/index.html` — a standalone, one-column catalogue of interactive
   webdesign experiments. It omits the portrait and personal identity block so the trials
   remain the page's only subject. It uses the narrow page shell, one muted explanatory line,
@@ -259,10 +258,6 @@ Immersive experiments are the exception: their shared panel construction lives i
 3. If a new pattern is needed: build it from tokens only, add it to `styles.css` under a
    commented section, and document it in this file.
 4. Keep every page's footer format identical.
-
-Until a project demo asset is ready, use `.demo-placeholder` for its media slot. It uses
-only the standard image border, inset background, mono annotation voice, and existing type
-scale. Replace the element with the real content image rather than preserving the placeholder.
 
 ## cache-busting
 

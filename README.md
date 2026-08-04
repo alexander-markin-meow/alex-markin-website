@@ -4,7 +4,7 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 
 ## Files
 - `index.html` — page content and structure
-- `louppe/` — landing page for the louppe photo and video culling app
+- `louppe/` — legacy redirect to the standalone site at `louppe.eu`
 - `trials/` — the site-native trials index and immersive webdesign experiments
 - `styles.css` — all styling; everything derives from the tokens at the top
 - `robots.txt` — crawler permissions and sitemap discovery
