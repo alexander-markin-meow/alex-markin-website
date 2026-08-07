@@ -219,9 +219,11 @@ Five appearances have equal default probability:
 - `blobs` — bold system-sans display and body type over 2–3 diffuse color fields. Every blob
   has a seeded `0.45–0.85` scroll-speed multiplier. Movement is transform-only and becomes
   static under `prefers-reduced-motion`.
-- `crt` — IBM Plex Mono throughout at 500–600 weight, with bounded green, amber, or icy-blue
-  phosphor, bloom, scanlines, vignette, grain, width, and type scale. Never add flicker or text
-  displacement.
+- `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
+  `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
+  tube vignette, beam boost, saturation, bloom, horizontal smear, and optional convergence.
+  Every setting is seed-bounded for homepage readability; reduced motion removes the rolling
+  band. Never add flicker or text displacement.
 - `terminal` — IBM Plex Mono throughout at 400–500 weight, with quiet prompt prefixes, solid
   leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
 

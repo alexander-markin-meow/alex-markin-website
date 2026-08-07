@@ -114,10 +114,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
   <!-- Compose the homepage edition before CSS paints, preventing a theme flash. -->
-  <script src="appearance.js?v=20260807-2"></script>
+  <script src="appearance.js?v=20260807-3"></script>
   <!-- bump ?v= whenever styles.css changes so caches fetch it fresh -->
   <link rel="stylesheet" href="styles.css?v=20260807-1" />
-  <link rel="stylesheet" href="appearances.css?v=20260807-2" />
+  <link rel="stylesheet" href="appearances.css?v=20260807-3" />
 </head>
 <body>
   <div class="appearance-backdrop" aria-hidden="true">
@@ -125,6 +125,39 @@
     <span class="appearance-blob" data-parallax-blob></span>
     <span class="appearance-blob" data-parallax-blob></span>
   </div>
+
+  <!-- The same phosphor optics used by /trials/scanline/. The seeded CRT
+       appearance updates blur, smear, and convergence attributes on load. -->
+  <svg class="appearance-defs" aria-hidden="true" focusable="false">
+    <filter id="appearance-crt-optics" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+      <feGaussianBlur id="appearance-crt-smear-a" in="SourceGraphic" stdDeviation="0.4 0" result="smear" />
+      <feGaussianBlur id="appearance-crt-bloom-a" in="SourceGraphic" stdDeviation="2.5" result="bloom" />
+      <feComponentTransfer in="bloom" result="glow"><feFuncA type="linear" slope=".65" /></feComponentTransfer>
+      <feMerge><feMergeNode in="glow" /><feMergeNode in="smear" /></feMerge>
+    </filter>
+    <filter id="appearance-crt-optics-x" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" result="red" type="matrix"
+        values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+      <feColorMatrix in="SourceGraphic" result="green" type="matrix"
+        values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+      <feColorMatrix in="SourceGraphic" result="blue" type="matrix"
+        values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+      <feOffset id="appearance-crt-conv-r" in="red" dx="-0.3" result="red-offset" />
+      <feOffset id="appearance-crt-conv-b" in="blue" dx="0.3" result="blue-offset" />
+      <feBlend in="red-offset" in2="green" mode="screen" result="red-green" />
+      <feBlend in="red-green" in2="blue-offset" mode="screen" result="converged" />
+      <feGaussianBlur id="appearance-crt-smear-b" in="converged" stdDeviation="0.4 0" result="smear" />
+      <feGaussianBlur id="appearance-crt-bloom-b" in="converged" stdDeviation="2.5" result="bloom" />
+      <feComponentTransfer in="bloom" result="glow"><feFuncA type="linear" slope=".65" /></feComponentTransfer>
+      <feMerge><feMergeNode in="glow" /><feMergeNode in="smear" /></feMerge>
+    </filter>
+  </svg>
+
+  <div class="crt-mask-layer crt-mask-lines" aria-hidden="true"></div>
+  <div class="crt-mask-layer crt-mask-grille" aria-hidden="true"></div>
+  <div class="crt-mask-layer crt-mask-roll" aria-hidden="true"></div>
+  <div class="crt-mask-layer crt-mask-tube" aria-hidden="true"></div>
+
   <main class="page">
     <div class="columns">
       <div class="stack">

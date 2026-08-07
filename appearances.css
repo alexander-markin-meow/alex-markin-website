@@ -19,7 +19,17 @@ html[data-look] {
   --photo-contrast: 1;
   --grain-opacity: 0;
   --grain-blend: normal;
-  --scanline-opacity: 0;
+  --crt-pitch: 3.2px;
+  --crt-depth: 76;
+  --crt-p1: 0.27;
+  --crt-p2: 0.57;
+  --crt-p3: 0.67;
+  --crt-triad: 3px;
+  --crt-grille: 0.38;
+  --crt-bright: 1.85;
+  --crt-saturation: 1.15;
+  --crt-vignette: 0.62;
+  --crt-roll-period: 7s;
   min-height: 100%;
   background: var(--bg);
 }
@@ -270,8 +280,75 @@ html[data-blob-layout="scatter"] .appearance-blob:nth-child(2) { top: 55%; left:
 html[data-blob-layout="scatter"] .appearance-blob:nth-child(3) { top: 124%; right: -18%; }
 
 /* --------------------------------------------------------------------------
-   CRT — bolder mono phosphor, scanlines, glow, and a restrained vignette
+   CRT — the full /trials/scanline/ mask over the homepage signal
    -------------------------------------------------------------------------- */
+
+.appearance-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.crt-mask-layer {
+  display: none;
+  position: fixed;
+  z-index: 5;
+  inset: 0;
+  pointer-events: none;
+}
+
+html[data-look="crt"] .crt-mask-layer { display: block; }
+
+.crt-mask-lines {
+  mix-blend-mode: multiply;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #fff 0,
+    #fff calc(var(--crt-pitch) * var(--crt-p1)),
+    var(--crt-gap) calc(var(--crt-pitch) * var(--crt-p2)),
+    var(--crt-gap) calc(var(--crt-pitch) * var(--crt-p3)),
+    #fff var(--crt-pitch)
+  );
+}
+
+.crt-mask-grille {
+  mix-blend-mode: multiply;
+  opacity: var(--crt-grille);
+  background-image: repeating-linear-gradient(
+    to right,
+    #ff4d4d 0,
+    #ff4d4d calc(var(--crt-triad) / 3),
+    #4dff4d calc(var(--crt-triad) / 3),
+    #4dff4d calc(var(--crt-triad) / 3 * 2),
+    #4d4dff calc(var(--crt-triad) / 3 * 2),
+    #4d4dff var(--crt-triad)
+  );
+}
+
+.crt-mask-roll {
+  bottom: auto;
+  height: 26vh;
+  mix-blend-mode: screen;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(255 255 255 / 0.035) 55%,
+    rgb(255 255 255 / 0.06) 72%,
+    transparent
+  );
+  animation: appearance-crt-roll var(--crt-roll-period) linear infinite;
+  will-change: transform;
+}
+
+@keyframes appearance-crt-roll {
+  from { transform: translate3d(0, -30vh, 0); }
+  to { transform: translate3d(0, 105vh, 0); }
+}
+
+.crt-mask-tube {
+  background: radial-gradient(125% 105% at 50% 50%, transparent 52%, rgb(0 0 0 / var(--crt-vignette)) 100%);
+}
 
 html[data-look="crt"] body {
   --appearance-body-family: var(--mono);
@@ -281,18 +358,12 @@ html[data-look="crt"] body {
   --appearance-display-weight: 600;
   --appearance-body-weight: 500;
   --grain-blend: screen;
+  --crt-gap: color-mix(in srgb, #000 calc(var(--crt-depth) * 1%), #fff);
   text-shadow: 0 0 var(--crt-glow) currentColor;
 }
 
-html[data-look="crt"] body::after {
-  content: "";
-  position: fixed;
-  z-index: 3;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.38) 100%),
-    repeating-linear-gradient(to bottom, rgb(0 0 0 / var(--scanline-opacity)) 0 1px, transparent 1px 4px);
+html[data-look="crt"] .page {
+  filter: brightness(var(--crt-bright)) saturate(var(--crt-saturation));
 }
 
 html[data-look="crt"] .name {
@@ -313,7 +384,12 @@ html[data-look="crt"] :is(.desc, .tagline, .tag, .ago, .meta, .footer, .appearan
 
 html[data-look="crt"] :is(.photo, .flickr-photo-image) {
   border-radius: 0;
+  filter: url(#appearance-crt-optics) grayscale(var(--photo-gray)) sepia(var(--photo-sepia)) contrast(var(--photo-contrast));
   box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+html[data-look="crt"][data-crt-convergence="on"] :is(.photo, .flickr-photo-image) {
+  filter: url(#appearance-crt-optics-x) grayscale(var(--photo-gray)) sepia(var(--photo-sepia)) contrast(var(--photo-contrast));
 }
 
 html[data-look="crt"] :is(.copy-markdown, .appearance-option) { border-radius: 0; }
@@ -368,13 +444,10 @@ html[data-look="terminal"] :is(.photo, .flickr-photo-image, .copy-markdown, .app
     width: 92vw;
   }
 
-  html[data-look="crt"] body::after {
-    background:
-      radial-gradient(ellipse at center, transparent 62%, rgb(0 0 0 / 0.28) 100%),
-      repeating-linear-gradient(to bottom, rgb(0 0 0 / calc(var(--scanline-opacity) * 0.55)) 0 1px, transparent 1px 4px);
-  }
+  html[data-look="crt"] .crt-mask-grille { opacity: calc(var(--crt-grille) * 0.86); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .appearance-blob { will-change: auto; }
+  .crt-mask-roll { display: none !important; }
 }
