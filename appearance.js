@@ -97,6 +97,14 @@
     return vars;
   }
 
+  function imageVars(random, bounds) {
+    return {
+      "--image-contrast": range(random, bounds.contrast[0], bounds.contrast[1], 2),
+      "--image-brightness": range(random, bounds.brightness[0], bounds.brightness[1], 2),
+      "--image-opacity": range(random, bounds.opacity[0], bounds.opacity[1], 2)
+    };
+  }
+
   function enoColor(random, hue, contrast) {
     var adjustedHue = Math.round((hue + range(random, -8, 8, 0) + 360) % 360);
     var saturation = range(random, contrast === "light" ? 72 : 62, contrast === "light" ? 96 : 88, 0);
@@ -156,6 +164,9 @@
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
       edition.vars["--gap-row"] = pick(random, ["40px", "44px", "48px"]);
+      Object.assign(edition.vars, imageVars(random, {
+        contrast: [1.04, 1.16], brightness: [0.94, 1.06], opacity: [0.92, 0.98]
+      }));
     }
 
     if (look === "paper") {
@@ -177,6 +188,9 @@
       }));
       edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
       edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
+      Object.assign(edition.vars, imageVars(random, {
+        contrast: [1.1, 1.28], brightness: [0.98, 1.08], opacity: [0.86, 0.95]
+      }));
     }
 
     if (look === "blobs") {
@@ -233,6 +247,9 @@
       }, "--background-grain-opacity"));
       edition.attrs["data-blob-layout"] = pick(random, ["diagonal", "orbit", "horizon", "scatter"]);
       edition.attrs["data-blob-count"] = pick(random, ["3", "4", "4", "5"]);
+      Object.assign(edition.vars, imageVars(random, {
+        contrast: [0.96, 1.12], brightness: [0.94, 1.08], opacity: [0.88, 0.96]
+      }));
     }
 
     if (look === "eno") {
@@ -288,6 +305,9 @@
       }));
       edition.attrs["data-eno-composition"] = enoMode;
       edition.attrs["data-eno-contrast"] = enoContrast;
+      Object.assign(edition.vars, imageVars(random, {
+        contrast: [0.88, 1.06], brightness: [1.02, 1.16], opacity: [0.86, 0.95]
+      }));
     }
 
     if (look === "crt") {
@@ -323,6 +343,9 @@
         tile: [512, 640], frequency: [0.55, 0.9], octaves: [5, 6],
         contrast: [1.4, 2], brightness: [0.78, 1], opacity: [0.012, 0.024], rate: [380, 900]
       }));
+      Object.assign(edition.vars, imageVars(random, {
+        contrast: [1.1, 1.28], brightness: [0.92, 1.04], opacity: [0.9, 0.97]
+      }));
     }
 
     if (look === "terminal") {
@@ -343,6 +366,9 @@
         contrast: [1.35, 2.1], brightness: [0.72, 0.96], opacity: [0.024, 0.052], rate: [520, 1280]
       }));
       edition.attrs["data-terminal-prompt"] = pick(random, ["tilde", "dot", "chevron"]);
+      Object.assign(edition.vars, imageVars(random, {
+        contrast: [1.08, 1.24], brightness: [0.92, 1.04], opacity: [0.9, 0.97]
+      }));
     }
 
     return edition;

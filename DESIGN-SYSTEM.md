@@ -102,7 +102,13 @@ portrait and name link back to `/`. Product and catalogue pages omit the identit
 use the footer's `alex-markin.com` link as their route home.
 
 ```html
-<a class="photo-link" href="/"><img class="photo" src="photo.jpg" alt="…" /></a>
+<!-- generative homepage -->
+<span class="appearance-image appearance-image--portrait">
+  <img class="photo" src="photo.jpg?v=YYYYMMDD-N" alt="…" />
+</span>
+
+<!-- non-generative cv -->
+<a class="photo-link" href="/"><img class="photo" src="photo.jpg?v=YYYYMMDD-N" alt="…" /></a>
 <h1 class="name"><a href="/">alex markin</a></h1>
 ```
 
@@ -163,9 +169,11 @@ legible as clickable without drawing focus. It builds its output from the live s
 click time; do not add or maintain a separate Markdown copy of the page.
 
 ### images
-1px `--border`, 2px radius, slight `grayscale(0.25)`. The portrait is a 148px square
-(116px mobile), `object-position` tuned to the face. Content photos may be wider but keep
-the border + radius + grayscale treatment.
+Source photographs are black-and-white. On generative homepage images, wrap the `<img>` in
+`.appearance-image`; add `.appearance-image--portrait` to the identity portrait. The wrapper
+owns the standard 1px `--border`, 2px radius, and crop, while the image stays semantically real
+and source-resolution independent. The portrait remains a 148px square (116px mobile).
+Non-generative pages retain the standard slight `grayscale(0.25)` image treatment.
 
 ## web-1.0 flavor — the boundaries
 
@@ -286,9 +294,16 @@ paint through mobile safe areas, while page padding incorporates every safe-area
 remains clear of device controls. Keep stronger texture reduced on small screens and honor the
 visitor's motion preference.
 
-Images are invariant across appearances: retain the standard border, radius, grayscale, crop,
-and dimensions from `styles.css`. Whole-page overlays such as paper grain or the CRT mask may sit
-above them, but no appearance may apply an image-specific filter or geometry change.
+Image geometry is invariant across appearances: retain the standard border, radius, crop, and
+dimensions from `styles.css`. Color development is appearance-aware and operates non-destructively
+on the black-and-white source. Paper uses `multiply` over `--bg`, replacing photographic whites
+with the selected stock while the page grain prints across the image. Blob and Eno use
+`luminosity` against small internal versions of their moving light fields, so the same photograph
+inherits local light and hue as those fields change; Eno's three image-light states share the
+page's exact crossfade duration and phase. Simple, CRT, and terminal use `screen` over a restrained
+accent-tinted dark surface; the CRT mask remains above the result. Every edition seeds bounded
+contrast, brightness, and image opacity. Do not use per-file color edits or change image geometry
+for a look.
 
 ## pages
 
@@ -370,6 +385,8 @@ every immersive experiment page whenever either shared trial asset changes.
 
 The homepage additionally versions `appearance.js` and `appearances.css`. Bump each asset's
 own dated query whenever it changes; neither generative file belongs on the other pages.
+The shared profile photograph uses the same dated query in HTML, social metadata, and structured
+data; bump every occurrence together whenever `photo.jpg` is replaced.
 
 ## don'ts
 

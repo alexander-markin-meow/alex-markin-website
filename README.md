@@ -14,7 +14,8 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 - `DESIGN-SYSTEM.md` — the design source of truth: color/type tokens, layout, and the
   reusable patterns. Read this before any UI change.
 - `CLAUDE.md` — instructs any editor (human or LLM) to read `DESIGN-SYSTEM.md` first.
-- `photo.jpg` — portrait, a 148px square (116px on mobile) cropped to the face
+- `photo.jpg` — black-and-white portrait source; square-cropped in layout and developed by
+  the active homepage appearance (148px desktop, 116px mobile)
 - `favicon.svg`, `apple-touch-icon.png` — tab/home-screen icons
 - `CNAME` — custom domain config for GitHub Pages (contains `alex-markin.com`)
 

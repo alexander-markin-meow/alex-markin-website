@@ -14,6 +14,11 @@ html[data-look] {
   --appearance-body-size: 16px;
   --appearance-body-weight: 400;
   --appearance-line-height: 1.55;
+  --image-contrast: 1.08;
+  --image-brightness: 1;
+  --image-opacity: 0.96;
+  --image-surface: var(--chip-bg);
+  --image-blend-mode: screen;
   --grain-url: none;
   --grain-size: 320px;
   --grain-opacity: 0;
@@ -136,6 +141,120 @@ html[data-look] .leader {
 html[data-look] :is(.heading, .meta, .tag, .ago, .dates, .footer, .appearance-control),
 html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link)::after {
   font-family: var(--appearance-annotation-family);
+}
+
+/* --------------------------------------------------------------------------
+   appearance-aware photographs — one monochrome source, six light systems
+   -------------------------------------------------------------------------- */
+
+.appearance-image {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--image-surface);
+  isolation: isolate;
+  line-height: 0;
+}
+
+.appearance-image img {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  filter:
+    grayscale(1)
+    contrast(var(--image-contrast))
+    brightness(var(--image-brightness));
+  mix-blend-mode: var(--image-blend-mode);
+  opacity: var(--image-opacity);
+}
+
+.appearance-image--portrait {
+  flex: none;
+  width: 148px;
+  aspect-ratio: 1;
+}
+
+.appearance-image--portrait .photo {
+  width: 100%;
+  height: 100%;
+}
+
+.flickr-photo-link.appearance-image { margin-bottom: 8px; }
+
+html[data-look="simple"] {
+  --image-surface: color-mix(in srgb, var(--accent) 14%, var(--bg));
+  --image-blend-mode: screen;
+}
+
+html[data-look="paper"] {
+  --image-surface: var(--bg);
+  --image-blend-mode: multiply;
+}
+
+html[data-look="blobs"] {
+  --image-blend-mode: luminosity;
+}
+
+html[data-look="blobs"] .appearance-image {
+  background:
+    radial-gradient(circle at 20% 24%, var(--blob-1-color) 0%, transparent 58%),
+    radial-gradient(circle at 78% 30%, var(--blob-2-color) 0%, transparent 62%),
+    radial-gradient(circle at 46% 82%, var(--blob-3-color) 0%, transparent 64%),
+    var(--bg);
+  background-size: 145% 145%;
+  animation: appearance-image-blob-light 28s ease-in-out infinite alternate;
+}
+
+@keyframes appearance-image-blob-light {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 100%; }
+}
+
+html[data-look="eno"] {
+  --image-blend-mode: luminosity;
+}
+
+html[data-look="eno"] .appearance-image {
+  background: var(--eno-gradient-a) center / cover no-repeat;
+}
+
+html[data-look="eno"] .appearance-image::before,
+html[data-look="eno"] .appearance-image::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -8%;
+  pointer-events: none;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: blur(calc(var(--eno-softness) * 0.35)) saturate(var(--eno-saturation));
+}
+
+html[data-look="eno"] .appearance-image::before {
+  opacity: 0;
+  background-image: var(--eno-gradient-b);
+  animation: eno-lightbox-state-b var(--eno-cycle) ease-in-out var(--eno-phase) infinite;
+}
+
+html[data-look="eno"] .appearance-image::after {
+  opacity: 0;
+  background-image: var(--eno-gradient-c);
+  animation: eno-lightbox-state-c var(--eno-cycle) ease-in-out var(--eno-phase) infinite;
+}
+
+html[data-look="crt"] {
+  --image-surface: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  --image-blend-mode: screen;
+}
+
+html[data-look="terminal"] {
+  --image-surface: color-mix(in srgb, var(--accent) 16%, var(--bg));
+  --image-blend-mode: screen;
 }
 
 /* --------------------------------------------------------------------------
@@ -758,6 +877,8 @@ html[data-look="terminal"] :is(.copy-markdown, .appearance-option) {
 
   html[data-look] .columns { grid-template-columns: minmax(0, 1fr); }
 
+  .appearance-image--portrait { width: 116px; }
+
   .appearance-control {
     display: flex;
     align-items: center;
@@ -800,6 +921,9 @@ html[data-look="terminal"] :is(.copy-markdown, .appearance-option) {
 
 @media (prefers-reduced-motion: reduce) {
   .appearance-blob { animation: none !important; translate: none; will-change: auto; }
+  html[data-look="blobs"] .appearance-image { animation: none !important; }
+  html[data-look="eno"] .appearance-image::before,
+  html[data-look="eno"] .appearance-image::after { animation: none !important; opacity: 0; }
   .eno-lightbox-state { animation: none !important; will-change: auto; }
   .eno-lightbox-state:nth-child(n + 2) { opacity: 0; }
   html[data-look] body::before,
