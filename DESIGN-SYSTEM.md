@@ -353,7 +353,9 @@ The blob layer never contains content. Generated columns use an appearance-aware
 long rows may wrap instead of clipping, and the display name scales against its actual identity
 text container so it remains on one line. The homepage uses `viewport-fit=cover`: visual layers
 paint through mobile safe areas, while page padding incorporates every safe-area inset so content
-remains clear of device controls. Keep stronger texture reduced on small screens and honor the
+remains clear of device controls. The root and `theme-color` remain pure black as a browser-owned
+outer frame; Safari may tint its translucent URL controls from this color, but the page cannot
+style those controls directly. Keep stronger texture reduced on small screens and honor the
 visitor's motion preference.
 
 Image geometry is invariant across appearances: retain the standard border, radius, crop, and

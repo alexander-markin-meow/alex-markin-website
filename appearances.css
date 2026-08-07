@@ -77,7 +77,9 @@ html[data-look] {
   --crt-vignette: 0.62;
   --crt-roll-period: 7s;
   min-height: 100%;
-  background: var(--bg);
+  /* Keep the browser-owned glass and any area beyond the document dark. The
+     artwork itself is supplied by the real document layers below. */
+  background: var(--browser-frame);
 }
 
 html[data-look] body {
@@ -85,6 +87,7 @@ html[data-look] body {
   min-height: 100vh;
   isolation: isolate;
   overflow-x: hidden;
+  background: transparent;
   font-family: var(--appearance-body-family);
   font-size: var(--appearance-body-size);
   font-weight: var(--appearance-body-weight);
@@ -652,15 +655,11 @@ html[data-blob-layout="scatter"] .appearance-blob-track:nth-child(7) { top: 96%;
 
 html[data-look="eno"] .eno-lightbox { display: block; }
 
-/* The root repeats the first state only outside the document during elastic
-   overscroll. The absolute lightbox itself scales once across the body's full
-   responsive height, so scrolling travels through one continuous artwork. */
+/* The root stays as the dark browser frame outside the document. The absolute
+   lightbox itself scales once across the body's full responsive height, so
+   scrolling still travels through one continuous artwork. */
 html[data-look="eno"] {
-  background-color: var(--bg);
-  background-image: var(--eno-gradient-a);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background: var(--browser-frame);
 }
 
 .eno-lightbox-state {

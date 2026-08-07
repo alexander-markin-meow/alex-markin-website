@@ -19,6 +19,7 @@
   --rule:      #24221d;  /* solid horizontal rules (footer) */
   --border:    #2a2822;  /* borders on images / counter chip */
   --chip-bg:   #131311;  /* visitor-counter chip background */
+  --browser-frame: #000000; /* browser chrome / elastic-overscroll fallback */
 
   /* type */
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
@@ -44,7 +45,10 @@
 
 * { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--browser-frame);
+}
 
 body {
   margin: 0;
