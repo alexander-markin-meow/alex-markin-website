@@ -58,7 +58,7 @@
         "name": "webdesign trials",
         "url": "https://alex-markin.com/trials/"
       },
-      "dateModified": "2026-08-04",
+      "dateModified": "2026-08-07",
       "mainEntity": {
         "@type": "Person",
         "@id": "https://alex-markin.com/#alex-markin",
@@ -113,10 +113,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <!-- Compose the homepage edition before CSS paints, preventing a theme flash. -->
+  <script src="appearance.js?v=20260807-2"></script>
   <!-- bump ?v= whenever styles.css changes so caches fetch it fresh -->
-  <link rel="stylesheet" href="styles.css?v=20260804-3" />
+  <link rel="stylesheet" href="styles.css?v=20260807-1" />
+  <link rel="stylesheet" href="appearances.css?v=20260807-2" />
 </head>
 <body>
+  <div class="appearance-backdrop" aria-hidden="true">
+    <span class="appearance-blob" data-parallax-blob></span>
+    <span class="appearance-blob" data-parallax-blob></span>
+    <span class="appearance-blob" data-parallax-blob></span>
+  </div>
   <main class="page">
     <div class="columns">
       <div class="stack">
@@ -201,14 +209,27 @@
     </div>
 
     <footer class="footer">
-      <a class="footer-date" href="https://github.com/alexander-markin-meow/alex-markin-website" target="_blank" rel="noopener">last upd 2026-08-04</a>
+      <a class="footer-date" href="https://github.com/alexander-markin-meow/alex-markin-website" target="_blank" rel="noopener">last upd 2026-08-07</a>
       <button class="copy-markdown" type="button" data-copy-markdown aria-live="polite">copy as markdown</button>
       <a class="footer-domain" href="https://syndicate-m.com/" target="_blank" rel="noopener">part of syndicate m</a>
     </footer>
+
+    <div class="appearance-control" data-appearance-control>
+      <span class="appearance-control-label">appearance</span>
+      <div class="appearance-options" role="group" aria-label="choose homepage appearance">
+        <button class="appearance-option" type="button" data-choose-look="random">random</button>
+        <button class="appearance-option" type="button" data-choose-look="simple" aria-pressed="false">simple</button>
+        <button class="appearance-option" type="button" data-choose-look="paper" aria-pressed="false">paper</button>
+        <button class="appearance-option" type="button" data-choose-look="blobs" aria-pressed="false">blobs</button>
+        <button class="appearance-option" type="button" data-choose-look="crt" aria-pressed="false">crt</button>
+        <button class="appearance-option" type="button" data-choose-look="terminal" aria-pressed="false">terminal</button>
+      </div>
+      <span class="appearance-status" data-appearance-status aria-live="polite"></span>
+    </div>
   </main>
 
   <!-- shared behaviour: live timestamps, clock, flickr feeds, copy-as-markdown.
        bump ?v= whenever site.js changes so caches fetch it fresh -->
-  <script src="site.js?v=20260804-1"></script>
+  <script src="site.js?v=20260807-1"></script>
 </body>
 </html>

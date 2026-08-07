@@ -1,0 +1,380 @@
+/* ==========================================================================
+   Generative homepage appearances
+   The content and shared structure remain in index.html + styles.css.
+   appearance.js chooses only the bounded tokens defined by the design system.
+   ========================================================================== */
+
+html[data-look] {
+  --appearance-body-family: var(--serif);
+  --appearance-display-family: var(--mono);
+  --appearance-annotation-family: var(--mono);
+  --appearance-display-size: 44px;
+  --appearance-display-mobile: 32px;
+  --appearance-display-weight: 600;
+  --appearance-body-size: 16px;
+  --appearance-body-weight: 400;
+  --appearance-line-height: 1.55;
+  --photo-gray: 0.25;
+  --photo-sepia: 0;
+  --photo-contrast: 1;
+  --grain-opacity: 0;
+  --grain-blend: normal;
+  --scanline-opacity: 0;
+  min-height: 100%;
+  background: var(--bg);
+}
+
+html[data-look] body {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+  overflow-x: hidden;
+  font-family: var(--appearance-body-family);
+  font-size: var(--appearance-body-size);
+  font-weight: var(--appearance-body-weight);
+  line-height: var(--appearance-line-height);
+}
+
+/* One tiny generated noise texture serves paper fibre, atmospheric grain,
+   terminal dust, and CRT surface noise at independently bounded opacities. */
+html[data-look] body::before {
+  content: "";
+  position: fixed;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.72'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+html[data-look] .page {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-look] .name {
+  font-family: var(--appearance-display-family);
+  font-size: clamp(var(--appearance-display-mobile), 7vw, var(--appearance-display-size));
+  font-weight: var(--appearance-display-weight);
+}
+
+html[data-look] :is(.heading, .meta, .tag, .ago, .dates, .footer, .appearance-control),
+html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link)::after {
+  font-family: var(--appearance-annotation-family);
+}
+
+html[data-look] .photo,
+html[data-look] .flickr-photo-image {
+  filter: grayscale(var(--photo-gray)) sepia(var(--photo-sepia)) contrast(var(--photo-contrast));
+}
+
+/* --------------------------------------------------------------------------
+   appearance control — temporary manual choice, random again on reload
+   -------------------------------------------------------------------------- */
+
+.appearance-control {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 12px;
+  margin-top: 14px;
+  color: var(--footnote);
+  font-size: var(--fs-footer);
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+}
+
+.appearance-control-label { color: var(--muted); }
+
+.appearance-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+}
+
+.appearance-option {
+  min-height: 28px;
+  margin: 0;
+  padding: 3px 7px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--footnote);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.appearance-option:hover,
+.appearance-option:focus-visible {
+  color: var(--ink-hover);
+  border-color: var(--border);
+}
+
+.appearance-option[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.appearance-status {
+  min-width: 9.5em;
+  color: var(--faint);
+  text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   simple — the original dual serif/mono voice with five tonal palettes
+   -------------------------------------------------------------------------- */
+
+html[data-look="simple"] body {
+  --appearance-body-family: var(--serif);
+  --appearance-display-family: var(--mono);
+  --appearance-annotation-family: var(--mono);
+}
+
+/* --------------------------------------------------------------------------
+   paper — all serif, editorial scale, ink on generated stock
+   -------------------------------------------------------------------------- */
+
+html[data-look="paper"] body {
+  --appearance-body-family: var(--serif);
+  --appearance-display-family: var(--serif);
+  --appearance-annotation-family: var(--serif);
+  --appearance-display-mobile: 36px;
+  --appearance-display-weight: 600;
+  --grain-blend: multiply;
+  letter-spacing: 0.002em;
+}
+
+html[data-look="paper"] .page { padding-top: 48px; }
+
+html[data-look="paper"] .name {
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+html[data-look="paper"] :is(.heading, .meta, .tag, .ago, .dates, .footer, .appearance-control) {
+  letter-spacing: 0.035em;
+}
+
+html[data-look="paper"] .heading {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+html[data-look="paper"][data-paper-heading="small-caps"] .heading {
+  font-variant-caps: all-small-caps;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+}
+
+html[data-look="paper"][data-paper-heading="italic"] .heading {
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.015em;
+}
+
+html[data-look="paper"][data-paper-rule="solid"] .leader {
+  border-bottom-style: solid;
+}
+
+html[data-look="paper"] :is(.photo, .flickr-photo-image) {
+  border-radius: 0;
+}
+
+html[data-look="paper"] .copy-markdown,
+html[data-look="paper"] .appearance-option {
+  border-radius: 0;
+}
+
+/* --------------------------------------------------------------------------
+   blobs — contemporary sans typography + scroll-responsive colour fields
+   -------------------------------------------------------------------------- */
+
+html[data-look="blobs"] body {
+  --appearance-body-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --appearance-display-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --appearance-annotation-family: var(--mono);
+  --appearance-display-mobile: 38px;
+  --appearance-body-weight: 400;
+  --grain-blend: soft-light;
+}
+
+html[data-look="blobs"] .name {
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+html[data-look="blobs"] .heading {
+  font-family: var(--appearance-display-family);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+}
+
+html[data-look="blobs"] :is(.photo, .flickr-photo-image) { border-radius: 10px; }
+
+html[data-look="blobs"] :is(.copy-markdown, .appearance-option) { border-radius: 7px; }
+
+.appearance-backdrop {
+  display: none;
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+html[data-look="blobs"] .appearance-backdrop { display: block; }
+
+.appearance-blob {
+  position: absolute;
+  width: var(--blob-size, 58vw);
+  min-width: 460px;
+  max-width: 920px;
+  aspect-ratio: 1 / 0.82;
+  opacity: var(--blob-opacity, 0.25);
+  border-radius: 47% 53% 61% 39% / 53% 42% 58% 47%;
+  will-change: transform;
+}
+
+.appearance-blob:nth-child(1) { background: radial-gradient(ellipse, var(--blob-1) 0%, transparent 70%); }
+.appearance-blob:nth-child(2) { background: radial-gradient(ellipse, var(--blob-2) 0%, transparent 70%); }
+.appearance-blob:nth-child(3) { background: radial-gradient(ellipse, var(--blob-3) 0%, transparent 70%); }
+
+html[data-blob-count="2"] .appearance-blob:nth-child(3) { display: none; }
+
+html[data-blob-layout="diagonal"] .appearance-blob:nth-child(1) { top: -20%; left: -18%; }
+html[data-blob-layout="diagonal"] .appearance-blob:nth-child(2) { top: 44%; right: -22%; }
+html[data-blob-layout="diagonal"] .appearance-blob:nth-child(3) { top: 118%; left: 18%; }
+
+html[data-blob-layout="orbit"] .appearance-blob:nth-child(1) { top: -28%; right: 8%; }
+html[data-blob-layout="orbit"] .appearance-blob:nth-child(2) { top: 36%; left: -24%; }
+html[data-blob-layout="orbit"] .appearance-blob:nth-child(3) { top: 112%; right: -14%; }
+
+html[data-blob-layout="horizon"] .appearance-blob:nth-child(1) { top: 16%; left: -20%; }
+html[data-blob-layout="horizon"] .appearance-blob:nth-child(2) { top: 26%; right: -20%; }
+html[data-blob-layout="horizon"] .appearance-blob:nth-child(3) { top: 118%; left: 24%; }
+
+html[data-blob-layout="scatter"] .appearance-blob:nth-child(1) { top: -24%; left: 18%; }
+html[data-blob-layout="scatter"] .appearance-blob:nth-child(2) { top: 55%; left: -20%; }
+html[data-blob-layout="scatter"] .appearance-blob:nth-child(3) { top: 124%; right: -18%; }
+
+/* --------------------------------------------------------------------------
+   CRT — bolder mono phosphor, scanlines, glow, and a restrained vignette
+   -------------------------------------------------------------------------- */
+
+html[data-look="crt"] body {
+  --appearance-body-family: var(--mono);
+  --appearance-display-family: var(--mono);
+  --appearance-annotation-family: var(--mono);
+  --appearance-display-mobile: 34px;
+  --appearance-display-weight: 600;
+  --appearance-body-weight: 500;
+  --grain-blend: screen;
+  text-shadow: 0 0 var(--crt-glow) currentColor;
+}
+
+html[data-look="crt"] body::after {
+  content: "";
+  position: fixed;
+  z-index: 3;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.38) 100%),
+    repeating-linear-gradient(to bottom, rgb(0 0 0 / var(--scanline-opacity)) 0 1px, transparent 1px 4px);
+}
+
+html[data-look="crt"] .name {
+  line-height: 1;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+html[data-look="crt"] .heading {
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+html[data-look="crt"] :is(.desc, .tagline, .tag, .ago, .meta, .footer, .appearance-control) {
+  font-weight: 500;
+}
+
+html[data-look="crt"] :is(.photo, .flickr-photo-image) {
+  border-radius: 0;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+html[data-look="crt"] :is(.copy-markdown, .appearance-option) { border-radius: 0; }
+
+/* --------------------------------------------------------------------------
+   terminal — quiet all-mono typesetting, prompts, grain, no CRT glow
+   -------------------------------------------------------------------------- */
+
+html[data-look="terminal"] body {
+  --appearance-body-family: var(--mono);
+  --appearance-display-family: var(--mono);
+  --appearance-annotation-family: var(--mono);
+  --appearance-display-mobile: 30px;
+  --appearance-display-weight: 500;
+  --appearance-body-weight: 400;
+  --grain-blend: screen;
+}
+
+html[data-look="terminal"] .name {
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+html[data-look="terminal"] .heading {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+html[data-look="terminal"] .heading::before {
+  display: inline-block;
+  margin-right: 0.55em;
+  color: var(--faint);
+}
+
+html[data-look="terminal"][data-terminal-prompt="tilde"] .heading::before { content: "~/"; }
+html[data-look="terminal"][data-terminal-prompt="dot"] .heading::before { content: "./"; }
+html[data-look="terminal"][data-terminal-prompt="chevron"] .heading::before { content: ">"; }
+
+html[data-look="terminal"] .leader { border-bottom-style: solid; }
+
+html[data-look="terminal"] :is(.photo, .flickr-photo-image, .copy-markdown, .appearance-option) {
+  border-radius: 0;
+}
+
+@media (max-width: 640px) {
+  .appearance-control { align-items: flex-start; flex-direction: column; }
+  .appearance-options { justify-content: flex-start; margin-left: -7px; }
+  .appearance-status { min-width: 0; text-align: left; }
+
+  .appearance-blob {
+    min-width: 360px;
+    width: 92vw;
+  }
+
+  html[data-look="crt"] body::after {
+    background:
+      radial-gradient(ellipse at center, transparent 62%, rgb(0 0 0 / 0.28) 100%),
+      repeating-linear-gradient(to bottom, rgb(0 0 0 / calc(var(--scanline-opacity) * 0.55)) 0 1px, transparent 1px 4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appearance-blob { will-change: auto; }
+}

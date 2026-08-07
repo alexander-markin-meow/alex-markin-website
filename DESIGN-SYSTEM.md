@@ -1,6 +1,8 @@
 # alex-markin.com design system
 
-Dark, serif, quiet, with subtle web-1.0 details. Static HTML + CSS, no build step.
+Quiet, typographic, and lowercase, with subtle web-1.0 details. The homepage is a seeded
+generative edition; all other standard pages use its original dark serif/mono appearance.
+Static HTML + CSS, no build step.
 This file is the source of truth. If you (human or LLM) are editing the site, read this first;
 every visual decision below is deliberate.
 
@@ -10,11 +12,15 @@ every visual decision below is deliberate.
   proper nouns inside descriptions where lowercase would be confusing.
 - Compact, understated, no exclamation marks, no emoji.
 
-## color tokens (defined in `styles.css :root`)
+## base color tokens (defined in `styles.css :root`)
+
+These are the permanent palette for the cv and trials catalogue and the starting palette for
+the homepage's `simple` appearance. Homepage editions may override them only through the
+bounded palettes in `appearance.js` and `appearances.css`.
 
 | token | value | use |
 |---|---|---|
-| `--bg` | `#000000` | page background. always pure black, never tinted |
+| `--bg` | `#000000` | base page background |
 | `--ink` | `#ccc6b9` | body text and link default |
 | `--ink-bright` | `#eae5da` | display text (the name) only |
 | `--ink-hover` | `#ffffff` | link hover |
@@ -27,7 +33,7 @@ every visual decision below is deliberate.
 | `--border` | `#2a2822` | 1px borders on images and chips |
 | `--chip-bg` | `#131311` | chip/inset backgrounds |
 
-Rules:
+Rules for non-generative pages:
 - The palette is warm grey on black plus one olive accent. Do not introduce new hues.
 - Need a new shade? Stay between `--footnote` and `--ink-bright` on the same warm axis.
 - Accent is scarce by design — if more than headings + compact meta lines are olive, it's wrong.
@@ -197,9 +203,42 @@ radius, and grayscale treatment.
 Not allowed: bevels, marquees, animated gifs, table layouts, coloured link-visited states,
 under-construction banners. The nostalgia is a seasoning, not the dish.
 
+## generative homepage appearances
+
+The homepage separates content from presentation. `index.html` remains the single semantic
+content source. `appearance.js` composes an edition before CSS paints, and `appearances.css`
+renders it. Do not duplicate, reorder, or rewrite content for an appearance.
+
+Five appearances have equal default probability:
+
+- `simple` — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
+  muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
+  spacing, and photo grayscale.
+- `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
+  bounded grain, ink temperature, scale, width, heading treatment, and rule style.
+- `blobs` — bold system-sans display and body type over 2–3 diffuse color fields. Every blob
+  has a seeded `0.45–0.85` scroll-speed multiplier. Movement is transform-only and becomes
+  static under `prefers-reduced-motion`.
+- `crt` — IBM Plex Mono throughout at 500–600 weight, with bounded green, amber, or icy-blue
+  phosphor, bloom, scanlines, vignette, grain, width, and type scale. Never add flicker or text
+  displacement.
+- `terminal` — IBM Plex Mono throughout at 400–500 weight, with quiet prompt prefixes, solid
+  leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
+
+All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
+`?look=<name>&seed=<value>` pins both its appearance and values. An ordinary load without these
+parameters generates a new seed. The control below the homepage footer switches immediately,
+does not persist, and removes pinned parameters so the next reload is random again.
+
+Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
+contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
+The blob layer never contains content. Keep stronger texture reduced on small screens and honor
+the visitor's motion preference.
+
 ## pages
 
-- `/` → `index.html` — the identity page.
+- `/` → `index.html` — the generative identity page. It alone loads `appearance.js` and
+  `appearances.css` and includes the manual appearance control.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
@@ -249,9 +288,13 @@ recognizes either.
 Immersive experiments are the exception: their shared panel construction lives in
 `trials/_shared/trial-ui.js`, which is never loaded by standard site pages.
 
+Homepage appearance behaviour is a second deliberate exception: it lives in `appearance.js`
+because it must run synchronously in the document head before CSS paints. Do not merge it into
+the deferred shared behaviour in `site.js`.
+
 ## adding a new page
 
-1. Copy `index.html`'s `<head>` (fonts + `styles.css`) and `.page` shell, and load
+1. Copy `cv.html`'s standard `<head>` (fonts + `styles.css`) and `.page` shell, and load
    `site.js` at the end of `<body>`.
 2. Reuse `.columns` / `.heading` / `.row` patterns, and `.intro` only for identity pages —
    do not write new CSS unless a pattern is genuinely missing.
@@ -270,12 +313,17 @@ edit `styles.css`** (keep it in sync with the footer's "last updated" date).
 Apply the same dated `?v=` convention to `trials/_shared/trial.css` and `trial-ui.js` on
 every immersive experiment page whenever either shared trial asset changes.
 
+The homepage additionally versions `appearance.js` and `appearances.css`. Bump each asset's
+own dated query whenever it changes; neither generative file belongs on the other pages.
+
 ## don'ts
 
-- No new fonts, hues, or font sizes outside the scale.
+- On non-generative pages, no new fonts, hues, or font sizes outside the base scale.
 - No borders/underlines on links (hover is a color change only).
-- No rounded corners beyond `--radius: 2px`, no shadows, no gradients.
-- No uppercase anywhere.
+- No rounded corners beyond `--radius: 2px`, shadows, gradients, or uppercase on non-generative
+  pages. The bounded `blobs` and `crt` appearances are the documented exceptions.
+- Authored content remains lowercase everywhere; CRT may render the name and headings uppercase
+  with CSS only.
 - Don't restyle with inline `style=""` attributes — extend `styles.css` via tokens.
-- Experimental gradients, colors, and motion are allowed only inside the rendered effect;
-  the experiment's surrounding chrome still follows the main tokens.
+- Experimental gradients, colors, and motion are allowed inside immersive trial effects and the
+  documented generative homepage appearances only.
