@@ -5,7 +5,7 @@
   var looks = ["simple", "paper", "blobs", "crt", "terminal"];
   var appearanceAttributes = [
     "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-blob-layout",
-    "data-blob-count", "data-crt-convergence", "data-terminal-prompt"
+    "data-blob-count", "data-terminal-prompt"
   ];
   var appliedProperties = [];
   var currentEdition;
@@ -52,7 +52,7 @@
   function compose(seed, forcedLook) {
     var random = randomFrom(seed);
     var look = looks.indexOf(forcedLook) !== -1 ? forcedLook : pick(random, looks);
-    var edition = { look: look, seed: seed, attrs: {}, vars: {}, blobSpeeds: [], crt: null };
+    var edition = { look: look, seed: seed, attrs: {}, vars: {}, blobSpeeds: [] };
 
     if (look === "simple") {
       var simplePalettes = [
@@ -68,7 +68,6 @@
       edition.vars["--appearance-body-size"] = pick(random, ["16px", "16.5px", "17px"]);
       edition.vars["--page-max"] = pick(random, ["1040px", "1100px"]);
       edition.vars["--gap-row"] = pick(random, ["40px", "44px", "48px"]);
-      edition.vars["--photo-gray"] = range(random, 0.15, 0.35, 2);
     }
 
     if (look === "paper") {
@@ -82,9 +81,7 @@
       edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "18px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.7]);
       edition.vars["--page-max"] = pick(random, ["680px", "750px", "820px"]);
-      edition.vars["--grain-opacity"] = range(random, 0.035, 0.085, 3);
-      edition.vars["--photo-gray"] = range(random, 0.55, 0.85, 2);
-      edition.vars["--photo-sepia"] = range(random, 0.08, 0.18, 2);
+      edition.vars["--grain-opacity"] = range(random, 0.06, 0.12, 3);
       edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
       edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
     }
@@ -123,11 +120,11 @@
         { bg: "#020407", ink: "#b9d8ee", bright: "#dceeff", muted: "#809fb7", faint: "#607c92", foot: "#607c92", accent: "#8fc3e5", hair: "#273b4b", rule: "#172633", border: "#223747", chip: "#071019" }
       ];
       edition.vars = paletteVars(pick(random, crtPalettes));
-      edition.vars["--appearance-display-size"] = pick(random, ["44px", "48px", "52px"]);
-      edition.vars["--appearance-body-size"] = pick(random, ["15.5px", "16px", "16.5px"]);
-      edition.vars["--appearance-line-height"] = pick(random, [1.5, 1.58, 1.65]);
+      edition.vars["--appearance-display-size"] = pick(random, ["48px", "54px", "60px"]);
+      edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "17.5px"]);
+      edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.68]);
       edition.vars["--page-max"] = pick(random, ["900px", "1000px", "1100px"]);
-      edition.vars["--crt-pitch"] = range(random, 2.8, 3.8, 1) + "px";
+      edition.vars["--crt-pitch"] = range(random, 2.2, 3, 1) + "px";
       edition.vars["--crt-depth"] = range(random, 66, 82, 0);
       var crtSoftness = range(random, 80, 95, 0) / 100;
       var crtHalfGap = 0.05 + (1 - crtSoftness) * 0.25;
@@ -136,7 +133,7 @@
       edition.vars["--crt-p1"] = Math.max(0, crtP2 - crtSoftness * 0.30).toFixed(3);
       edition.vars["--crt-p2"] = crtP2.toFixed(3);
       edition.vars["--crt-p3"] = crtP3.toFixed(3);
-      edition.vars["--crt-triad"] = range(random, 2.4, 3.6, 1) + "px";
+      edition.vars["--crt-triad"] = range(random, 1.8, 2.7, 1) + "px";
       edition.vars["--crt-grille"] = range(random, 0.28, 0.42, 2);
       edition.vars["--crt-bright"] = range(random, 1.55, 1.9, 2);
       edition.vars["--crt-saturation"] = range(random, 1, 1.2, 2);
@@ -144,14 +141,6 @@
       edition.vars["--crt-roll-period"] = range(random, 6.5, 12.5, 1) + "s";
       edition.vars["--crt-glow"] = range(random, 0.35, 0.85, 2) + "px";
       edition.vars["--grain-opacity"] = range(random, 0.012, 0.024, 3);
-      edition.vars["--photo-gray"] = range(random, 0.65, 1, 2);
-      var crtConvergence = pick(random, [0, range(random, 0.15, 0.5, 2)]);
-      edition.crt = {
-        bloom: range(random, 1.5, 3.75, 2),
-        smear: range(random, 0.15, 0.55, 2),
-        convergence: crtConvergence
-      };
-      edition.attrs["data-crt-convergence"] = crtConvergence > 0 ? "on" : "off";
     }
 
     if (look === "terminal") {
@@ -167,7 +156,6 @@
       edition.vars["--page-max"] = pick(random, ["760px", "860px", "960px"]);
       edition.vars["--grain-opacity"] = range(random, 0.02, 0.04, 3);
       edition.attrs["data-terminal-prompt"] = pick(random, ["tilde", "dot", "chevron"]);
-      edition.vars["--photo-gray"] = range(random, 0.65, 1, 2);
     }
 
     return edition;
@@ -211,24 +199,6 @@
     currentEdition = edition;
     updateControls();
     updateParallax();
-    updateCrtOptics();
-  }
-
-  function updateCrtOptics() {
-    if (!currentEdition || currentEdition.look !== "crt" || !currentEdition.crt) return;
-    var bloomA = document.getElementById("appearance-crt-bloom-a");
-    var bloomB = document.getElementById("appearance-crt-bloom-b");
-    var smearA = document.getElementById("appearance-crt-smear-a");
-    var smearB = document.getElementById("appearance-crt-smear-b");
-    var convR = document.getElementById("appearance-crt-conv-r");
-    var convB = document.getElementById("appearance-crt-conv-b");
-    if (!bloomA || !bloomB || !smearA || !smearB || !convR || !convB) return;
-    bloomA.setAttribute("stdDeviation", currentEdition.crt.bloom);
-    bloomB.setAttribute("stdDeviation", currentEdition.crt.bloom);
-    smearA.setAttribute("stdDeviation", currentEdition.crt.smear + " 0");
-    smearB.setAttribute("stdDeviation", currentEdition.crt.smear + " 0");
-    convR.setAttribute("dx", -currentEdition.crt.convergence);
-    convB.setAttribute("dx", currentEdition.crt.convergence);
   }
 
   function updateControls() {
@@ -285,7 +255,6 @@
     }
     updateControls();
     updateParallax();
-    updateCrtOptics();
     window.addEventListener("scroll", updateParallax, { passive: true });
     window.addEventListener("resize", updateParallax);
   });

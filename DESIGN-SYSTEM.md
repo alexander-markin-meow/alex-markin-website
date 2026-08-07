@@ -213,17 +213,18 @@ Five appearances have equal default probability:
 
 - `simple` — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
-  spacing, and photo grayscale.
+  and spacing.
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
-  bounded grain, ink temperature, scale, width, heading treatment, and rule style.
+  bounded ink temperature, scale, width, heading treatment, and rule style. Its generated grain
+  is always a top layer over the complete edition.
 - `blobs` — bold system-sans display and body type over 2–3 diffuse color fields. Every blob
   has a seeded `0.45–0.85` scroll-speed multiplier. Movement is transform-only and becomes
   static under `prefers-reduced-motion`.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
-  tube vignette, beam boost, saturation, bloom, horizontal smear, and optional convergence.
-  Every setting is seed-bounded for homepage readability; reduced motion removes the rolling
-  band. Never add flicker or text displacement.
+  tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
+  are seed-bounded for homepage readability; reduced motion removes the rolling band. Never add
+  flicker or text displacement.
 - `terminal` — IBM Plex Mono throughout at 400–500 weight, with quiet prompt prefixes, solid
   leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
 
@@ -236,6 +237,10 @@ Readability is not random: semantic order, links, click areas, responsive behavi
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
 The blob layer never contains content. Keep stronger texture reduced on small screens and honor
 the visitor's motion preference.
+
+Images are invariant across appearances: retain the standard border, radius, grayscale, crop,
+and dimensions from `styles.css`. Whole-page overlays such as paper grain or the CRT mask may sit
+above them, but no appearance may apply an image-specific filter or geometry change.
 
 ## pages
 
