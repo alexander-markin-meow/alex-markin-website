@@ -3,6 +3,7 @@
 (function () {
   var root = document.documentElement;
   var fontSans = 'ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  var fontEno = '"Montserrat", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
   var fontSerif = "var(--serif)";
   var fontMono = "var(--mono)";
   var looks = ["simple", "paper", "blobs", "eno", "crt", "terminal"];
@@ -98,8 +99,8 @@
 
   function enoColor(random, hue, contrast) {
     var adjustedHue = Math.round((hue + range(random, -8, 8, 0) + 360) % 360);
-    var saturation = range(random, contrast === "light" ? 62 : 58, contrast === "light" ? 92 : 84, 0);
-    var lightness = range(random, contrast === "light" ? 72 : 18, contrast === "light" ? 86 : 30, 0);
+    var saturation = range(random, contrast === "light" ? 72 : 62, contrast === "light" ? 96 : 88, 0);
+    var lightness = range(random, contrast === "light" ? 64 : 18, contrast === "light" ? 80 : 30, 0);
     return "hsl(" + adjustedHue + " " + saturation + "% " + lightness + "%)";
   }
 
@@ -109,7 +110,7 @@
     });
   }
 
-  function enoGradient(mode, colors, geometry) {
+  function enoGradient(mode, colors, geometry, contrast) {
     if (mode === "vertical" || mode === "horizontal") {
       var angle = mode === "vertical" ? "90deg" : "180deg";
       return "linear-gradient(" + angle + ", " + colors[0] + " 0%, " + colors[0] + " " + geometry.s1 +
@@ -127,8 +128,11 @@
         " 0%, " + colors[0] + " 14%, " + colors[1] + " 25%, transparent 48%), " +
         "linear-gradient(135deg, " + colors[2] + ", " + colors[3] + ")";
     }
-    return "radial-gradient(circle at " + geometry.x + "% " + geometry.y + "%, " + colors[0] +
-      " 0%, " + colors[1] + " 28%, " + colors[2] + " 58%, " + colors[3] + " 100%)";
+    var enoCore = contrast === "light" ? "color-mix(in srgb, " + colors[0] + " 72%, black)" : colors[0];
+    var enoRing = contrast === "light" ? "color-mix(in srgb, " + colors[1] + " 76%, white)" : colors[1];
+    return "radial-gradient(circle at " + geometry.x + "% " + geometry.y + "%, " + enoCore +
+      " 0%, " + enoCore + " 16%, " + enoRing + " 19%, " + enoRing + " 36%, " +
+      colors[2] + " 46%, " + colors[3] + " 62%, " + colors[3] + " 100%)";
   }
 
   function compose(seed, forcedLook) {
@@ -233,9 +237,11 @@
 
     if (look === "eno") {
       var enoFamilies = [
-        [195, 222, 292, 330],
-        [175, 205, 325, 24],
+        [348, 337, 174, 184],
+        [2, 27, 44, 52],
+        [186, 72, 150, 160],
         [220, 270, 318, 48],
+        [195, 222, 292, 330],
         [188, 238, 350, 165]
       ];
       var enoHues = pick(random, enoFamilies);
@@ -257,25 +263,25 @@
         ? { bg: enoA[3], ink: "#191522", bright: "#09070d", muted: "#403748", faint: "#53475d", foot: "#53475d", accent: "hsl(" + enoHues[1] + " 55% 28%)", hair: "rgb(25 20 34 / 0.34)", rule: "rgb(25 20 34 / 0.28)", border: "rgb(25 20 34 / 0.38)", chip: "rgb(255 255 255 / 0.18)" }
         : { bg: enoA[3], ink: "#ece9f1", bright: "#ffffff", muted: "#d5cfdb", faint: "#bdb4c5", foot: "#bdb4c5", accent: "hsl(" + enoHues[1] + " 74% 80%)", hair: "rgb(255 255 255 / 0.30)", rule: "rgb(255 255 255 / 0.24)", border: "rgb(255 255 255 / 0.36)", chip: "rgb(0 0 0 / 0.16)" };
       edition.vars = paletteVars(enoPalette);
-      edition.vars["--appearance-body-family"] = fontSans;
-      edition.vars["--appearance-display-family"] = fontSans;
-      edition.vars["--appearance-annotation-family"] = fontMono;
-      edition.vars["--appearance-display-size"] = pick(random, ["46px", "50px", "54px"]);
+      edition.vars["--appearance-body-family"] = fontEno;
+      edition.vars["--appearance-display-family"] = fontEno;
+      edition.vars["--appearance-annotation-family"] = fontEno;
+      edition.vars["--appearance-display-size"] = pick(random, ["42px", "46px", "50px"]);
       edition.vars["--appearance-display-weight"] = pick(random, [500, 600]);
-      edition.vars["--appearance-body-size"] = pick(random, ["16px", "16.5px", "17px"]);
+      edition.vars["--appearance-body-size"] = pick(random, ["15.5px", "16px", "16.5px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.58, 1.64, 1.7]);
       edition.vars["--page-max"] = pick(random, ["1100px", "1160px", "1200px"]);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px", "64px"]);
-      edition.vars["--eno-gradient-a"] = enoGradient(enoMode, enoA, enoGeometry);
-      edition.vars["--eno-gradient-b"] = enoGradient(enoMode, enoB, enoGeometry);
-      edition.vars["--eno-gradient-c"] = enoGradient(enoMode, enoC, enoGeometry);
+      edition.vars["--eno-gradient-a"] = enoGradient(enoMode, enoA, enoGeometry, enoContrast);
+      edition.vars["--eno-gradient-b"] = enoGradient(enoMode, enoB, enoGeometry, enoContrast);
+      edition.vars["--eno-gradient-c"] = enoGradient(enoMode, enoC, enoGeometry, enoContrast);
       var enoCycle = range(random, 180, 480, 0);
       edition.vars["--eno-cycle"] = enoCycle + "s";
       edition.vars["--eno-phase"] = -range(random, 0, enoCycle, 0) + "s";
       edition.vars["--eno-softness"] = range(random, 14, 46, 0) + "px";
-      edition.vars["--eno-saturation"] = range(random, 1.02, 1.18, 2);
-      edition.vars["--eno-diffusion"] = range(random, 0.08, 0.18, 2);
+      edition.vars["--eno-saturation"] = range(random, 1.08, 1.26, 2);
+      edition.vars["--eno-diffusion"] = range(random, 0.05, 0.12, 2);
       Object.assign(edition.vars, grainVars(random, {
         tile: [512, 640], frequency: [0.38, 0.7], octaves: [5, 6],
         contrast: [1.15, 1.6], brightness: [0.9, 1.08], opacity: [0.012, 0.028], rate: [900, 1800]

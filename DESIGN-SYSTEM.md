@@ -229,18 +229,24 @@ Six appearances have equal default probability:
   scroll-speed multiplier. A separate atmospheric grain layer stays behind all content. Both
   motions become static under `prefers-reduced-motion`.
 - `eno` — the complete fixed viewport is one luminous lightbox rather than a collection of
-  decorative objects. A seed selects a vertical, horizontal, quartered, central-window, or halo
-  composition; one light or dark contrast family; bounded divisions, diffusion, saturation,
-  and a curated cyan/blue/violet/pink/mint/coral/amber scheme. Three related edge-to-edge color
-  states crossfade over `180–480s` with bounded `±24°` hue travel. Text colors remain fixed
-  inside the selected contrast family. Reduced motion shows the first seeded state.
+  decorative objects. A seed selects a vertical, horizontal, quartered, central-window, or
+  softened concentric core-and-ring halo composition; one light or dark contrast family;
+  bounded divisions, diffusion, saturation,
+  and curated turquoise/pink/crimson, amber/orange/red, green/lime/cyan, or
+  blue/violet/magenta schemes. Three related edge-to-edge color states crossfade over
+  `180–480s` with bounded `±24°` hue travel. Montserrat supplies the geometric album-art voice:
+  the display name and headings render uppercase through CSS with wide tracking, while authored
+  content remains lowercase. Text colors remain fixed inside the selected contrast family.
+  Reduced motion shows the first seeded state.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
   are seed-bounded for homepage readability. Text links invert into a clear phosphor selection
   block on hover/focus, and their unchanged text-presentation `↗︎` / `→` markers render at body
-  scale. A fixed seed-colored signal layer covers elastic overscroll outside the document;
-  reduced motion removes the rolling band. Never add flicker or text displacement.
+  scale. Footer selection blocks remain content-width instead of stretching across their grid
+  cells; the `appearance ↻` and `copy as markdown` utilities receive bounded phosphor glow.
+  A fixed seed-colored signal layer covers elastic overscroll outside the document; reduced
+  motion removes the rolling band. Never add flicker or text displacement.
 - `>...` (`terminal` internally) — IBM Plex Mono throughout at 400–500 weight, with quiet prompt prefixes, solid
   leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
 
@@ -365,8 +371,8 @@ own dated query whenever it changes; neither generative file belongs on the othe
 - No borders/underlines on links (hover is a color change only).
 - No rounded corners beyond `--radius: 2px`, shadows, gradients, or uppercase on non-generative
   pages. The bounded `blobs` and `crt` appearances are the documented exceptions.
-- Authored content remains lowercase everywhere; CRT may render the name and headings uppercase
-  with CSS only.
+- Authored content remains lowercase everywhere; CRT and Eno may render the name and headings
+  uppercase with CSS only.
 - Don't restyle with inline `style=""` attributes — extend `styles.css` via tokens.
 - Experimental gradients, colors, and motion are allowed inside immersive trial effects and the
   documented generative homepage appearances only.
