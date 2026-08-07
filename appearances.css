@@ -14,8 +14,14 @@ html[data-look] {
   --appearance-body-size: 16px;
   --appearance-body-weight: 400;
   --appearance-line-height: 1.55;
+  --grain-url: none;
+  --grain-size: 320px;
   --grain-opacity: 0;
+  --background-grain-opacity: 0;
   --grain-blend: normal;
+  --grain-contrast: 1;
+  --grain-brightness: 1;
+  --grain-rate: 900ms;
   --crt-pitch: 3.2px;
   --crt-depth: 76;
   --crt-p1: 0.27;
@@ -42,19 +48,33 @@ html[data-look] body {
   line-height: var(--appearance-line-height);
 }
 
-/* One tiny generated noise texture serves paper fibre, atmospheric grain,
-   terminal dust, and CRT surface noise at independently bounded opacities. */
+/* The composer builds a real feTurbulence tile per edition. Size, frequency,
+   octave quality, contrast, brightness, strength, and shift rate are seeded. */
 html[data-look] body::before {
   content: "";
   position: fixed;
   z-index: 4;
-  inset: 0;
+  inset: -20%;
   pointer-events: none;
   opacity: var(--grain-opacity);
   mix-blend-mode: var(--grain-blend);
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.72'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+  background-image: var(--grain-url);
+  background-size: var(--grain-size) var(--grain-size);
+  filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
+  animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
+  will-change: transform;
 }
+
+@keyframes appearance-grain-shift {
+  0% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(-3%, 2%, 0); }
+  50% { transform: translate3d(2%, -3%, 0); }
+  75% { transform: translate3d(-2%, -2%, 0); }
+  100% { transform: translate3d(3%, 1%, 0); }
+}
+
+html[data-look="simple"] body::before,
+html[data-look="blobs"] body::before { content: none; }
 
 html[data-look] .page {
   position: relative;
@@ -63,8 +83,32 @@ html[data-look] .page {
 
 html[data-look] .name {
   font-family: var(--appearance-display-family);
-  font-size: clamp(var(--appearance-display-mobile), 7vw, var(--appearance-display-size));
+  font-size: clamp(var(--appearance-display-mobile), 12cqi, var(--appearance-display-size));
   font-weight: var(--appearance-display-weight);
+  white-space: nowrap;
+}
+
+html[data-look] .intro-text {
+  min-width: 0;
+  container-type: inline-size;
+}
+
+/* Long publication rows can wrap inside a narrow generated column. The
+   leader and tag then move together to the available line instead of clipping. */
+html[data-look] .row {
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+html[data-look] .row > a:first-child {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+html[data-look] .leader {
+  min-width: 24px;
 }
 
 html[data-look] :is(.heading, .meta, .tag, .ago, .dates, .footer, .appearance-control),
@@ -173,14 +217,7 @@ html[data-look="paper"] body {
 /* Paper grain sits above the entire edition, including images and type. */
 html[data-look="paper"] body::before {
   z-index: 6;
-  mix-blend-mode: multiply;
-  background-image:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='.9'/%3E%3C/svg%3E"),
-    radial-gradient(circle, rgb(61 43 25 / 0.48) 0 0.45px, transparent 0.7px),
-    radial-gradient(circle, rgb(255 255 255 / 0.75) 0 0.4px, transparent 0.68px);
-  background-position: 0 0, 0 0, 2px 1px;
-  background-size: 96px 96px, 3px 3px, 5px 5px;
-  filter: contrast(1.75);
+  mix-blend-mode: var(--grain-blend);
 }
 
 html[data-look="paper"] .page { padding-top: 48px; }
@@ -265,14 +302,15 @@ html[data-look="blobs"] .appearance-backdrop { display: block; }
   content: "";
   position: absolute;
   z-index: 2;
-  inset: 0;
+  inset: -20%;
   pointer-events: none;
-  opacity: var(--blob-grain-opacity, 0.14);
-  mix-blend-mode: soft-light;
-  background-image:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='atmosphere'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23atmosphere)' opacity='.86'/%3E%3C/svg%3E"),
-    radial-gradient(circle, rgb(255 255 255 / 0.32) 0 0.4px, transparent 0.72px);
-  background-size: 128px 128px, 4px 4px;
+  opacity: var(--background-grain-opacity);
+  mix-blend-mode: screen;
+  background-image: var(--grain-url);
+  background-size: var(--grain-size) var(--grain-size);
+  filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
+  animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
+  will-change: transform;
 }
 
 .appearance-blob {
@@ -492,6 +530,8 @@ html[data-look="terminal"] :is(.copy-markdown, .appearance-option) {
 }
 
 @media (max-width: 640px) {
+  html[data-look] .columns { grid-template-columns: minmax(0, 1fr); }
+
   .appearance-control {
     grid-template-columns: 1fr auto;
     align-items: center;
@@ -513,5 +553,7 @@ html[data-look="terminal"] :is(.copy-markdown, .appearance-option) {
 
 @media (prefers-reduced-motion: reduce) {
   .appearance-blob { will-change: auto; }
+  html[data-look] body::before,
+  .appearance-backdrop::after { animation: none !important; will-change: auto; }
   .crt-mask-roll { display: none !important; }
 }

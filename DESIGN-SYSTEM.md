@@ -215,8 +215,8 @@ Five appearances have equal default probability:
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
   and spacing.
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
-  bounded ink temperature, scale, width, heading treatment, and rule style. Its generated grain
-  is always a top layer over the complete edition.
+  bounded ink temperature, scale, width, heading treatment, and rule style. Its generated
+  `feTurbulence` grain is always a top layer over the complete edition.
 - `blobs` — bold system-sans display and body type over 3–5 diffuse color fields. Every blob
   independently varies in hue, saturation, lightness, opacity, size, shape, horizontal drift,
   and a seeded `0.45–0.85` scroll-speed multiplier. A separate atmospheric grain layer stays
@@ -230,6 +230,13 @@ Five appearances have equal default probability:
 - `terminal` — IBM Plex Mono throughout at 400–500 weight, with quiet prompt prefixes, solid
   leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
 
+Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
+seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. Each grain-bearing
+edition independently randomizes tile size, noise frequency, octave count (quality), contrast,
+brightness, strength, and stepped shift rate within readability-safe brackets. Paper blends the
+grain over the complete page with `multiply`; blobs blend it behind content with `screen`;
+terminal and CRT keep their lighter surface treatment. Reduced motion freezes the tile.
+
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
 `?look=<name>&seed=<value>` pins both its appearance and values. An ordinary load without these
 parameters generates a new seed. The first utility row on the homepage switches immediately,
@@ -238,8 +245,10 @@ glyph composes a new random appearance and edition without requiring a page refr
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
-The blob layer never contains content. Keep stronger texture reduced on small screens and honor
-the visitor's motion preference.
+The blob layer never contains content. Generated columns use an appearance-aware minimum width;
+long rows may wrap instead of clipping, and the display name scales against its actual identity
+text container so it remains on one line. Keep stronger texture reduced on small screens and
+honor the visitor's motion preference.
 
 Images are invariant across appearances: retain the standard border, radius, grayscale, crop,
 and dimensions from `styles.css`. Whole-page overlays such as paper grain or the CRT mask may sit

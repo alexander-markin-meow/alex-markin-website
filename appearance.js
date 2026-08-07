@@ -56,6 +56,27 @@
     return "hsl(" + variedHue + " " + saturation + "% " + lightness + "%)";
   }
 
+  function grainVars(random, bounds, opacityProperty) {
+    var tile = range(random, bounds.tile[0], bounds.tile[1], 0);
+    var frequency = range(random, bounds.frequency[0], bounds.frequency[1], 2);
+    var octaves = range(random, bounds.octaves[0], bounds.octaves[1], 0);
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + tile + "' height='" + tile + "'>" +
+      "<filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' " +
+      "baseFrequency='" + frequency + "' numOctaves='" + octaves + "' stitchTiles='stitch'/></filter>" +
+      "<rect width='100%' height='100%' filter='url(#n)'/></svg>";
+    var vars = {
+      "--grain-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")',
+      "--grain-size": tile + "px",
+      "--grain-frequency": frequency,
+      "--grain-octaves": octaves,
+      "--grain-contrast": range(random, bounds.contrast[0], bounds.contrast[1], 2),
+      "--grain-brightness": range(random, bounds.brightness[0], bounds.brightness[1], 2),
+      "--grain-rate": range(random, bounds.rate[0], bounds.rate[1], 0) + "ms"
+    };
+    vars[opacityProperty || "--grain-opacity"] = range(random, bounds.opacity[0], bounds.opacity[1], 3);
+    return vars;
+  }
+
   function compose(seed, forcedLook) {
     var random = randomFrom(seed);
     var look = looks.indexOf(forcedLook) !== -1 ? forcedLook : pick(random, looks);
@@ -73,7 +94,9 @@
       edition.vars = paletteVars(simple);
       edition.vars["--appearance-display-size"] = pick(random, ["42px", "44px", "46px"]);
       edition.vars["--appearance-body-size"] = pick(random, ["16px", "16.5px", "17px"]);
-      edition.vars["--page-max"] = pick(random, ["1040px", "1100px"]);
+      edition.vars["--page-max"] = pick(random, ["1120px", "1180px"]);
+      edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
+      edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
       edition.vars["--gap-row"] = pick(random, ["40px", "44px", "48px"]);
     }
 
@@ -84,11 +107,16 @@
         { bg: "#f5f0e6", ink: "#25231f", bright: "#11110f", muted: "#625f58", faint: "#6d6961", foot: "#6d6961", accent: "#4f5b4c", hair: "#c0bbb0", rule: "#d2cdc2", border: "#bdb8ae", chip: "#ebe6dc" }
       ];
       edition.vars = paletteVars(pick(random, paperPalettes));
-      edition.vars["--appearance-display-size"] = pick(random, ["46px", "50px", "56px"]);
+      edition.vars["--appearance-display-size"] = pick(random, ["44px", "48px", "52px"]);
       edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "18px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.7]);
-      edition.vars["--page-max"] = pick(random, ["680px", "750px", "820px"]);
-      edition.vars["--grain-opacity"] = range(random, 0.17, 0.25, 3);
+      edition.vars["--page-max"] = pick(random, ["760px", "840px", "920px"]);
+      edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
+      edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
+      Object.assign(edition.vars, grainVars(random, {
+        tile: [180, 360], frequency: [0.42, 1.05], octaves: [2, 5],
+        contrast: [1.2, 1.8], brightness: [0.88, 1.08], opacity: [0.09, 0.18], rate: [480, 1400]
+      }));
       edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
       edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
     }
@@ -109,11 +137,16 @@
         edition.blobSpeeds.push(range(random, 0.45, 0.85, 2));
         edition.blobDrifts.push(range(random, -0.08, 0.08, 3));
       }
-      edition.vars["--appearance-display-size"] = pick(random, ["46px", "52px", "58px"]);
+      edition.vars["--appearance-display-size"] = pick(random, ["44px", "49px", "54px"]);
       edition.vars["--appearance-display-weight"] = pick(random, [650, 700, 750]);
       edition.vars["--appearance-body-size"] = pick(random, ["15.5px", "16px", "17px"]);
-      edition.vars["--page-max"] = pick(random, ["1000px", "1060px", "1120px"]);
-      edition.vars["--blob-grain-opacity"] = range(random, 0.1, 0.18, 3);
+      edition.vars["--page-max"] = pick(random, ["1060px", "1120px", "1180px"]);
+      edition.vars["--col-min"] = pick(random, ["360px", "390px"]);
+      edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
+      Object.assign(edition.vars, grainVars(random, {
+        tile: [320, 640], frequency: [0.45, 0.9], octaves: [3, 5],
+        contrast: [1.8, 2.6], brightness: [0.65, 0.9], opacity: [0.09, 0.17], rate: [520, 1280]
+      }, "--background-grain-opacity"));
       edition.attrs["data-blob-layout"] = pick(random, ["diagonal", "orbit", "horizon", "scatter"]);
       edition.attrs["data-blob-count"] = pick(random, ["3", "4", "4", "5"]);
     }
@@ -125,10 +158,12 @@
         { bg: "#020407", ink: "#b9d8ee", bright: "#dceeff", muted: "#809fb7", faint: "#607c92", foot: "#607c92", accent: "#8fc3e5", hair: "#273b4b", rule: "#172633", border: "#223747", chip: "#071019" }
       ];
       edition.vars = paletteVars(pick(random, crtPalettes));
-      edition.vars["--appearance-display-size"] = pick(random, ["48px", "54px", "60px"]);
+      edition.vars["--appearance-display-size"] = pick(random, ["46px", "50px", "54px"]);
       edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "17.5px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.68]);
-      edition.vars["--page-max"] = pick(random, ["900px", "1000px", "1100px"]);
+      edition.vars["--page-max"] = pick(random, ["1000px", "1100px", "1180px"]);
+      edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
+      edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
       edition.vars["--crt-pitch"] = range(random, 2.2, 3, 1) + "px";
       edition.vars["--crt-depth"] = range(random, 66, 82, 0);
       var crtSoftness = range(random, 80, 95, 0) / 100;
@@ -145,7 +180,10 @@
       edition.vars["--crt-vignette"] = range(random, 0.38, 0.62, 2);
       edition.vars["--crt-roll-period"] = range(random, 6.5, 12.5, 1) + "s";
       edition.vars["--crt-glow"] = range(random, 0.35, 0.85, 2) + "px";
-      edition.vars["--grain-opacity"] = range(random, 0.012, 0.024, 3);
+      Object.assign(edition.vars, grainVars(random, {
+        tile: [256, 440], frequency: [0.55, 1], octaves: [2, 4],
+        contrast: [1.4, 2], brightness: [0.78, 1], opacity: [0.012, 0.024], rate: [380, 900]
+      }));
     }
 
     if (look === "terminal") {
@@ -155,11 +193,16 @@
         { bg: "#0b0a06", ink: "#ddd7c8", bright: "#f5efdf", muted: "#9e9581", faint: "#837860", foot: "#837860", accent: "#d0ae69", hair: "#403927", rule: "#2c281b", border: "#393321", chip: "#15130c" }
       ];
       edition.vars = paletteVars(pick(random, terminalPalettes));
-      edition.vars["--appearance-display-size"] = pick(random, ["36px", "40px", "44px"]);
+      edition.vars["--appearance-display-size"] = pick(random, ["36px", "39px", "42px"]);
       edition.vars["--appearance-body-size"] = pick(random, ["15px", "15.5px", "16px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.6, 1.68, 1.75]);
-      edition.vars["--page-max"] = pick(random, ["760px", "860px", "960px"]);
-      edition.vars["--grain-opacity"] = range(random, 0.02, 0.04, 3);
+      edition.vars["--page-max"] = pick(random, ["900px", "1000px", "1100px"]);
+      edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
+      edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
+      Object.assign(edition.vars, grainVars(random, {
+        tile: [240, 480], frequency: [0.5, 0.95], octaves: [2, 4],
+        contrast: [1.35, 2.1], brightness: [0.72, 0.96], opacity: [0.024, 0.052], rate: [520, 1280]
+      }));
       edition.attrs["data-terminal-prompt"] = pick(random, ["tilde", "dot", "chevron"]);
     }
 
