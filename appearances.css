@@ -31,7 +31,11 @@ html[data-look] {
   --paper-texture-contrast: 1;
   --paper-texture-brightness: 1;
   --paper-texture-blend: multiply;
-  --terminal-font-family: "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --terminal-font-family: "Fira Mono", "Roboto Mono", monospace;
+  --terminal-display-weight: 500;
+  --terminal-name-spacing: -0.018em;
+  --terminal-heading-spacing: 0.035em;
+  --appearance-document-height: 100vh;
   --eno-gradient-a: none;
   --eno-gradient-b: none;
   --eno-gradient-c: none;
@@ -103,14 +107,15 @@ html[data-look] body::before {
 
 html[data-look="simple"] body::before { content: none; }
 
-/* Paper fibre belongs to the physical document rather than the viewport. It
-   scrolls with the body and prints over text and photographs; the finer grain
-   remains a separate, subtly moving surface layer above it. */
-html[data-look="paper"] body::after {
-  content: "";
+/* Paper fibre belongs to the physical document rather than the viewport. This
+   real document layer is sized from the rendered page, so it travels at the
+   exact speed of the content on short desktop and long mobile layouts alike. */
+.paper-texture-layer {
+  display: none;
   position: absolute;
   z-index: 5;
-  inset: 0;
+  inset: 0 0 auto;
+  height: var(--appearance-document-height);
   pointer-events: none;
   opacity: var(--paper-texture-opacity);
   mix-blend-mode: var(--paper-texture-blend);
@@ -119,6 +124,8 @@ html[data-look="paper"] body::after {
   background-size: var(--paper-texture-size) var(--paper-texture-size);
   filter: contrast(var(--paper-texture-contrast)) brightness(var(--paper-texture-brightness));
 }
+
+html[data-look="paper"] .paper-texture-layer { display: block; }
 
 html[data-look] .page {
   position: relative;
@@ -828,19 +835,19 @@ html[data-look="terminal"] body {
   --appearance-display-family: var(--terminal-font-family);
   --appearance-annotation-family: var(--terminal-font-family);
   --appearance-display-mobile: 30px;
-  --appearance-display-weight: 500;
+  --appearance-display-weight: var(--terminal-display-weight);
   --appearance-body-weight: 400;
   --grain-blend: screen;
 }
 
 html[data-look="terminal"] .name {
   line-height: 1.05;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--terminal-name-spacing);
 }
 
 html[data-look="terminal"] .heading {
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--terminal-heading-spacing);
 }
 
 html[data-look="terminal"] .heading::before {
@@ -922,6 +929,6 @@ html[data-look="terminal"] :is(.copy-markdown, .appearance-option) {
   .eno-lightbox-state { animation: none !important; will-change: auto; }
   .eno-lightbox-state:nth-child(n + 2) { opacity: 0; }
   html[data-look] body::before,
-  html[data-look="paper"] body::after { animation: none !important; will-change: auto; }
+  .paper-texture-layer { animation: none !important; will-change: auto; }
   .crt-mask-roll { display: none !important; }
 }

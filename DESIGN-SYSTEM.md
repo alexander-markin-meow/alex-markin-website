@@ -231,10 +231,10 @@ Six appearances have equal default probability:
   bounded ink temperature, scale, width, heading treatment, and rule style. Its generated
   `feTurbulence` grain is always a top layer over the complete edition. A second, much lighter
   seeded SVG stock texture is chosen independently from three families: directional `laid`
-  fibres, smooth `vellum` pulp, or softly lit `watercolour` tooth. It is absolutely attached to
-  the full document, so it scrolls with the sheet while printing consistently over text and
-  photographs; it never tracks the viewport. Texture opacity stays within `0.016–0.055`, with
-  the coarser watercolour relief receiving the upper end of that range.
+  fibres, smooth `vellum` pulp, or softly lit `watercolour` tooth. An explicit layer follows the
+  full rendered document height, so it scrolls with the sheet while printing consistently over
+  text and photographs; it never tracks the viewport. Texture opacity stays within
+  `0.030–0.075`, with the coarser watercolour relief receiving the upper end of that range.
 - `blob` (`blobs` internally) — bold type over 3–5 diffuse color fields. Each edition selects
   one readability-tested pairing from sans, Source Serif, and IBM Plex Mono; body, display,
   and annotations may vary, but no edition contains more than two font families. Its accent is
@@ -269,10 +269,11 @@ Six appearances have equal default probability:
   cells; the `appearance ↻` and `copy as markdown` utilities receive bounded phosphor glow.
   A fixed seed-colored signal layer covers elastic overscroll outside the document; reduced
   motion removes the rolling band. Never add flicker or text displacement.
-- `>...` (`terminal` internally) — a seeded native terminal stack led by SF Mono, Menlo, or
-  Monaco throughout at 400–500 weight, with quiet prompt prefixes, solid leaders, restrained
-  green/blue/amber palettes, slight grain, and a narrower reading measure. IBM Plex Mono is not
-  used inside this appearance; non-macOS fallbacks remain conventional terminal monospace faces.
+- `>...` (`terminal` internally) — one seeded technical face is used throughout each edition:
+  DEC-inspired VT323, workstation-like Fira Mono, or modern-console Roboto Mono. The family,
+  tuned size, weight, tracking, and line spacing vary together as a bounded preset rather than
+  mixing faces inside one view. Quiet prompt prefixes, solid leaders, restrained green/blue/amber
+  palettes, slight grain, and a narrower reading measure vary independently.
 
 Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
 seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. The shared reference

@@ -140,7 +140,7 @@
         "' numOctaves='3' seed='" + primarySeed + "' stitchTiles='stitch' result='primary'/>" +
         "<feTurbulence type='fractalNoise' baseFrequency='" + pulpFrequency + "' numOctaves='2' seed='" + secondarySeed +
         "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='multiply' result='paper'/>";
-      opacity = range(random, 0.018, 0.042, 3);
+      opacity = range(random, 0.035, 0.065, 3);
       contrast = range(random, 1.08, 1.28, 2);
       brightness = range(random, 0.94, 1.02, 2);
       blend = "multiply";
@@ -151,7 +151,7 @@
         "' numOctaves='3' seed='" + primarySeed + "' stitchTiles='stitch' result='primary'/>" +
         "<feTurbulence type='fractalNoise' baseFrequency='" + vellumFleck + "' numOctaves='1' seed='" + secondarySeed +
         "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='soft-light' result='paper'/>";
-      opacity = range(random, 0.016, 0.036, 3);
+      opacity = range(random, 0.03, 0.055, 3);
       contrast = range(random, 1.08, 1.24, 2);
       brightness = range(random, 0.96, 1.03, 2);
       blend = "soft-light";
@@ -167,7 +167,7 @@
         "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='multiply' result='tooth'/>" +
         "<feDiffuseLighting in='tooth' surfaceScale='" + surfaceScale + "' diffuseConstant='0.86' lighting-color='white' result='paper'>" +
         "<feDistantLight azimuth='" + azimuth + "' elevation='" + elevation + "'/></feDiffuseLighting>";
-      opacity = range(random, 0.026, 0.055, 3);
+      opacity = range(random, 0.045, 0.075, 3);
       contrast = range(random, 1.04, 1.2, 2);
       brightness = range(random, 0.97, 1.04, 2);
       blend = "soft-light";
@@ -445,14 +445,42 @@
         { bg: "#0b0a06", ink: "#ddd7c8", bright: "#f5efdf", muted: "#9e9581", faint: "#837860", foot: "#837860", accent: "#d0ae69", hair: "#403927", rule: "#2c281b", border: "#393321", chip: "#15130c" }
       ];
       edition.vars = paletteVars(pick(random, terminalPalettes));
-      edition.vars["--terminal-font-family"] = pick(random, [
-        '"SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
-        'Menlo, Monaco, "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace',
-        'Monaco, Menlo, "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace'
+      var terminalType = pick(random, [
+        {
+          family: '"VT323", "Roboto Mono", monospace',
+          displaySize: ["46px", "49px", "52px"],
+          bodySize: ["18px", "18.5px", "19px"],
+          lineHeight: [1.42, 1.48, 1.54],
+          displayWeight: 400,
+          nameSpacing: "0.005em",
+          headingSpacing: "0.055em"
+        },
+        {
+          family: '"Fira Mono", "Roboto Mono", monospace',
+          displaySize: ["36px", "39px", "42px"],
+          bodySize: ["15px", "15.5px", "16px"],
+          lineHeight: [1.58, 1.66, 1.72],
+          displayWeight: pick(random, [400, 500]),
+          nameSpacing: "-0.018em",
+          headingSpacing: "0.035em"
+        },
+        {
+          family: '"Roboto Mono", "Fira Mono", monospace',
+          displaySize: ["36px", "38px", "41px"],
+          bodySize: ["14.5px", "15px", "15.5px"],
+          lineHeight: [1.62, 1.68, 1.74],
+          displayWeight: pick(random, [400, 500]),
+          nameSpacing: "-0.014em",
+          headingSpacing: "0.045em"
+        }
       ]);
-      edition.vars["--appearance-display-size"] = pick(random, ["36px", "39px", "42px"]);
-      edition.vars["--appearance-body-size"] = pick(random, ["15px", "15.5px", "16px"]);
-      edition.vars["--appearance-line-height"] = pick(random, [1.6, 1.68, 1.75]);
+      edition.vars["--terminal-font-family"] = terminalType.family;
+      edition.vars["--appearance-display-size"] = pick(random, terminalType.displaySize);
+      edition.vars["--appearance-body-size"] = pick(random, terminalType.bodySize);
+      edition.vars["--appearance-line-height"] = pick(random, terminalType.lineHeight);
+      edition.vars["--terminal-display-weight"] = terminalType.displayWeight;
+      edition.vars["--terminal-name-spacing"] = terminalType.nameSpacing;
+      edition.vars["--terminal-heading-spacing"] = terminalType.headingSpacing;
       edition.vars["--page-max"] = pick(random, ["900px", "1000px", "1100px"]);
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
@@ -532,6 +560,26 @@
   }
 
   var parallaxFrame;
+  var documentLayerFrame;
+  var documentLayerObserver;
+
+  function updateDocumentLayerSize() {
+    if (documentLayerFrame) window.cancelAnimationFrame(documentLayerFrame);
+    documentLayerFrame = window.requestAnimationFrame(function () {
+      documentLayerFrame = null;
+      if (!document.body) return;
+      var page = document.querySelector(".page");
+      var pageBottom = page ? page.offsetTop + page.offsetHeight : 0;
+      var height = Math.max(
+        window.innerHeight,
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        pageBottom
+      );
+      root.style.setProperty("--appearance-document-height", height + "px");
+    });
+  }
+
   function updateBlobMotion() {
     var blobs = document.querySelectorAll("[data-parallax-blob]");
     blobs.forEach(function (blob, index) {
@@ -584,7 +632,19 @@
     updateControls();
     updateBlobMotion();
     updateParallax();
+    updateDocumentLayerSize();
     window.addEventListener("scroll", updateParallax, { passive: true });
-    window.addEventListener("resize", updateParallax);
+    window.addEventListener("resize", function () {
+      updateParallax();
+      updateDocumentLayerSize();
+    });
+    window.addEventListener("load", updateDocumentLayerSize);
+    if (window.ResizeObserver) {
+      documentLayerObserver = new ResizeObserver(updateDocumentLayerSize);
+      documentLayerObserver.observe(document.body);
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(updateDocumentLayerSize);
+    }
   });
 })();
