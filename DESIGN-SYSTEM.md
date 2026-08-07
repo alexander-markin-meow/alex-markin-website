@@ -237,7 +237,9 @@ Six appearances have equal default probability:
   `180–480s` with bounded `±24°` hue travel. Montserrat supplies the geometric album-art voice:
   the display name and headings render uppercase through CSS with wide tracking, while authored
   content remains lowercase. Text colors remain fixed inside the selected contrast family.
-  Reduced motion shows the first seeded state.
+  The document canvas repeats the first seeded state beneath the fixed animation so mobile
+  safe-area and elastic-scroll reveals stay inside the lightbox. Controls remain transparent
+  so the lightbox itself is their fill. Reduced motion shows the first seeded state.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
@@ -272,13 +274,17 @@ glyph composes a new random appearance and edition without requiring a page refr
 `appearance` and the reload glyph are one compact outlined button, not separate controls. The
 control's top inset matches the footer's bottom inset. It and `copy as markdown` share the same
 fixed height while their widths remain content-sized and never force either label to wrap.
+On mobile, seed/status text is hidden and all six style choices share one row with a
+symbol-only randomize button aligned at the right edge.
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
 The blob layer never contains content. Generated columns use an appearance-aware minimum width;
 long rows may wrap instead of clipping, and the display name scales against its actual identity
-text container so it remains on one line. Keep stronger texture reduced on small screens and
-honor the visitor's motion preference.
+text container so it remains on one line. The homepage uses `viewport-fit=cover`: visual layers
+paint through mobile safe areas, while page padding incorporates every safe-area inset so content
+remains clear of device controls. Keep stronger texture reduced on small screens and honor the
+visitor's motion preference.
 
 Images are invariant across appearances: retain the standard border, radius, grayscale, crop,
 and dimensions from `styles.css`. Whole-page overlays such as paper grain or the CRT mask may sit
