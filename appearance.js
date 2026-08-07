@@ -14,7 +14,7 @@
   };
   var appearanceAttributes = [
     "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-blob-layout",
-    "data-blob-count", "data-eno-composition", "data-eno-contrast", "data-terminal-prompt"
+    "data-blob-count", "data-blob-mobile-extra", "data-eno-composition", "data-eno-contrast", "data-terminal-prompt"
   ];
   var appliedProperties = [];
   var currentEdition;
@@ -69,19 +69,20 @@
     return "hsl(" + variedHue + " " + saturation + "% " + lightness + "%)";
   }
 
-  function grainVars(random, bounds, opacityProperty) {
+  function grainVars(random, bounds) {
     var tile = range(random, bounds.tile[0], bounds.tile[1], 0);
     var rasterScale = 4;
     var rasterTile = tile * rasterScale;
     var frequency = range(random, bounds.frequency[0], bounds.frequency[1], 3);
     var octaves = range(random, bounds.octaves[0], bounds.octaves[1], 0);
+    var noiseSeed = range(random, 1, 9999, 0);
     var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + rasterTile + "' height='" + rasterTile +
       "' viewBox='0 0 " + tile + " " + tile + "' preserveAspectRatio='none'>" +
       "<filter id='n' x='0' y='0' width='" + tile + "' height='" + tile +
       "' filterUnits='userSpaceOnUse' filterRes='" + rasterTile + " " + rasterTile +
       "' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' " +
       "baseFrequency='" + frequency + "' numOctaves='" + octaves +
-      "' stitchTiles='stitch' result='noise'/><feColorMatrix in='noise' type='saturate' values='0'/></filter>" +
+      "' seed='" + noiseSeed + "' stitchTiles='stitch' result='noise'/><feColorMatrix in='noise' type='saturate' values='0'/></filter>" +
       "<rect width='" + tile + "' height='" + tile + "' filter='url(#n)'/></svg>";
     var vars = {
       "--grain-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")',
@@ -89,11 +90,12 @@
       "--grain-raster-scale": rasterScale,
       "--grain-frequency": frequency,
       "--grain-octaves": octaves,
+      "--grain-seed": noiseSeed,
       "--grain-contrast": range(random, bounds.contrast[0], bounds.contrast[1], 2),
       "--grain-brightness": range(random, bounds.brightness[0], bounds.brightness[1], 2),
       "--grain-rate": range(random, bounds.rate[0], bounds.rate[1], 0) + "ms"
     };
-    vars[opacityProperty || "--grain-opacity"] = range(random, bounds.opacity[0], bounds.opacity[1], 3);
+    vars["--grain-opacity"] = range(random, bounds.opacity[0], bounds.opacity[1], 3);
     return vars;
   }
 
@@ -113,6 +115,35 @@
       bounds[key] = overrides[key];
     });
     return bounds;
+  }
+
+  function paperTextureVars(random) {
+    var tile = range(random, 720, 960, 0);
+    var rasterScale = 2;
+    var rasterTile = tile * rasterScale;
+    var fibreX = range(random, 0.009, 0.018, 3);
+    var fibreY = range(random, 0.09, 0.16, 3);
+    var pulpFrequency = range(random, 0.022, 0.042, 3);
+    var fibreOctaves = range(random, 3, 4, 0);
+    var fibreSeed = range(random, 1, 9999, 0);
+    var pulpSeed = range(random, 1, 9999, 0);
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + rasterTile + "' height='" + rasterTile +
+      "' viewBox='0 0 " + tile + " " + tile + "' preserveAspectRatio='none'>" +
+      "<filter id='p' x='0' y='0' width='" + tile + "' height='" + tile +
+      "' filterUnits='userSpaceOnUse' filterRes='" + rasterTile + " " + rasterTile +
+      "' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='" + fibreX + " " + fibreY +
+      "' numOctaves='" + fibreOctaves + "' seed='" + fibreSeed + "' stitchTiles='stitch' result='fibres'/>" +
+      "<feTurbulence type='fractalNoise' baseFrequency='" + pulpFrequency + "' numOctaves='2' seed='" + pulpSeed +
+      "' stitchTiles='stitch' result='pulp'/><feBlend in='fibres' in2='pulp' mode='multiply' result='paper'/>" +
+      "<feColorMatrix in='paper' type='saturate' values='0'/></filter>" +
+      "<rect width='" + tile + "' height='" + tile + "' filter='url(#p)'/></svg>";
+    return {
+      "--paper-texture-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")',
+      "--paper-texture-size": tile + "px",
+      "--paper-texture-opacity": range(random, 0.07, 0.12, 3),
+      "--paper-texture-contrast": range(random, 1.25, 1.55, 2),
+      "--paper-texture-brightness": range(random, 0.84, 0.96, 2)
+    };
   }
 
   function imageVars(random, bounds) {
@@ -200,6 +231,7 @@
       Object.assign(edition.vars, grainVars(random, grainBounds({
         tile: [512, 576], frequency: [0.5, 0.62], opacity: [0.1, 0.17]
       })));
+      Object.assign(edition.vars, paperTextureVars(random));
       edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
       edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
       Object.assign(edition.vars, imageVars(random, {
@@ -231,8 +263,8 @@
       edition.vars["--blob-name-spacing"] = blobType.nameSpacing;
       edition.vars["--blob-name-line"] = blobType.nameLine;
       edition.vars["--appearance-line-height"] = blobType.lineHeight;
-      for (var b = 0; b < 5; b++) {
-        edition.vars["--blob-" + (b + 1) + "-color"] = blobColor(random, blob.blobHues[b]);
+      for (var b = 0; b < 7; b++) {
+        edition.vars["--blob-" + (b + 1) + "-color"] = blobColor(random, blob.blobHues[b % blob.blobHues.length]);
         edition.vars["--blob-" + (b + 1) + "-size"] = range(random, 34, 72, 0) + "vw";
         edition.vars["--blob-" + (b + 1) + "-opacity"] = range(random, 0.7, 1, 2);
         edition.vars["--blob-" + (b + 1) + "-strength"] = range(random, 0.28, 0.42, 2);
@@ -256,10 +288,11 @@
       edition.vars["--col-min"] = pick(random, ["360px", "390px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
       Object.assign(edition.vars, grainVars(random, grainBounds({
-        opacity: [0.12, 0.18]
-      }), "--background-grain-opacity"));
+        frequency: [0.62, 0.74], opacity: [0.08, 0.14]
+      })));
       edition.attrs["data-blob-layout"] = pick(random, ["diagonal", "orbit", "horizon", "scatter"]);
       edition.attrs["data-blob-count"] = pick(random, ["3", "4", "4", "5"]);
+      edition.attrs["data-blob-mobile-extra"] = pick(random, ["1", "2"]);
       Object.assign(edition.vars, imageVars(random, {
         contrast: [0.96, 1.12], brightness: [0.94, 1.08], opacity: [0.88, 0.96]
       }));
@@ -313,7 +346,7 @@
       edition.vars["--eno-saturation"] = range(random, 1.08, 1.26, 2);
       edition.vars["--eno-diffusion"] = range(random, 0.05, 0.12, 2);
       Object.assign(edition.vars, grainVars(random, grainBounds({
-        frequency: [0.58, 0.68], opacity: [0.012, 0.026], rate: [780, 1080]
+        frequency: [0.65, 0.76], opacity: [0.022, 0.04], rate: [780, 1080]
       })));
       edition.attrs["data-eno-composition"] = enoMode;
       edition.attrs["data-eno-contrast"] = enoContrast;

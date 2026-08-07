@@ -229,7 +229,9 @@ Six appearances have equal default probability:
   and spacing.
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
   bounded ink temperature, scale, width, heading treatment, and rule style. Its generated
-  `feTurbulence` grain is always a top layer over the complete edition.
+  `feTurbulence` grain is always a top layer over the complete edition. A second seeded
+  fibre-and-pulp SVG texture is absolutely attached to the full document, so it scrolls with
+  the sheet while printing consistently over text and photographs; it never tracks the viewport.
 - `blob` (`blobs` internally) — bold type over 3–5 diffuse color fields. Each edition selects
   one readability-tested pairing from sans, Source Serif, and IBM Plex Mono; body, display,
   and annotations may vary, but no edition contains more than two font families. Its accent is
@@ -238,7 +240,8 @@ Six appearances have equal default probability:
   independently varies in hue, saturation, lightness, opacity, size, blur, and autonomous
   drift path. As on `louppe.eu`, autonomous drift uses `transform`, while the separate
   `translate` property compensates page scroll so each blob travels at its seeded `0.45–0.85`
-  scroll-speed multiplier. A separate atmospheric grain layer stays behind all content. Both
+  scroll-speed multiplier. Mobile editions reveal one or two additional seeded fields from a
+  seven-field pool to cover their longer document. A separate atmospheric grain layer prints over all content. Both
   motions become static under `prefers-reduced-motion`.
 - `eno` — the complete responsive document is one luminous lightbox rather than a collection of
   decorative objects. A seed selects a vertical, horizontal, quartered, central-window, or
@@ -276,15 +279,15 @@ monochrome before blending to prevent colored raster artifacts; lower-resolution
 allowed. Each grain-bearing edition independently randomizes tile size, noise frequency, octave
 count, contrast, brightness, strength, and stepped shift rate inside tight brackets around that
 reference. Paper uses a slightly lower `0.50–0.62` frequency range for larger physical grain and blends the
-grain over the complete page with `multiply`; blobs blend it behind content with `screen`;
-Eno uses a very light diffuser grain; terminal and CRT keep their lighter surface treatment.
+grain over the complete page with `multiply`; blobs use a topmost `screen` surface;
+Eno uses a very light, slightly finer topmost diffuser grain; terminal and CRT keep their lighter surface treatment.
 Reduced motion freezes the tile.
 
 The shared random brackets are: `512–560px` tile, `0.60–0.72` frequency, four or five
 octaves, `2.20–2.60` contrast, `0.68–0.78` brightness, and `720–960ms` step rate. Paper
-may extend to `576px`; Eno narrows frequency to `0.58–0.68`, CRT to `0.62–0.76`, and
+may extend to `576px`; Eno uses `0.65–0.76`, CRT uses `0.62–0.76`, and
 terminal to `0.58–0.72`. Opacity stays appearance-specific: paper `0.10–0.17`, blob
-`0.12–0.18`, Eno `0.012–0.026`, CRT `0.012–0.024`, and terminal `0.030–0.055`.
+`0.08–0.14`, Eno `0.022–0.040`, CRT `0.012–0.024`, and terminal `0.030–0.055`.
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
 `?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases
@@ -296,8 +299,9 @@ glyph composes a new random appearance and edition without requiring a page refr
 `appearance` and the reload glyph are one compact outlined button, not separate controls. The
 control's top inset matches the footer's bottom inset. It and `copy as markdown` share the same
 fixed height while their widths remain content-sized and never force either label to wrap.
-On mobile, seed/status text is hidden and all six style choices share one row with a
-symbol-only randomize button aligned at the right edge.
+On mobile, seed/status text is hidden and all six style choices form a compact left cluster in
+one row, beginning exactly at the content divider's left edge. The symbol-only randomize button
+is pushed to the opposite side with its right edge aligned exactly to the divider's right edge.
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
