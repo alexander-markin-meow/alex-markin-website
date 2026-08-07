@@ -458,27 +458,27 @@
       var terminalType = pick(random, [
         {
           family: '"VT323", "Roboto Mono", monospace',
-          displaySize: ["48px", "52px", "56px"],
-          bodySize: ["18.5px", "19px", "19.5px"],
-          lineHeight: [1.42, 1.48, 1.54],
+          displaySize: ["54px", "58px", "62px"],
+          bodySize: ["20px", "21px", "22px"],
+          lineHeight: [1.4, 1.46, 1.52],
           displayWeight: 400,
           nameSpacing: "0.005em",
           headingSpacing: "0.055em"
         },
         {
           family: '"Fira Mono", "Roboto Mono", monospace',
-          displaySize: ["40px", "42px", "44px"],
-          bodySize: ["16px", "16.5px", "17px"],
-          lineHeight: [1.58, 1.66, 1.72],
+          displaySize: ["44px", "46px", "48px"],
+          bodySize: ["18px", "18.5px", "19px"],
+          lineHeight: [1.54, 1.6, 1.66],
           displayWeight: pick(random, [400, 500]),
           nameSpacing: "-0.018em",
           headingSpacing: "0.035em"
         },
         {
           family: '"Roboto Mono", "Fira Mono", monospace',
-          displaySize: ["40px", "42px", "44px"],
-          bodySize: ["16px", "16.5px", "17px"],
-          lineHeight: [1.62, 1.68, 1.74],
+          displaySize: ["44px", "46px", "48px"],
+          bodySize: ["18px", "18.5px", "19px"],
+          lineHeight: [1.58, 1.64, 1.7],
           displayWeight: pick(random, [400, 500]),
           nameSpacing: "-0.014em",
           headingSpacing: "0.045em"

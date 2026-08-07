@@ -279,8 +279,10 @@ Six appearances have equal default probability:
   tuned size, weight, tracking, and line spacing vary together as a bounded preset rather than
   mixing faces inside one view. Quiet prompt prefixes, solid leaders, restrained green/blue/amber
   palettes, slight grain, and a narrower reading measure vary independently. Fira Mono and
-  Roboto Mono never fall below a `16px` body / `40px` display scale; VT323 stays larger to
-  compensate for its smaller raster-style x-height.
+  Roboto Mono use an `18–19px` body / `44–48px` display scale; VT323 uses a larger
+  `20–22px` body / `54–62px` display scale to compensate for its raster-style x-height. Text
+  links invert against the selected terminal accent on hover/focus, using a content-width
+  selection block without CRT glow.
 
 Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
 seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. The shared reference
@@ -318,10 +320,10 @@ is pushed to the opposite side with its right edge aligned exactly to the divide
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
-Every text link on the generative homepage has both a color change and a thin seed-accent baseline
-on hover/focus, so its state remains visible in every palette. Image links answer with an accent
-border. CRT replaces the baseline with its phosphor selection block, and Blob adds its documented
-seed-colored bloom.
+Every text link on the generative homepage changes tone or color on hover/focus; do not add
+underlines or baseline effects because the layout already uses leader lines and rules. Image links
+answer with an accent border. CRT uses a phosphor selection block, Terminal uses a clean selection
+inversion, and Blob adds its documented seed-colored bloom.
 The blob layer never contains content. Generated columns use an appearance-aware minimum width;
 long rows may wrap instead of clipping, and the display name scales against its actual identity
 text container so it remains on one line. The homepage uses `viewport-fit=cover`: visual layers

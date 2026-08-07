@@ -174,9 +174,8 @@ html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link):
   font-family: var(--appearance-annotation-family);
 }
 
-/* Color-only hover can disappear inside a seeded palette. Every homepage text
-   link therefore receives a thin accent response as well; CRT replaces it with
-   its phosphor selection block below. */
+/* Homepage text links answer through each edition's palette. Keep the response
+   typographic: the page already contains enough leader lines and rules. */
 html[data-look] a:not(.flickr-photo-link) {
   transition: color 0.15s ease, box-shadow 0.15s ease, text-shadow 0.18s ease;
   -webkit-box-decoration-break: clone;
@@ -185,7 +184,6 @@ html[data-look] a:not(.flickr-photo-link) {
 
 html[data-look]:not([data-look="crt"]) a:not(.flickr-photo-link):is(:hover, :focus-visible) {
   color: var(--ink-hover);
-  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--accent) 78%, transparent);
 }
 
 /* --------------------------------------------------------------------------
@@ -916,6 +914,20 @@ html[data-look="terminal"] .leader { border-bottom-style: solid; }
 
 html[data-look="terminal"] :is(.copy-markdown, .appearance-option) {
   border-radius: 0;
+}
+
+/* Terminal links use the same compact selection inversion as CRT, without the
+   phosphor halo. The block follows wrapped text instead of stretching a row. */
+html[data-look="terminal"] a:not(.flickr-photo-link):is(:hover, :focus-visible) {
+  color: var(--bg);
+  background-color: var(--accent);
+  text-shadow: none;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+html[data-look="terminal"] a:not(.flickr-photo-link):is(:hover, :focus-visible)::after {
+  color: inherit;
+  text-shadow: none;
 }
 
 @media (max-width: 640px) {
