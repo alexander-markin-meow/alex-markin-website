@@ -82,7 +82,8 @@ The signature pattern. Title left, dotted line fills the middle, lowercase mono 
   `photo`. Reuse before inventing.
 - The first link's hit area covers the full row, including the dotted leader and tag.
 - Links: no underline, `--ink`, hover to pure white. Nothing else changes on hover. External
-  links append a compact mono `↗` marker with a narrow gap. Deliberate internal navigation uses
+  links append a compact mono `↗︎` marker with a narrow gap and the Unicode text-presentation
+  selector; never permit emoji presentation. Deliberate internal navigation uses
   `.internal-link` and a mono `→`; identity, image, and back links remain unmarked because their
   direction is already clear. Photo links are also unmarked because the image signals interaction.
 
@@ -218,10 +219,11 @@ Five appearances have equal default probability:
   bounded ink temperature, scale, width, heading treatment, and rule style. Its generated
   `feTurbulence` grain is always a top layer over the complete edition.
 - `blobs` — bold system-sans display and body type over 3–5 diffuse color fields. Every blob
-  independently varies in hue, saturation, lightness, opacity, size, shape, horizontal drift,
-  and a seeded `0.45–0.85` scroll-speed multiplier. A separate atmospheric grain layer stays
-  behind all content. Movement is transform-only and becomes static under
-  `prefers-reduced-motion`.
+  independently varies in hue, saturation, lightness, opacity, size, blur, and autonomous
+  drift path. As on `louppe.eu`, autonomous drift uses `transform`, while the separate
+  `translate` property compensates page scroll so each blob travels at its seeded `0.45–0.85`
+  scroll-speed multiplier. A separate atmospheric grain layer stays behind all content. Both
+  motions become static under `prefers-reduced-motion`.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
@@ -231,9 +233,11 @@ Five appearances have equal default probability:
   leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
 
 Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
-seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. Each grain-bearing
+seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. Every tile is at
+least 512px with at least four octaves; lower-resolution grain is not allowed. Each grain-bearing
 edition independently randomizes tile size, noise frequency, octave count (quality), contrast,
-brightness, strength, and stepped shift rate within readability-safe brackets. Paper blends the
+brightness, strength, and stepped shift rate within readability-safe brackets. Paper uses a
+lower frequency range for slightly larger physical grain and blends the
 grain over the complete page with `multiply`; blobs blend it behind content with `screen`;
 terminal and CRT keep their lighter surface treatment. Reduced motion freezes the tile.
 
@@ -241,7 +245,8 @@ All random values are derived from one edition seed. `?seed=<value>` reproduces 
 `?look=<name>&seed=<value>` pins both its appearance and values. An ordinary load without these
 parameters generates a new seed. The first utility row on the homepage switches immediately,
 does not persist, and removes pinned parameters so the next reload is random again. Its reload
-glyph composes a new random appearance and edition without requiring a page refresh.
+glyph composes a new random appearance and edition without requiring a page refresh. The word
+`appearance` and the reload glyph are one compact outlined button, not separate controls.
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.

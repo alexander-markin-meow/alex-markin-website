@@ -80,7 +80,7 @@
   function compose(seed, forcedLook) {
     var random = randomFrom(seed);
     var look = looks.indexOf(forcedLook) !== -1 ? forcedLook : pick(random, looks);
-    var edition = { look: look, seed: seed, attrs: {}, vars: {}, blobSpeeds: [], blobDrifts: [] };
+    var edition = { look: look, seed: seed, attrs: {}, vars: {}, blobSpeeds: [], blobMotions: [] };
 
     if (look === "simple") {
       var simplePalettes = [
@@ -114,7 +114,7 @@
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
       Object.assign(edition.vars, grainVars(random, {
-        tile: [180, 360], frequency: [0.42, 1.05], octaves: [2, 5],
+        tile: [512, 640], frequency: [0.25, 0.55], octaves: [4, 5],
         contrast: [1.2, 1.8], brightness: [0.88, 1.08], opacity: [0.09, 0.18], rate: [480, 1400]
       }));
       edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
@@ -131,11 +131,22 @@
       edition.vars = paletteVars(blob);
       for (var b = 0; b < 5; b++) {
         edition.vars["--blob-" + (b + 1) + "-color"] = blobColor(random, blob.blobHues[b]);
-        edition.vars["--blob-" + (b + 1) + "-size"] = range(random, 34, 84, 0) + "vw";
-        edition.vars["--blob-" + (b + 1) + "-opacity"] = range(random, 0.16, 0.34, 2);
-        edition.vars["--blob-" + (b + 1) + "-ratio"] = "1 / " + range(random, 0.62, 1.16, 2);
+        edition.vars["--blob-" + (b + 1) + "-size"] = range(random, 34, 72, 0) + "vw";
+        edition.vars["--blob-" + (b + 1) + "-opacity"] = range(random, 0.7, 1, 2);
+        edition.vars["--blob-" + (b + 1) + "-strength"] = range(random, 0.28, 0.42, 2);
+        edition.vars["--blob-" + (b + 1) + "-blur"] = range(random, 24, 58, 0) + "px";
         edition.blobSpeeds.push(range(random, 0.45, 0.85, 2));
-        edition.blobDrifts.push(range(random, -0.08, 0.08, 3));
+        var driftDuration = range(random, 18, 42, 0);
+        edition.blobMotions.push({
+          duration: driftDuration,
+          delay: -range(random, 0, driftDuration, 0),
+          fromX: range(random, -12, 12, 0),
+          fromY: range(random, -10, 10, 0),
+          fromScale: range(random, 0.92, 1.08, 2),
+          toX: range(random, -14, 14, 0),
+          toY: range(random, -12, 12, 0),
+          toScale: range(random, 0.94, 1.16, 2)
+        });
       }
       edition.vars["--appearance-display-size"] = pick(random, ["44px", "49px", "54px"]);
       edition.vars["--appearance-display-weight"] = pick(random, [650, 700, 750]);
@@ -144,7 +155,7 @@
       edition.vars["--col-min"] = pick(random, ["360px", "390px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
       Object.assign(edition.vars, grainVars(random, {
-        tile: [320, 640], frequency: [0.45, 0.9], octaves: [3, 5],
+        tile: [512, 640], frequency: [0.42, 0.75], octaves: [4, 5],
         contrast: [1.8, 2.6], brightness: [0.65, 0.9], opacity: [0.09, 0.17], rate: [520, 1280]
       }, "--background-grain-opacity"));
       edition.attrs["data-blob-layout"] = pick(random, ["diagonal", "orbit", "horizon", "scatter"]);
@@ -181,7 +192,7 @@
       edition.vars["--crt-roll-period"] = range(random, 6.5, 12.5, 1) + "s";
       edition.vars["--crt-glow"] = range(random, 0.35, 0.85, 2) + "px";
       Object.assign(edition.vars, grainVars(random, {
-        tile: [256, 440], frequency: [0.55, 1], octaves: [2, 4],
+        tile: [512, 640], frequency: [0.55, 0.9], octaves: [4, 5],
         contrast: [1.4, 2], brightness: [0.78, 1], opacity: [0.012, 0.024], rate: [380, 900]
       }));
     }
@@ -200,7 +211,7 @@
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
       Object.assign(edition.vars, grainVars(random, {
-        tile: [240, 480], frequency: [0.5, 0.95], octaves: [2, 4],
+        tile: [512, 640], frequency: [0.45, 0.8], octaves: [4, 5],
         contrast: [1.35, 2.1], brightness: [0.72, 0.96], opacity: [0.024, 0.052], rate: [520, 1280]
       }));
       edition.attrs["data-terminal-prompt"] = pick(random, ["tilde", "dot", "chevron"]);
@@ -246,6 +257,7 @@
     });
     currentEdition = edition;
     updateControls();
+    updateBlobMotion();
     updateParallax();
   }
 
@@ -272,6 +284,22 @@
   }
 
   var parallaxFrame;
+  function updateBlobMotion() {
+    var blobs = document.querySelectorAll("[data-parallax-blob]");
+    blobs.forEach(function (blob, index) {
+      var motion = currentEdition && currentEdition.blobMotions[index];
+      if (!motion) return;
+      blob.style.setProperty("--blob-drift-speed", motion.duration + "s");
+      blob.style.setProperty("--blob-drift-delay", motion.delay + "s");
+      blob.style.setProperty("--blob-from-x", motion.fromX + "%");
+      blob.style.setProperty("--blob-from-y", motion.fromY + "%");
+      blob.style.setProperty("--blob-from-scale", motion.fromScale);
+      blob.style.setProperty("--blob-to-x", motion.toX + "%");
+      blob.style.setProperty("--blob-to-y", motion.toY + "%");
+      blob.style.setProperty("--blob-to-scale", motion.toScale);
+    });
+  }
+
   function updateParallax() {
     if (parallaxFrame) window.cancelAnimationFrame(parallaxFrame);
     parallaxFrame = window.requestAnimationFrame(function () {
@@ -280,14 +308,10 @@
       var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       blobs.forEach(function (blob, index) {
         var speed = currentEdition && currentEdition.blobSpeeds[index];
-        var drift = currentEdition && currentEdition.blobDrifts[index];
         var offsetY = currentEdition && currentEdition.look === "blobs" && !reduceMotion && speed
-          ? -window.scrollY * speed
+          ? window.scrollY * (1 - speed)
           : 0;
-        var offsetX = currentEdition && currentEdition.look === "blobs" && !reduceMotion && drift
-          ? window.scrollY * drift
-          : 0;
-        blob.style.transform = "translate3d(" + offsetX.toFixed(1) + "px," + offsetY.toFixed(1) + "px,0)";
+        blob.style.setProperty("--blob-parallax-y", offsetY.toFixed(1) + "px");
       });
     });
   }
@@ -310,6 +334,7 @@
       });
     }
     updateControls();
+    updateBlobMotion();
     updateParallax();
     window.addEventListener("scroll", updateParallax, { passive: true });
     window.addEventListener("resize", updateParallax);

@@ -194,9 +194,10 @@ a:focus-visible {
 /* external destinations receive a compact machine-voice marker. Photo links
    are already visibly interactive through their image treatment. */
 a[target="_blank"]:not(.flickr-photo-link)::after {
-  content: "↗";
+  content: "↗︎";
   margin-left: 0.15em;
   font-family: var(--mono);
+  font-variant-emoji: text;
   font-size: var(--fs-tag);
   letter-spacing: 0;
 }
