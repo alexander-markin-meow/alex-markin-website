@@ -13,7 +13,7 @@
     eno: "eno", crt: "crt", terminal: "terminal", ">...": "terminal"
   };
   var appearanceAttributes = [
-    "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-blob-layout",
+    "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-paper-texture", "data-blob-layout",
     "data-blob-count", "data-blob-mobile-extra", "data-eno-composition", "data-eno-contrast", "data-terminal-prompt"
   ];
   var appliedProperties = [];
@@ -118,32 +118,76 @@
   }
 
   function paperTextureVars(random) {
-    var tile = range(random, 720, 960, 0);
+    var type = pick(random, ["laid", "vellum", "watercolour"]);
+    var tile = type === "watercolour"
+      ? range(random, 820, 1080, 0)
+      : range(random, 720, 960, 0);
     var rasterScale = 2;
     var rasterTile = tile * rasterScale;
-    var fibreX = range(random, 0.009, 0.018, 3);
-    var fibreY = range(random, 0.09, 0.16, 3);
-    var pulpFrequency = range(random, 0.022, 0.042, 3);
-    var fibreOctaves = range(random, 3, 4, 0);
-    var fibreSeed = range(random, 1, 9999, 0);
-    var pulpSeed = range(random, 1, 9999, 0);
+    var primarySeed = range(random, 1, 9999, 0);
+    var secondarySeed = range(random, 1, 9999, 0);
+    var filterNodes;
+    var opacity;
+    var contrast;
+    var brightness;
+    var blend;
+
+    if (type === "laid") {
+      var fibreX = range(random, 0.008, 0.014, 3);
+      var fibreY = range(random, 0.07, 0.12, 3);
+      var pulpFrequency = range(random, 0.018, 0.035, 3);
+      filterNodes = "<feTurbulence type='fractalNoise' baseFrequency='" + fibreX + " " + fibreY +
+        "' numOctaves='3' seed='" + primarySeed + "' stitchTiles='stitch' result='primary'/>" +
+        "<feTurbulence type='fractalNoise' baseFrequency='" + pulpFrequency + "' numOctaves='2' seed='" + secondarySeed +
+        "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='multiply' result='paper'/>";
+      opacity = range(random, 0.018, 0.042, 3);
+      contrast = range(random, 1.08, 1.28, 2);
+      brightness = range(random, 0.94, 1.02, 2);
+      blend = "multiply";
+    } else if (type === "vellum") {
+      var vellumFrequency = range(random, 0.028, 0.05, 3);
+      var vellumFleck = range(random, 0.11, 0.18, 3);
+      filterNodes = "<feTurbulence type='fractalNoise' baseFrequency='" + vellumFrequency +
+        "' numOctaves='3' seed='" + primarySeed + "' stitchTiles='stitch' result='primary'/>" +
+        "<feTurbulence type='fractalNoise' baseFrequency='" + vellumFleck + "' numOctaves='1' seed='" + secondarySeed +
+        "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='soft-light' result='paper'/>";
+      opacity = range(random, 0.016, 0.036, 3);
+      contrast = range(random, 1.08, 1.24, 2);
+      brightness = range(random, 0.96, 1.03, 2);
+      blend = "soft-light";
+    } else {
+      var toothFrequency = range(random, 0.012, 0.026, 3);
+      var fineFrequency = range(random, 0.06, 0.11, 3);
+      var surfaceScale = range(random, 0.8, 1.6, 2);
+      var azimuth = range(random, 25, 155, 0);
+      var elevation = range(random, 48, 64, 0);
+      filterNodes = "<feTurbulence type='fractalNoise' baseFrequency='" + toothFrequency +
+        "' numOctaves='4' seed='" + primarySeed + "' stitchTiles='stitch' result='primary'/>" +
+        "<feTurbulence type='fractalNoise' baseFrequency='" + fineFrequency + "' numOctaves='2' seed='" + secondarySeed +
+        "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='multiply' result='tooth'/>" +
+        "<feDiffuseLighting in='tooth' surfaceScale='" + surfaceScale + "' diffuseConstant='0.86' lighting-color='white' result='paper'>" +
+        "<feDistantLight azimuth='" + azimuth + "' elevation='" + elevation + "'/></feDiffuseLighting>";
+      opacity = range(random, 0.026, 0.055, 3);
+      contrast = range(random, 1.04, 1.2, 2);
+      brightness = range(random, 0.97, 1.04, 2);
+      blend = "soft-light";
+    }
+
     var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + rasterTile + "' height='" + rasterTile +
       "' viewBox='0 0 " + tile + " " + tile + "' preserveAspectRatio='none'>" +
       "<filter id='p' x='0' y='0' width='" + tile + "' height='" + tile +
       "' filterUnits='userSpaceOnUse' filterRes='" + rasterTile + " " + rasterTile +
-      "' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='" + fibreX + " " + fibreY +
-      "' numOctaves='" + fibreOctaves + "' seed='" + fibreSeed + "' stitchTiles='stitch' result='fibres'/>" +
-      "<feTurbulence type='fractalNoise' baseFrequency='" + pulpFrequency + "' numOctaves='2' seed='" + pulpSeed +
-      "' stitchTiles='stitch' result='pulp'/><feBlend in='fibres' in2='pulp' mode='multiply' result='paper'/>" +
+      "' color-interpolation-filters='sRGB'>" + filterNodes +
       "<feColorMatrix in='paper' type='saturate' values='0'/></filter>" +
       "<rect width='" + tile + "' height='" + tile + "' filter='url(#p)'/></svg>";
-    return {
+    return { type: type, vars: {
       "--paper-texture-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")',
       "--paper-texture-size": tile + "px",
-      "--paper-texture-opacity": range(random, 0.07, 0.12, 3),
-      "--paper-texture-contrast": range(random, 1.25, 1.55, 2),
-      "--paper-texture-brightness": range(random, 0.84, 0.96, 2)
-    };
+      "--paper-texture-opacity": opacity,
+      "--paper-texture-contrast": contrast,
+      "--paper-texture-brightness": brightness,
+      "--paper-texture-blend": blend
+    } };
   }
 
   function imageVars(random, bounds) {
@@ -231,7 +275,9 @@
       Object.assign(edition.vars, grainVars(random, grainBounds({
         tile: [512, 576], frequency: [0.5, 0.62], opacity: [0.1, 0.17]
       })));
-      Object.assign(edition.vars, paperTextureVars(random));
+      var paperTexture = paperTextureVars(random);
+      Object.assign(edition.vars, paperTexture.vars);
+      edition.attrs["data-paper-texture"] = paperTexture.type;
       edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
       edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
       Object.assign(edition.vars, imageVars(random, {
@@ -399,6 +445,11 @@
         { bg: "#0b0a06", ink: "#ddd7c8", bright: "#f5efdf", muted: "#9e9581", faint: "#837860", foot: "#837860", accent: "#d0ae69", hair: "#403927", rule: "#2c281b", border: "#393321", chip: "#15130c" }
       ];
       edition.vars = paletteVars(pick(random, terminalPalettes));
+      edition.vars["--terminal-font-family"] = pick(random, [
+        '"SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+        'Menlo, Monaco, "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace',
+        'Monaco, Menlo, "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace'
+      ]);
       edition.vars["--appearance-display-size"] = pick(random, ["36px", "39px", "42px"]);
       edition.vars["--appearance-body-size"] = pick(random, ["15px", "15.5px", "16px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.6, 1.68, 1.75]);

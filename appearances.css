@@ -30,6 +30,8 @@ html[data-look] {
   --paper-texture-opacity: 0;
   --paper-texture-contrast: 1;
   --paper-texture-brightness: 1;
+  --paper-texture-blend: multiply;
+  --terminal-font-family: "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --eno-gradient-a: none;
   --eno-gradient-b: none;
   --eno-gradient-c: none;
@@ -111,7 +113,7 @@ html[data-look="paper"] body::after {
   inset: 0;
   pointer-events: none;
   opacity: var(--paper-texture-opacity);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--paper-texture-blend);
   background-image: var(--paper-texture-url);
   background-position: top left;
   background-size: var(--paper-texture-size) var(--paper-texture-size);
@@ -822,9 +824,9 @@ html[data-look="crt"] a:not(.flickr-photo-link):is(:hover, :focus-visible)::afte
    -------------------------------------------------------------------------- */
 
 html[data-look="terminal"] body {
-  --appearance-body-family: var(--mono);
-  --appearance-display-family: var(--mono);
-  --appearance-annotation-family: var(--mono);
+  --appearance-body-family: var(--terminal-font-family);
+  --appearance-display-family: var(--terminal-font-family);
+  --appearance-annotation-family: var(--terminal-font-family);
   --appearance-display-mobile: 30px;
   --appearance-display-weight: 500;
   --appearance-body-weight: 400;
