@@ -217,9 +217,11 @@ Five appearances have equal default probability:
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
   bounded ink temperature, scale, width, heading treatment, and rule style. Its generated grain
   is always a top layer over the complete edition.
-- `blobs` — bold system-sans display and body type over 2–3 diffuse color fields. Every blob
-  has a seeded `0.45–0.85` scroll-speed multiplier. Movement is transform-only and becomes
-  static under `prefers-reduced-motion`.
+- `blobs` — bold system-sans display and body type over 3–5 diffuse color fields. Every blob
+  independently varies in hue, saturation, lightness, opacity, size, shape, horizontal drift,
+  and a seeded `0.45–0.85` scroll-speed multiplier. A separate atmospheric grain layer stays
+  behind all content. Movement is transform-only and becomes static under
+  `prefers-reduced-motion`.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
@@ -230,8 +232,9 @@ Five appearances have equal default probability:
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
 `?look=<name>&seed=<value>` pins both its appearance and values. An ordinary load without these
-parameters generates a new seed. The control below the homepage footer switches immediately,
-does not persist, and removes pinned parameters so the next reload is random again.
+parameters generates a new seed. The first utility row on the homepage switches immediately,
+does not persist, and removes pinned parameters so the next reload is random again. Its reload
+glyph composes a new random appearance and edition without requiring a page refresh.
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.

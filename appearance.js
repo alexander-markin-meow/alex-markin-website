@@ -49,10 +49,17 @@
     return Number(value.toFixed(decimals || 0));
   }
 
+  function blobColor(random, hue) {
+    var variedHue = Math.round((hue + range(random, -20, 20, 0) + 360) % 360);
+    var saturation = range(random, 34, 62, 0);
+    var lightness = range(random, 28, 49, 0);
+    return "hsl(" + variedHue + " " + saturation + "% " + lightness + "%)";
+  }
+
   function compose(seed, forcedLook) {
     var random = randomFrom(seed);
     var look = looks.indexOf(forcedLook) !== -1 ? forcedLook : pick(random, looks);
-    var edition = { look: look, seed: seed, attrs: {}, vars: {}, blobSpeeds: [] };
+    var edition = { look: look, seed: seed, attrs: {}, vars: {}, blobSpeeds: [], blobDrifts: [] };
 
     if (look === "simple") {
       var simplePalettes = [
@@ -81,36 +88,34 @@
       edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "18px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.7]);
       edition.vars["--page-max"] = pick(random, ["680px", "750px", "820px"]);
-      edition.vars["--grain-opacity"] = range(random, 0.06, 0.12, 3);
+      edition.vars["--grain-opacity"] = range(random, 0.17, 0.25, 3);
       edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
       edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
     }
 
     if (look === "blobs") {
       var blobPalettes = [
-        { bg: "#060807", ink: "#d8d4d5", bright: "#f4eff5", muted: "#aaa2a8", faint: "#817981", foot: "#817981", accent: "#ae91ff", hair: "#443b47", rule: "#29242b", border: "#37313a", chip: "#111012", blobs: ["#326f67", "#743e33", "#604381"] },
-        { bg: "#07070a", ink: "#d7d5dc", bright: "#f1eff8", muted: "#a6a2ae", faint: "#817c8b", foot: "#817c8b", accent: "#8ca8ff", hair: "#3e3a4b", rule: "#27242f", border: "#34303e", chip: "#111017", blobs: ["#314f86", "#6e365f", "#8a6531"] },
-        { bg: "#070807", ink: "#d8d6d1", bright: "#f3f1e9", muted: "#aaa69d", faint: "#817d74", foot: "#817d74", accent: "#b1a1ff", hair: "#423d3a", rule: "#292725", border: "#383431", chip: "#12110f", blobs: ["#4d683d", "#7b3a37", "#3f4077"] }
+        { bg: "#060807", ink: "#d8d4d5", bright: "#f4eff5", muted: "#aaa2a8", faint: "#817981", foot: "#817981", accent: "#ae91ff", hair: "#443b47", rule: "#29242b", border: "#37313a", chip: "#111012", blobHues: [166, 14, 274, 206, 330] },
+        { bg: "#07070a", ink: "#d7d5dc", bright: "#f1eff8", muted: "#a6a2ae", faint: "#817c8b", foot: "#817c8b", accent: "#8ca8ff", hair: "#3e3a4b", rule: "#27242f", border: "#34303e", chip: "#111017", blobHues: [218, 318, 42, 178, 270] },
+        { bg: "#070807", ink: "#d8d6d1", bright: "#f3f1e9", muted: "#aaa69d", faint: "#817d74", foot: "#817d74", accent: "#b1a1ff", hair: "#423d3a", rule: "#292725", border: "#383431", chip: "#12110f", blobHues: [102, 5, 234, 45, 300] }
       ];
       var blob = pick(random, blobPalettes);
       edition.vars = paletteVars(blob);
-      edition.vars["--blob-1"] = blob.blobs[0];
-      edition.vars["--blob-2"] = blob.blobs[1];
-      edition.vars["--blob-3"] = blob.blobs[2];
-      edition.vars["--blob-opacity"] = range(random, 0.18, 0.32, 2);
-      edition.vars["--blob-size"] = range(random, 45, 70, 0) + "vw";
+      for (var b = 0; b < 5; b++) {
+        edition.vars["--blob-" + (b + 1) + "-color"] = blobColor(random, blob.blobHues[b]);
+        edition.vars["--blob-" + (b + 1) + "-size"] = range(random, 34, 84, 0) + "vw";
+        edition.vars["--blob-" + (b + 1) + "-opacity"] = range(random, 0.16, 0.34, 2);
+        edition.vars["--blob-" + (b + 1) + "-ratio"] = "1 / " + range(random, 0.62, 1.16, 2);
+        edition.blobSpeeds.push(range(random, 0.45, 0.85, 2));
+        edition.blobDrifts.push(range(random, -0.08, 0.08, 3));
+      }
       edition.vars["--appearance-display-size"] = pick(random, ["46px", "52px", "58px"]);
       edition.vars["--appearance-display-weight"] = pick(random, [650, 700, 750]);
       edition.vars["--appearance-body-size"] = pick(random, ["15.5px", "16px", "17px"]);
       edition.vars["--page-max"] = pick(random, ["1000px", "1060px", "1120px"]);
-      edition.vars["--grain-opacity"] = range(random, 0.018, 0.038, 3);
+      edition.vars["--blob-grain-opacity"] = range(random, 0.1, 0.18, 3);
       edition.attrs["data-blob-layout"] = pick(random, ["diagonal", "orbit", "horizon", "scatter"]);
-      edition.attrs["data-blob-count"] = pick(random, ["2", "3", "3"]);
-      edition.blobSpeeds = [
-        range(random, 0.45, 0.85, 2),
-        range(random, 0.45, 0.85, 2),
-        range(random, 0.45, 0.85, 2)
-      ];
+      edition.attrs["data-blob-count"] = pick(random, ["3", "4", "4", "5"]);
     }
 
     if (look === "crt") {
@@ -205,7 +210,11 @@
     var control = document.querySelector("[data-appearance-control]");
     if (!control || !currentEdition) return;
     control.querySelectorAll("[data-choose-look]").forEach(function (button) {
-      button.setAttribute("aria-pressed", button.dataset.chooseLook === currentEdition.look ? "true" : "false");
+      if (button.dataset.chooseLook === "random") {
+        button.removeAttribute("aria-pressed");
+      } else {
+        button.setAttribute("aria-pressed", button.dataset.chooseLook === currentEdition.look ? "true" : "false");
+      }
     });
     var status = control.querySelector("[data-appearance-status]");
     if (status) status.textContent = currentEdition.look + " · " + currentEdition.seed.slice(0, 7);
@@ -228,10 +237,14 @@
       var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       blobs.forEach(function (blob, index) {
         var speed = currentEdition && currentEdition.blobSpeeds[index];
-        var offset = currentEdition && currentEdition.look === "blobs" && !reduceMotion && speed
+        var drift = currentEdition && currentEdition.blobDrifts[index];
+        var offsetY = currentEdition && currentEdition.look === "blobs" && !reduceMotion && speed
           ? -window.scrollY * speed
           : 0;
-        blob.style.transform = "translate3d(0," + offset.toFixed(1) + "px,0)";
+        var offsetX = currentEdition && currentEdition.look === "blobs" && !reduceMotion && drift
+          ? window.scrollY * drift
+          : 0;
+        blob.style.transform = "translate3d(" + offsetX.toFixed(1) + "px," + offsetY.toFixed(1) + "px,0)";
       });
     });
   }
