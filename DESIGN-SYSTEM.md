@@ -268,18 +268,21 @@ Seven appearances have equal default probability:
   elastic-overscroll fallback. Controls remain transparent so the lightbox itself is their fill.
   A fine topmost diffuser grain remains visible at a restrained `0.035–0.060` opacity.
   Reduced motion shows the first seeded state.
-- `70mm` — a projected-film edition with the content framed between two horizontal perforation
-  strips. The appearance selector remains above the top strip and the footer remains below the
-  bottom strip, keeping both utilities outside the picture gate. Every seed independently chooses
-  one restrained tungsten, warm-print, or silver palette; one serif from Source Serif 4,
-  Cormorant Garamond, or Georgia; one mono from IBM Plex Mono, Courier Prime, or Roboto Mono;
-  and one of three readable serif/mono role assignments that always uses both voices. Page width,
-  spacing, display scale, grain, vignette, bloom, red halation radius, perforation pitch and height,
-  light-leak positions, and image development vary inside bounded brackets. Three large blurred
-  light fields remain behind the semantic content. Bright display elements receive a quiet white
-  bloom; link hover/focus, selected appearance controls, and utility-button hover use a brighter
-  white core with a restrained red Cinestill-like halation fringe. High-resolution grain remains
-  above all type, photographs, controls, and perforation bands.
+- `70mm` — one exposed projected-film frame held between full-width black film-stock header and
+  footer regions. The appearance selector and seed/status sit in the upper stock; footer utilities
+  sit in the lower stock. Full-width perforation strips are their only dividers: holes stay black
+  while a dim, seeded warm or neutral edge halo catches their edges. The exposed frame alone holds
+  the generated palette, three blurred rear-plane light fields, vignette, image development, and
+  high-resolution grain. It grows with its semantic content; no image layer, grain, or light leak
+  may enter the stock regions or overscroll. Every seed independently chooses one restrained
+  tungsten, warm-print, or silver palette; one serif from Source Serif 4, Cormorant Garamond, or
+  Georgia; one mono from IBM Plex Mono, Courier Prime, or Roboto Mono; and one of three readable
+  serif/mono role assignments that always uses both voices. Page width, spacing, display scale,
+  grain, vignette, bloom, red halation radius, perforation pitch, hole width, strip height, edge
+  halo, light-leak positions, and image development vary inside bounded brackets. Bright display
+  elements receive a quiet white bloom; link hover/focus, selected appearance controls, and
+  utility-button hover use a brighter white core with a restrained red Cinestill-like halation
+  fringe.
 - `crt` — VT323 bitmap type throughout, using a fixed hardware-aligned signal treatment based on
   `/trials/scanline/`: one-device-pixel horizontal beam gaps and vertical RGB phosphor cells,
   a visible rolling refresh band, restrained seeded per-phosphor convergence/bloom and signal

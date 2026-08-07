@@ -435,9 +435,9 @@
 
     if (look === "70mm") {
       var filmPalettes = [
-        { tone: "tungsten", bg: "#08090b", ink: "#d8d2c6", bright: "#fff9ea", muted: "#aaa093", faint: "#81786e", foot: "#81786e", accent: "#ead6ac", hair: "#403a35", rule: "#292623", border: "#3b3530", chip: "#141210", halation: "#ff493d", stock: "#17120f", hole: "#a89272", lights: ["#9f382e", "#365d72", "#bf7641"] },
-        { tone: "warm", bg: "#0b0806", ink: "#ddd2bd", bright: "#fff4d9", muted: "#aa987f", faint: "#84725c", foot: "#84725c", accent: "#e0bd7a", hair: "#463827", rule: "#2f251a", border: "#413222", chip: "#17110b", halation: "#f43d32", stock: "#1b120b", hole: "#b08d59", lights: ["#b9522d", "#d3944b", "#684260"] },
-        { tone: "silver", bg: "#090909", ink: "#d5d5d1", bright: "#fffefa", muted: "#a09e98", faint: "#797770", foot: "#797770", accent: "#d8d1c2", hair: "#3d3c39", rule: "#272624", border: "#373633", chip: "#131312", halation: "#ef4037", stock: "#151413", hole: "#918b7f", lights: ["#8a302b", "#66645e", "#876b4f"] }
+        { tone: "tungsten", bg: "#08090b", ink: "#d8d2c6", bright: "#fff9ea", muted: "#aaa093", faint: "#81786e", foot: "#81786e", accent: "#ead6ac", hair: "#403a35", rule: "#292623", border: "#3b3530", chip: "#141210", halation: "#ff493d", stock: "#0d0b0a", edge: "#d8bd90", lights: ["#9f382e", "#365d72", "#bf7641"] },
+        { tone: "warm", bg: "#0b0806", ink: "#ddd2bd", bright: "#fff4d9", muted: "#aa987f", faint: "#84725c", foot: "#84725c", accent: "#e0bd7a", hair: "#463827", rule: "#2f251a", border: "#413222", chip: "#17110b", halation: "#f43d32", stock: "#100a07", edge: "#d7b57a", lights: ["#b9522d", "#d3944b", "#684260"] },
+        { tone: "silver", bg: "#090909", ink: "#d5d5d1", bright: "#fffefa", muted: "#a09e98", faint: "#797770", foot: "#797770", accent: "#d8d1c2", hair: "#3d3c39", rule: "#272624", border: "#373633", chip: "#131312", halation: "#ef4037", stock: "#0d0d0d", edge: "#d1cbc0", lights: ["#8a302b", "#66645e", "#876b4f"] }
       ];
       var film = pick(random, filmPalettes);
       var filmSerif = pick(random, filmSerifs);
@@ -466,14 +466,19 @@
       edition.vars["--film-halation-radius"] = range(random, 8, 15, 0) + "px";
       edition.vars["--film-halation-strength"] = range(random, 48, 72, 0) + "%";
       edition.vars["--film-vignette"] = range(random, 0.18, 0.34, 2);
+      edition.vars["--film-stock"] = film.stock;
+      edition.vars["--film-stock-ink"] = film.ink;
       edition.vars["--film-perf-stock"] = film.stock;
-      edition.vars["--film-perf-hole"] = film.hole;
+      edition.vars["--film-perf-hole"] = "#030303";
+      edition.vars["--film-perf-edge"] = film.edge;
       var filmPerfPitch = range(random, 38, 52, 0);
       var filmPerfHole = range(random, 17, 24, 0);
       edition.vars["--film-perf-pitch"] = filmPerfPitch + "px";
       edition.vars["--film-perf-hole-width"] = filmPerfHole + "px";
       edition.vars["--film-perf-side"] = ((filmPerfPitch - filmPerfHole) / 2).toFixed(1) + "px";
       edition.vars["--film-perf-height"] = range(random, 28, 38, 0) + "px";
+      edition.vars["--film-perf-halo-blur"] = range(random, 2, 6, 1) + "px";
+      edition.vars["--film-perf-halo-opacity"] = range(random, 0.1, 0.24, 2);
       edition.vars["--film-image-sepia"] = range(random, 0.04, 0.22, 2);
       for (var f = 0; f < 3; f++) {
         edition.vars["--film-light-" + (f + 1) + "-color"] = film.lights[f];

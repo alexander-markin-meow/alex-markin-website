@@ -53,12 +53,18 @@ html[data-look] {
   --film-halation-radius: 11px;
   --film-halation-strength: 60%;
   --film-vignette: 0.24;
-  --film-perf-stock: #17120f;
-  --film-perf-hole: #a89272;
+  --film-stock: #0b0908;
+  --film-stock-ink: #d8d2c6;
+  --film-perf-stock: #0b0908;
+  --film-perf-hole: #030303;
+  --film-perf-edge: #e6c99b;
   --film-perf-pitch: 44px;
   --film-perf-hole-width: 20px;
   --film-perf-side: 12px;
   --film-perf-height: 32px;
+  --film-perf-halo-blur: 4px;
+  --film-perf-halo-opacity: 0.18;
+  --film-perf-rail: 5px;
   --film-image-sepia: 0.12;
   --crt-cell: 1px;
   --crt-depth: 76;
@@ -754,10 +760,90 @@ html[data-look="70mm"] body {
   --grain-blend: screen;
 }
 
-/* The grain is the projected surface, so it passes over type, photographs,
-   controls, and both film strips rather than sitting behind the content. */
+/* Every appearance receives these neutral regions. Outside 70mm they collapse
+   back into the original source order without affecting layout or semantics. */
+.film-header,
+.film-header-inner,
+.film-exposure,
+.film-exposure-inner,
+.film-footer,
+.film-footer-inner { display: contents; }
+
+/* In 70mm, the page shell becomes the physical film strip. Its three regions
+   own their own backgrounds so the exposed image cannot bleed into either
+   utility area. The inner wrappers retain the existing responsive measure. */
+html[data-look="70mm"] .page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  container-type: normal;
+}
+
+html[data-look="70mm"] :is(.film-header, .film-exposure, .film-footer, .film-perforation) {
+  display: block;
+  width: 100%;
+}
+
+html[data-look="70mm"] :is(.film-header, .film-footer) {
+  background: var(--film-stock);
+  color: var(--film-stock-ink);
+}
+
+html[data-look="70mm"] :is(.film-header-inner, .film-exposure-inner, .film-footer-inner) {
+  display: block;
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: max(48px, calc(env(safe-area-inset-left) + 48px));
+  padding-right: max(48px, calc(env(safe-area-inset-right) + 48px));
+}
+
+html[data-look="70mm"] .film-header-inner {
+  padding-top: max(12px, calc(env(safe-area-inset-top) + 12px));
+  padding-bottom: 16px;
+}
+
+html[data-look="70mm"] .film-exposure {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+html[data-look="70mm"] .film-exposure-inner {
+  position: relative;
+  z-index: 1;
+  padding-top: 34px;
+  padding-bottom: 46px;
+}
+
+html[data-look="70mm"] .film-exposure .columns { margin-bottom: 0; }
+
+html[data-look="70mm"] .film-footer-inner {
+  padding-top: 12px;
+  padding-bottom: max(12px, calc(env(safe-area-inset-bottom) + 12px));
+}
+
+/* The grain belongs to the exposed frame only: it overlays live content and
+   images, but never the stock, perforations, or elastic overscroll fallback. */
 html[data-look="70mm"] body::before {
+  content: none;
+}
+
+html[data-look="70mm"] .film-exposure::after {
+  content: "";
+  position: absolute;
   z-index: 6;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: var(--grain-url);
+  background-size: var(--grain-size) var(--grain-size);
+  filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
+  animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
+  will-change: transform;
 }
 
 html[data-look="70mm"] .name {
@@ -792,17 +878,17 @@ html[data-look="70mm"] .appearance-image img {
   display: none;
   position: absolute;
   z-index: 0;
-  inset: 0 0 auto;
-  height: var(--appearance-document-height);
+  inset: 0;
   overflow: hidden;
   pointer-events: none;
 }
 
-html[data-look="70mm"] .film-backdrop { display: block; }
+html[data-look="70mm"] .film-exposure .film-backdrop { display: block; }
 
 .film-backdrop::after {
   content: "";
   position: absolute;
+  z-index: 1;
   inset: 0;
   background: radial-gradient(ellipse at 50% 42%, transparent 42%, rgb(0 0 0 / var(--film-vignette)) 100%);
 }
@@ -850,40 +936,58 @@ html[data-look="70mm"] .film-backdrop { display: block; }
 .film-perforation {
   display: none;
   position: relative;
-  z-index: 1;
   height: var(--film-perf-height);
-  border-block: 1px solid color-mix(in srgb, var(--film-perf-hole) 28%, transparent);
-  background: repeating-linear-gradient(
-    90deg,
-    var(--film-perf-stock) 0 var(--film-perf-side),
-    var(--film-perf-hole) var(--film-perf-side) calc(var(--film-perf-side) + var(--film-perf-hole-width)),
-    var(--film-perf-stock) calc(var(--film-perf-side) + var(--film-perf-hole-width)) var(--film-perf-pitch)
-  );
+  overflow: hidden;
+  isolation: isolate;
+  pointer-events: none;
+  background: var(--film-perf-stock);
   box-shadow:
-    inset 0 0 8px rgb(0 0 0 / 0.72),
-    0 0 var(--film-bloom-radius) color-mix(in srgb, var(--accent) 18%, transparent);
+    inset 0 1px 0 color-mix(in srgb, var(--film-perf-edge) 16%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--film-perf-edge) 10%, transparent),
+    inset 0 0 8px rgb(0 0 0 / 0.72);
 }
 
 .film-perforation::before,
 .film-perforation::after {
   content: "";
   position: absolute;
+  inset-block: var(--film-perf-rail);
   inset-inline: 0;
-  height: 6px;
-  background: var(--film-perf-stock);
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 var(--film-perf-side),
+    var(--film-perf-edge) var(--film-perf-side) calc(var(--film-perf-side) + var(--film-perf-hole-width)),
+    transparent calc(var(--film-perf-side) + var(--film-perf-hole-width)) var(--film-perf-pitch)
+  );
 }
 
-.film-perforation::before { top: 0; }
-.film-perforation::after { bottom: 0; }
+.film-perforation::before {
+  z-index: 1;
+  opacity: var(--film-perf-halo-opacity);
+  filter: blur(var(--film-perf-halo-blur));
+}
+
+.film-perforation::after {
+  z-index: 2;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 var(--film-perf-side),
+    var(--film-perf-hole) var(--film-perf-side) calc(var(--film-perf-side) + var(--film-perf-hole-width)),
+    transparent calc(var(--film-perf-side) + var(--film-perf-hole-width)) var(--film-perf-pitch)
+  );
+}
 
 html[data-look="70mm"] .film-perforation { display: block; }
-html[data-look="70mm"] .appearance-control { margin-bottom: 14px; }
-html[data-look="70mm"] .film-perforation--top { margin-bottom: 34px; }
-html[data-look="70mm"] .film-perforation--bottom { margin-top: 46px; margin-bottom: 22px; }
+html[data-look="70mm"] .appearance-control {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom-color: transparent;
+}
 
-html[data-look="70mm"][data-film-gate="wide"] .film-perforation {
-  width: calc(100% + 32px);
-  margin-left: -16px;
+html[data-look="70mm"] .footer {
+  padding-top: 0;
+  border-top-color: transparent;
 }
 
 /* Bright text blooms white first, then leaves the restrained red fringe that
@@ -1175,6 +1279,16 @@ html[data-look="terminal"] a:not(.flickr-photo-link):is(:hover, :focus-visible):
     padding-left: max(24px, calc(env(safe-area-inset-left) + 24px));
   }
 
+  /* The shared mobile shell adds gutters to every appearance. The 70mm shell
+     delegates those gutters to its inner regions so the physical film reaches
+     both edges while its content retains the same safe-area clearance. */
+  html[data-look="70mm"] .page { padding-inline: 0; }
+
+  html[data-look="70mm"] :is(.film-header-inner, .film-exposure-inner, .film-footer-inner) {
+    padding-left: max(24px, calc(env(safe-area-inset-left) + 24px));
+    padding-right: max(24px, calc(env(safe-area-inset-right) + 24px));
+  }
+
   html[data-look] .columns { grid-template-columns: minmax(0, 1fr); }
 
   .appearance-image--portrait { width: 116px; }
@@ -1234,6 +1348,7 @@ html[data-look="terminal"] a:not(.flickr-photo-link):is(:hover, :focus-visible):
   .eno-lightbox-state { animation: none !important; will-change: auto; }
   .eno-lightbox-state:nth-child(n + 2) { opacity: 0; }
   html[data-look] body::before,
+  html[data-look="70mm"] .film-exposure::after,
   .paper-texture-layer { animation: none !important; will-change: auto; }
   .crt-mask-roll { display: none !important; }
 }
