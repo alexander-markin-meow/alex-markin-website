@@ -131,6 +131,7 @@
     var contrast;
     var brightness;
     var blend;
+    var textureExponent;
 
     if (type === "laid") {
       var fibreX = range(random, 0.008, 0.014, 3);
@@ -140,25 +141,27 @@
         "' numOctaves='3' seed='" + primarySeed + "' stitchTiles='stitch' result='primary'/>" +
         "<feTurbulence type='fractalNoise' baseFrequency='" + pulpFrequency + "' numOctaves='2' seed='" + secondarySeed +
         "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='multiply' result='paper'/>";
-      opacity = range(random, 0.035, 0.065, 3);
-      contrast = range(random, 1.08, 1.28, 2);
-      brightness = range(random, 0.94, 1.02, 2);
+      opacity = range(random, 0.1, 0.145, 3);
+      contrast = range(random, 1.04, 1.14, 2);
+      brightness = range(random, 0.98, 1.03, 2);
       blend = "multiply";
+      textureExponent = range(random, 0.42, 0.48, 2);
     } else if (type === "vellum") {
-      var vellumFrequency = range(random, 0.028, 0.05, 3);
-      var vellumFleck = range(random, 0.11, 0.18, 3);
+      var vellumFrequency = range(random, 0.018, 0.035, 3);
+      var vellumFleck = range(random, 0.08, 0.14, 3);
       filterNodes = "<feTurbulence type='fractalNoise' baseFrequency='" + vellumFrequency +
         "' numOctaves='3' seed='" + primarySeed + "' stitchTiles='stitch' result='primary'/>" +
         "<feTurbulence type='fractalNoise' baseFrequency='" + vellumFleck + "' numOctaves='1' seed='" + secondarySeed +
         "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='soft-light' result='paper'/>";
-      opacity = range(random, 0.03, 0.055, 3);
-      contrast = range(random, 1.08, 1.24, 2);
-      brightness = range(random, 0.96, 1.03, 2);
-      blend = "soft-light";
+      opacity = range(random, 0.16, 0.22, 3);
+      contrast = range(random, 1.1, 1.2, 2);
+      brightness = range(random, 0.99, 1.04, 2);
+      blend = "multiply";
+      textureExponent = range(random, 0.52, 0.6, 2);
     } else {
       var toothFrequency = range(random, 0.012, 0.026, 3);
       var fineFrequency = range(random, 0.06, 0.11, 3);
-      var surfaceScale = range(random, 0.8, 1.6, 2);
+      var surfaceScale = range(random, 2, 3.6, 2);
       var azimuth = range(random, 25, 155, 0);
       var elevation = range(random, 48, 64, 0);
       filterNodes = "<feTurbulence type='fractalNoise' baseFrequency='" + toothFrequency +
@@ -167,10 +170,11 @@
         "' stitchTiles='stitch' result='secondary'/><feBlend in='primary' in2='secondary' mode='multiply' result='tooth'/>" +
         "<feDiffuseLighting in='tooth' surfaceScale='" + surfaceScale + "' diffuseConstant='0.86' lighting-color='white' result='paper'>" +
         "<feDistantLight azimuth='" + azimuth + "' elevation='" + elevation + "'/></feDiffuseLighting>";
-      opacity = range(random, 0.045, 0.075, 3);
-      contrast = range(random, 1.04, 1.2, 2);
-      brightness = range(random, 0.97, 1.04, 2);
-      blend = "soft-light";
+      opacity = range(random, 0.16, 0.23, 3);
+      contrast = range(random, 1.08, 1.18, 2);
+      brightness = range(random, 0.99, 1.04, 2);
+      blend = "multiply";
+      textureExponent = range(random, 0.56, 0.64, 2);
     }
 
     var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + rasterTile + "' height='" + rasterTile +
@@ -178,7 +182,10 @@
       "<filter id='p' x='0' y='0' width='" + tile + "' height='" + tile +
       "' filterUnits='userSpaceOnUse' filterRes='" + rasterTile + " " + rasterTile +
       "' color-interpolation-filters='sRGB'>" + filterNodes +
-      "<feColorMatrix in='paper' type='saturate' values='0'/></filter>" +
+      "<feColorMatrix in='paper' type='saturate' values='0' result='mono'/>" +
+      "<feComponentTransfer in='mono'><feFuncR type='gamma' amplitude='0.92' exponent='" + textureExponent + "' offset='0.08'/>" +
+      "<feFuncG type='gamma' amplitude='0.92' exponent='" + textureExponent + "' offset='0.08'/>" +
+      "<feFuncB type='gamma' amplitude='0.92' exponent='" + textureExponent + "' offset='0.08'/></feComponentTransfer></filter>" +
       "<rect width='" + tile + "' height='" + tile + "' filter='url(#p)'/></svg>";
     return { type: type, vars: {
       "--paper-texture-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")',

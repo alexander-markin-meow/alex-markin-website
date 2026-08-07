@@ -233,8 +233,10 @@ Six appearances have equal default probability:
   seeded SVG stock texture is chosen independently from three families: directional `laid`
   fibres, smooth `vellum` pulp, or softly lit `watercolour` tooth. An explicit layer follows the
   full rendered document height, so it scrolls with the sheet while printing consistently over
-  text and photographs; it never tracks the viewport. Texture opacity stays within
-  `0.030–0.075`, with the coarser watercolour relief receiving the upper end of that range.
+  text and photographs; it never tracks the viewport. The stock field is remapped toward
+  paper-white before a `multiply` pass, keeping the sheet bright while selective fibres remain
+  legible. Texture opacity stays within `0.10–0.23`; laid stock uses the quietest range, while
+  vellum receives larger pulp variation and watercolour the strongest shallow relief.
 - `blob` (`blobs` internally) — bold type over 3–5 diffuse color fields. Each edition selects
   one readability-tested pairing from sans, Source Serif, and IBM Plex Mono; body, display,
   and annotations may vary, but no edition contains more than two font families. Its accent is
