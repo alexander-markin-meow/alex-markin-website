@@ -186,6 +186,10 @@ Allowed (subtle, typographic): dotted leaders, mono tags and timestamps,
 inline script at the end of `index.html`. Reads as machine annotation (e.g. `upd 3
 days ago`). Drive it with a data attribute, never hard-code the text:
 `data-repo="owner/name"` → repo `pushed_at`; `data-user="login"` → latest public event.
+GitHub-backed spans also carry `data-fallback-updated="<ISO timestamp>"`. `site.js` renders
+the latest successful value cached in local storage, otherwise this authored timestamp,
+before requesting fresh API data. A rate limit or offline request must never make a previously
+known update label disappear; refresh authored fallbacks whenever the site itself is shipped.
 Minute values use the compact `min` abbreviation for both singular and plural (e.g.
 `upd 1 min ago`, `upd 3 min ago`), never `minute` or `minutes`. Live update statuses use
 the compact `upd` prefix, never `updated`; the footer reads `last upd`.
@@ -236,7 +240,7 @@ Six appearances have equal default probability:
   `translate` property compensates page scroll so each blob travels at its seeded `0.45–0.85`
   scroll-speed multiplier. A separate atmospheric grain layer stays behind all content. Both
   motions become static under `prefers-reduced-motion`.
-- `eno` — the complete fixed viewport is one luminous lightbox rather than a collection of
+- `eno` — the complete responsive document is one luminous lightbox rather than a collection of
   decorative objects. A seed selects a vertical, horizontal, quartered, central-window, or
   softened concentric core-and-ring halo composition; one light or dark contrast family;
   bounded divisions, diffusion, saturation,
@@ -245,9 +249,11 @@ Six appearances have equal default probability:
   `180–480s` with bounded `±24°` hue travel. Montserrat supplies the geometric album-art voice:
   the display name and headings render uppercase through CSS with wide tracking, while authored
   content remains lowercase. Text colors remain fixed inside the selected contrast family.
-  The document canvas repeats the first seeded state beneath the fixed animation so mobile
-  safe-area and elastic-scroll reveals stay inside the lightbox. Controls remain transparent
-  so the lightbox itself is their fill. Reduced motion shows the first seeded state.
+  The absolute lightbox recalculates to the body's full height at every mobile, tablet, and
+  desktop layout, so scrolling travels through one continuous artwork instead of keeping a
+  viewport-sized pattern fixed behind the content. The root repeats the first state only as an
+  elastic-overscroll fallback. Controls remain transparent so the lightbox itself is their fill.
+  Reduced motion shows the first seeded state.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
@@ -296,14 +302,15 @@ visitor's motion preference.
 
 Image geometry is invariant across appearances: retain the standard border, radius, crop, and
 dimensions from `styles.css`. Color development is appearance-aware and operates non-destructively
-on the black-and-white source. Paper uses `multiply` over `--bg`, replacing photographic whites
-with the selected stock while the page grain prints across the image. Blob and Eno use
-`luminosity` against small internal versions of their moving light fields, so the same photograph
-inherits local light and hue as those fields change; Eno's three image-light states share the
-page's exact crossfade duration and phase. Simple, CRT, and terminal use `screen` over a restrained
-accent-tinted dark surface; the CRT mask remains above the result. Every edition seeds bounded
-contrast, brightness, and image opacity. Do not use per-file color edits or change image geometry
-for a look.
+on the black-and-white source. The wrapper is transparent and must not isolate blending or
+reconstruct a miniature appearance inside the frame. Paper uses `multiply` against the actual
+stock beneath it, replacing photographic whites with paper while the page grain prints across
+the image. Blob and Eno use `luminosity` against the real pixels physically behind the image, so
+color appears only where the live page artwork is present at that position. Simple applies only
+the baseline black-and-white conversion: no contrast, opacity, tint, or blend treatment. CRT and
+terminal retain bounded monochrome development, with the CRT page mask above the result. The
+homepage portrait alone scales to `1.2` inside its unchanged frame for a closer face crop. Do not
+use per-file color edits or change image-frame geometry for a look.
 
 ## pages
 

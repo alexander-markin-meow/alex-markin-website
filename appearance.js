@@ -164,9 +164,6 @@
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
       edition.vars["--gap-row"] = pick(random, ["40px", "44px", "48px"]);
-      Object.assign(edition.vars, imageVars(random, {
-        contrast: [1.04, 1.16], brightness: [0.94, 1.06], opacity: [0.92, 0.98]
-      }));
     }
 
     if (look === "paper") {

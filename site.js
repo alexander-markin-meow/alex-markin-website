@@ -18,14 +18,43 @@
     return "just now";
   }
 
+  function cacheKey(el) {
+    if (el.dataset.repo) return "alex-markin:ago:repo:" + el.dataset.repo;
+    if (el.dataset.user) return "alex-markin:ago:user:" + el.dataset.user;
+    return "";
+  }
+
+  function readCachedTime(key) {
+    if (!key) return null;
+    try { return window.localStorage.getItem(key); }
+    catch (error) { return null; }
+  }
+
+  function writeCachedTime(key, value) {
+    if (!key || !value) return;
+    try { window.localStorage.setItem(key, value); }
+    catch (error) { /* storage may be disabled; the authored fallback remains */ }
+  }
+
+  function showTime(el, prefix, value) {
+    if (value && !Number.isNaN(new Date(value).getTime())) {
+      el.textContent = prefix + ago(value);
+    }
+  }
+
   function fill(el, url, prefix, pick) {
+    var key = cacheKey(el);
+    showTime(el, prefix, readCachedTime(key) || el.dataset.fallbackUpdated);
     fetch(url)
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (data) {
         var ts = pick(data);
-        if (ts) el.textContent = prefix + ago(ts);
+        if (ts) {
+          showTime(el, prefix, ts);
+          writeCachedTime(key, ts);
+        }
       })
-      .catch(function () { /* leave empty → hidden */ });
+      .catch(function () { /* keep the cached or authored fallback visible */ });
   }
 
   document.querySelectorAll(".ago").forEach(function (el) {
