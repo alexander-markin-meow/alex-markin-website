@@ -508,7 +508,9 @@
         { redX: -1, redY: 0, blueX: 1, blueY: 0 },
         { redX: -1, redY: 0, blueX: 0, blueY: -1 },
         { redX: 0, redY: 1, blueX: 1, blueY: 0 },
-        { redX: -1, redY: 1, blueX: 1, blueY: -1 }
+        { redX: -1, redY: 1, blueX: 1, blueY: -1 },
+        { redX: -2, redY: 0, blueX: 1, blueY: 0 },
+        { redX: -1, redY: 0, blueX: 2, blueY: -1 }
       ]);
       edition.vars = paletteVars(crtPalette);
       edition.vars["--crt-selection"] = inverseHex(crtPalette.accent);
@@ -524,12 +526,12 @@
          display) is the indivisible phosphor cell. No fractional stripe stops. */
       edition.vars["--crt-cell"] = (1 / Math.min(Math.max(window.devicePixelRatio || 1, 1), 2)).toFixed(3) + "px";
       edition.vars["--crt-depth"] = range(random, 38, 54, 0);
-      edition.vars["--crt-grille"] = range(random, 0.2, 0.3, 2);
-      edition.vars["--crt-halo-red"] = range(random, 28, 38, 0) + "%";
-      edition.vars["--crt-halo-blue"] = range(random, 24, 34, 0) + "%";
-      edition.vars["--crt-halo-strength"] = range(random, 36, 50, 0) + "%";
-      edition.vars["--crt-halo-radius"] = range(random, 1.6, 2.5, 1);
-      edition.vars["--crt-image-halo"] = range(random, 22, 34, 0) + "%";
+      edition.vars["--crt-grille"] = range(random, 0.24, 0.34, 2);
+      edition.vars["--crt-halo-red"] = range(random, 33, 43, 0) + "%";
+      edition.vars["--crt-halo-blue"] = range(random, 29, 39, 0) + "%";
+      edition.vars["--crt-halo-strength"] = range(random, 42, 56, 0) + "%";
+      edition.vars["--crt-halo-radius"] = range(random, 1.8, 2.7, 1);
+      edition.vars["--crt-image-halo"] = range(random, 26, 38, 0) + "%";
       edition.vars["--crt-red-x"] = crtConvergence.redX;
       edition.vars["--crt-red-y"] = crtConvergence.redY;
       edition.vars["--crt-blue-x"] = crtConvergence.blueX;
@@ -538,7 +540,7 @@
       edition.vars["--crt-vignette"] = range(random, 0.38, 0.62, 2);
       edition.vars["--crt-roll-period"] = range(random, 6.5, 12.5, 1) + "s";
       Object.assign(edition.vars, grainVars(random, grainBounds({
-        frequency: [0.62, 0.76], opacity: [0.026, 0.042], rate: [620, 900]
+        frequency: [0.62, 0.76], opacity: [0.034, 0.052], rate: [620, 900]
       })));
       Object.assign(edition.vars, imageVars(random, {
         contrast: [1.1, 1.28], brightness: [0.98, 1.08], opacity: [0.98, 1]

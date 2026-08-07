@@ -286,7 +286,8 @@ Seven appearances have equal default probability:
   noise, tube vignette, and a square-cell pixel pointer. The seed chooses from restrained green,
   amber, blue, violet, rose, cyan-phosphor, and cool monochrome families; all retain tested text
   contrast and avoid high saturation. Each edition rotates the RGB-cell phase and moves only the
-  red/blue phosphor fringes by at most one physical cell; layout and source glyphs never move.
+  red/blue phosphor fringes by one physical cell, with a minority of editions extending to two;
+  layout and source glyphs never move.
   Native text selection uses the RGB inverse of the selected accent (amber selects blue, green
   selects magenta, and blue selects brown). The page is never passed through a whole-page filter:
   glyphs are pixel-shaped at the source, the portrait is rendered at half resolution with

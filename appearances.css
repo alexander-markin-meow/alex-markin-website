@@ -961,8 +961,8 @@ html[data-look="crt"] .crt-mask-layer { display: block; }
   background: linear-gradient(
     to bottom,
     transparent,
-    rgb(255 255 255 / 0.055) 55%,
-    rgb(255 255 255 / 0.105) 72%,
+    rgb(255 255 255 / 0.04) 55%,
+    rgb(255 255 255 / 0.075) 72%,
     transparent
   );
   animation: appearance-crt-roll var(--crt-roll-period) linear infinite;
