@@ -35,6 +35,9 @@ html[data-look] {
   --terminal-display-weight: 500;
   --terminal-name-spacing: -0.018em;
   --terminal-heading-spacing: 0.035em;
+  --blob-link-bloom-near: 68%;
+  --blob-link-bloom-far: 32%;
+  --blob-link-bloom-radius: 9px;
   --appearance-document-height: 100vh;
   --eno-gradient-a: none;
   --eno-gradient-b: none;
@@ -171,6 +174,20 @@ html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link):
   font-family: var(--appearance-annotation-family);
 }
 
+/* Color-only hover can disappear inside a seeded palette. Every homepage text
+   link therefore receives a thin accent response as well; CRT replaces it with
+   its phosphor selection block below. */
+html[data-look] a:not(.flickr-photo-link) {
+  transition: color 0.15s ease, box-shadow 0.15s ease, text-shadow 0.18s ease;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+html[data-look]:not([data-look="crt"]) a:not(.flickr-photo-link):is(:hover, :focus-visible) {
+  color: var(--ink-hover);
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--accent) 78%, transparent);
+}
+
 /* --------------------------------------------------------------------------
    appearance-aware photographs — one monochrome source, six light systems
    -------------------------------------------------------------------------- */
@@ -184,6 +201,12 @@ html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link):
   background: transparent;
   isolation: auto;
   line-height: 0;
+  transition: border-color 0.15s ease, box-shadow 0.18s ease;
+}
+
+html[data-look] a.appearance-image:is(:hover, :focus-visible) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 72%, transparent);
 }
 
 .appearance-image img {
@@ -420,6 +443,20 @@ html[data-look="blobs"] .heading {
 }
 
 html[data-look="blobs"] :is(.copy-markdown, .appearance-option) { border-radius: 7px; }
+
+/* Blob links bloom from the edition's selected accent. The near and far halo
+   strengths and radius are seeded, while the text itself stays crisp. */
+html[data-look="blobs"] a:not(.flickr-photo-link):is(:hover, :focus-visible) {
+  text-shadow:
+    0 0 3px color-mix(in srgb, var(--accent) var(--blob-link-bloom-near), transparent),
+    0 0 var(--blob-link-bloom-radius) color-mix(in srgb, var(--accent) var(--blob-link-bloom-far), transparent);
+}
+
+html[data-look="blobs"] a.appearance-image:is(:hover, :focus-visible) {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 78%, transparent),
+    0 0 var(--blob-link-bloom-radius) color-mix(in srgb, var(--accent) var(--blob-link-bloom-far), transparent);
+}
 
 .appearance-backdrop {
   display: none;

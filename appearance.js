@@ -301,6 +301,9 @@
       var blob = pick(random, blobPalettes);
       blob.accent = pick(random, blob.accents);
       edition.vars = paletteVars(blob);
+      edition.vars["--blob-link-bloom-near"] = range(random, 56, 78, 0) + "%";
+      edition.vars["--blob-link-bloom-far"] = range(random, 24, 42, 0) + "%";
+      edition.vars["--blob-link-bloom-radius"] = range(random, 7, 12, 0) + "px";
       var blobType = pick(random, [
         { body: fontSans, display: fontSans, annotation: fontMono, displayWeight: 700, headingWeight: 700, nameSpacing: "-0.045em", nameLine: 0.96, lineHeight: 1.55 },
         { body: fontSerif, display: fontSans, annotation: fontSerif, displayWeight: 700, headingWeight: 700, nameSpacing: "-0.04em", nameLine: 0.97, lineHeight: 1.62 },

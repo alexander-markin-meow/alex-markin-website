@@ -247,7 +247,8 @@ Six appearances have equal default probability:
   `translate` property compensates page scroll so each blob travels at its seeded `0.45–0.85`
   scroll-speed multiplier. Mobile editions reveal one or two additional seeded fields from a
   seven-field pool to cover their longer document. A separate atmospheric grain layer prints over all content. Both
-  motions become static under `prefers-reduced-motion`.
+  motions become static under `prefers-reduced-motion`. Text and image links bloom on hover/focus
+  using only the selected edition accent; near strength, far strength, and radius are tightly seeded.
 - `eno` — the complete responsive document is one luminous lightbox rather than a collection of
   decorative objects. A seed selects a vertical, horizontal, quartered, central-window, or
   softened concentric core-and-ring halo composition; one light or dark contrast family;
@@ -313,6 +314,10 @@ is pushed to the opposite side with its right edge aligned exactly to the divide
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
+Every text link on the generative homepage has both a color change and a thin seed-accent baseline
+on hover/focus, so its state remains visible in every palette. Image links answer with an accent
+border. CRT replaces the baseline with its phosphor selection block, and Blob adds its documented
+seed-colored bloom.
 The blob layer never contains content. Generated columns use an appearance-aware minimum width;
 long rows may wrap instead of clipping, and the display name scales against its actual identity
 text container so it remains on one line. The homepage uses `viewport-fit=cover`: visual layers
