@@ -210,7 +210,7 @@ The homepage separates content from presentation. `index.html` remains the singl
 content source. `appearance.js` composes an edition before CSS paints, and `appearances.css`
 renders it. Do not duplicate, reorder, or rewrite content for an appearance.
 
-Five appearances have equal default probability:
+Six appearances have equal default probability:
 
 - `smpl` (`simple` internally) — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
@@ -218,7 +218,9 @@ Five appearances have equal default probability:
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
   bounded ink temperature, scale, width, heading treatment, and rule style. Its generated
   `feTurbulence` grain is always a top layer over the complete edition.
-- `blob` (`blobs` internally) — bold system-sans display and body type over 3–5 diffuse color fields. Its accent is
+- `blob` (`blobs` internally) — bold type over 3–5 diffuse color fields. Each edition selects
+  one readability-tested pairing from sans, Source Serif, and IBM Plex Mono; body, display,
+  and annotations may vary, but no edition contains more than two font families. Its accent is
   independently chosen from readable violet, blue, mint, coral, rose, gold, or sage families.
   Every blob
   independently varies in hue, saturation, lightness, opacity, size, blur, and autonomous
@@ -226,6 +228,12 @@ Five appearances have equal default probability:
   `translate` property compensates page scroll so each blob travels at its seeded `0.45–0.85`
   scroll-speed multiplier. A separate atmospheric grain layer stays behind all content. Both
   motions become static under `prefers-reduced-motion`.
+- `eno` — the complete fixed viewport is one luminous lightbox rather than a collection of
+  decorative objects. A seed selects a vertical, horizontal, quartered, central-window, or halo
+  composition; one light or dark contrast family; bounded divisions, diffusion, saturation,
+  and a curated cyan/blue/violet/pink/mint/coral/amber scheme. Three related edge-to-edge color
+  states crossfade over `180–480s` with bounded `±24°` hue travel. Text colors remain fixed
+  inside the selected contrast family. Reduced motion shows the first seeded state.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
@@ -238,13 +246,15 @@ Five appearances have equal default probability:
 
 Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
 seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. Every tile is at
-least 512 CSS pixels with at least four octaves and is internally rasterized at 3–4 times that
-resolution without changing its apparent noise size; lower-resolution grain is not allowed. Each grain-bearing
+least 512 CSS pixels with five or six octaves and is internally rasterized at four times that
+resolution without changing its apparent noise size. Noise is converted to monochrome before
+blending to prevent colored raster artifacts; lower-resolution grain is not allowed. Each grain-bearing
 edition independently randomizes tile size, noise frequency, octave count (quality), contrast,
 brightness, strength, and stepped shift rate within readability-safe brackets. Paper uses a
 lower frequency range for slightly larger physical grain and blends the
 grain over the complete page with `multiply`; blobs blend it behind content with `screen`;
-terminal and CRT keep their lighter surface treatment. Reduced motion freezes the tile.
+Eno uses a very light diffuser grain; terminal and CRT keep their lighter surface treatment.
+Reduced motion freezes the tile.
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
 `?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases
