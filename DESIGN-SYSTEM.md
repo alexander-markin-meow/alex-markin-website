@@ -280,15 +280,23 @@ Seven appearances have equal default probability:
   bloom; link hover/focus, selected appearance controls, and utility-button hover use a brighter
   white core with a restrained red Cinestill-like halation fringe. High-resolution grain remains
   above all type, photographs, controls, and perforation bands.
-- `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
-  `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
-  tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
-  are seed-bounded for homepage readability. Text links invert into a clear phosphor selection
-  block on hover/focus, and their unchanged text-presentation `↗︎` / `→` markers render at body
-  scale. Footer selection blocks remain content-width instead of stretching across their grid
-  cells; the `appearance ↻` and `copy as markdown` utilities receive bounded phosphor glow.
-  A fixed seed-colored signal layer covers elastic overscroll outside the document; reduced
-  motion removes the rolling band. Never add flicker or text displacement.
+- `crt` — VT323 bitmap type throughout, using a fixed hardware-aligned signal treatment based on
+  `/trials/scanline/`: one-device-pixel horizontal beam gaps and vertical RGB phosphor cells,
+  a visible rolling refresh band, restrained seeded per-phosphor convergence/bloom and signal
+  noise, tube vignette, and a square-cell pixel pointer. The seed chooses from restrained green,
+  amber, blue, violet, rose, cyan-phosphor, and cool monochrome families; all retain tested text
+  contrast and avoid high saturation. Each edition rotates the RGB-cell phase and moves only the
+  red/blue phosphor fringes by at most one physical cell; layout and source glyphs never move.
+  Native text selection uses the RGB inverse of the selected accent (amber selects blue, green
+  selects magenta, and blue selects brown). The page is never passed through a whole-page filter:
+  glyphs are pixel-shaped at the source, the portrait is rendered at half resolution with
+  nearest-neighbour expansion, and the screen grid sits directly on device-pixel boundaries.
+  Text links invert into a clear phosphor selection block on hover/focus, and their unchanged
+  text-presentation `↗︎` / `→` markers render at body scale. Footer selection blocks remain
+  content-width instead of stretching across their grid cells; the `appearance ↻` and `copy as
+  markdown` utilities receive bounded phosphor glow. A fixed seed-colored signal layer covers
+  elastic overscroll outside the document; reduced motion removes the rolling band. Never add
+  flicker or text displacement.
 - `>...` (`terminal` internally) — one seeded technical face is used throughout each edition:
   DEC-inspired VT323, workstation-like Fira Mono, or modern-console Roboto Mono. The family,
   tuned size, weight, tracking, and line spacing vary together as a bounded preset rather than
@@ -318,7 +326,7 @@ The shared random brackets are: `512–560px` tile, `0.60–0.72` frequency, fou
 octaves, `2.20–2.60` contrast, `0.68–0.78` brightness, and `720–960ms` step rate. Paper
 may extend to `576px`; Eno uses `0.65–0.76`, 70mm uses `0.54–0.68`, CRT uses `0.62–0.76`,
 and terminal uses `0.58–0.72`. Opacity stays appearance-specific: paper `0.10–0.17`, blob
-`0.08–0.14`, Eno `0.035–0.060`, 70mm `0.07–0.12`, CRT `0.012–0.024`, and terminal
+`0.08–0.14`, Eno `0.035–0.060`, 70mm `0.07–0.12`, CRT `0.026–0.042`, and terminal
 `0.030–0.055`.
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;

@@ -60,15 +60,20 @@ html[data-look] {
   --film-perf-side: 12px;
   --film-perf-height: 32px;
   --film-image-sepia: 0.12;
-  --crt-pitch: 3.2px;
+  --crt-cell: 1px;
   --crt-depth: 76;
-  --crt-p1: 0.27;
-  --crt-p2: 0.57;
-  --crt-p3: 0.67;
-  --crt-triad: 3px;
   --crt-grille: 0.38;
-  --crt-bright: 1.85;
-  --crt-saturation: 1.15;
+  --crt-halo-red: 32%;
+  --crt-halo-blue: 28%;
+  --crt-halo-strength: 42%;
+  --crt-halo-radius: 2;
+  --crt-image-halo: 28%;
+  --crt-red-x: -1;
+  --crt-red-y: 0;
+  --crt-blue-x: 1;
+  --crt-blue-y: 0;
+  --crt-triad-phase: 0;
+  --crt-selection: #6e2074;
   --crt-vignette: 0.62;
   --crt-roll-period: 7s;
   min-height: 100%;
@@ -933,25 +938,20 @@ html[data-look="crt"] .crt-mask-layer { display: block; }
   mix-blend-mode: multiply;
   background-image: repeating-linear-gradient(
     to bottom,
-    #fff 0,
-    #fff calc(var(--crt-pitch) * var(--crt-p1)),
-    var(--crt-gap) calc(var(--crt-pitch) * var(--crt-p2)),
-    var(--crt-gap) calc(var(--crt-pitch) * var(--crt-p3)),
-    #fff var(--crt-pitch)
+    #fff 0 var(--crt-cell),
+    var(--crt-gap) var(--crt-cell) calc(var(--crt-cell) * 2)
   );
 }
 
 .crt-mask-grille {
   mix-blend-mode: multiply;
   opacity: var(--crt-grille);
+  background-position-x: calc(var(--crt-cell) * var(--crt-triad-phase));
   background-image: repeating-linear-gradient(
     to right,
-    #ff4d4d 0,
-    #ff4d4d calc(var(--crt-triad) / 3),
-    #4dff4d calc(var(--crt-triad) / 3),
-    #4dff4d calc(var(--crt-triad) / 3 * 2),
-    #4d4dff calc(var(--crt-triad) / 3 * 2),
-    #4d4dff var(--crt-triad)
+    #ff4d4d 0 var(--crt-cell),
+    #4dff4d var(--crt-cell) calc(var(--crt-cell) * 2),
+    #4d4dff calc(var(--crt-cell) * 2) calc(var(--crt-cell) * 3)
   );
 }
 
@@ -962,8 +962,8 @@ html[data-look="crt"] .crt-mask-layer { display: block; }
   background: linear-gradient(
     to bottom,
     transparent,
-    rgb(255 255 255 / 0.035) 55%,
-    rgb(255 255 255 / 0.06) 72%,
+    rgb(255 255 255 / 0.055) 55%,
+    rgb(255 255 255 / 0.105) 72%,
     transparent
   );
   animation: appearance-crt-roll var(--crt-roll-period) linear infinite;
@@ -976,47 +976,96 @@ html[data-look="crt"] .crt-mask-layer { display: block; }
 }
 
 .crt-mask-tube {
-  background: radial-gradient(125% 105% at 50% 50%, transparent 52%, rgb(0 0 0 / var(--crt-vignette)) 100%);
+  background:
+    linear-gradient(118deg, transparent 23%, rgb(255 255 255 / 0.018) 49%, transparent 73%),
+    radial-gradient(125% 105% at 50% 50%, transparent 52%, rgb(0 0 0 / var(--crt-vignette)) 100%);
 }
 
 html[data-look="crt"] body {
-  --appearance-body-family: var(--mono);
-  --appearance-display-family: var(--mono);
-  --appearance-annotation-family: var(--mono);
-  --appearance-display-mobile: 36px;
+  --appearance-body-family: "VT323", var(--mono);
+  --appearance-display-family: "VT323", var(--mono);
+  --appearance-annotation-family: "VT323", var(--mono);
+  --appearance-display-mobile: 46px;
   --appearance-display-weight: 600;
   --appearance-body-weight: 500;
   --grain-blend: screen;
   --crt-gap: color-mix(in srgb, #000 calc(var(--crt-depth) * 1%), #fff);
-  text-shadow: 0 0 var(--crt-glow) currentColor;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  font-variant-ligatures: none;
+  /* Per-phosphor convergence and bloom, kept to the physical cell so the
+     bitmap source stays legible rather than becoming a filtered soft layer. */
+  text-shadow:
+    calc(var(--crt-cell) * var(--crt-red-x)) calc(var(--crt-cell) * var(--crt-red-y)) 0 rgb(255 75 70 / var(--crt-halo-red)),
+    calc(var(--crt-cell) * var(--crt-blue-x)) calc(var(--crt-cell) * var(--crt-blue-y)) 0 rgb(72 124 255 / var(--crt-halo-blue)),
+    0 0 calc(var(--crt-cell) * var(--crt-halo-radius)) color-mix(in srgb, currentColor var(--crt-halo-strength), transparent);
+}
+
+/* The native selection stays inside the real browser selection model, but its
+   field is the exact RGB inverse of the edition's accent phosphor. */
+html[data-look="crt"] ::selection {
+  color: var(--ink-bright);
+  background-color: var(--crt-selection);
+  text-shadow: none;
 }
 
 html[data-look="crt"] .page {
-  filter: brightness(var(--crt-bright)) saturate(var(--crt-saturation));
+  /* Do not filter the full page: that rasterizes a smooth intermediate layer
+     before the grille gets to it. The palette itself supplies the beam level. */
+  filter: none;
 }
 
 html[data-look="crt"] .name {
   line-height: 1;
-  letter-spacing: 0.015em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
 html[data-look="crt"] .heading {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
-html[data-look="crt"] .desc { font-size: calc(var(--appearance-body-size) - 1px); }
+html[data-look="crt"] .desc { font-size: 21px; }
 
 html[data-look="crt"] :is(.desc, .tagline, .tag, .ago, .meta, .footer, .appearance-control) {
   font-weight: 500;
 }
 
-html[data-look="crt"] :is(.meta, .tag) { font-size: 12.5px; }
-html[data-look="crt"] .ago { font-size: 12px; }
-html[data-look="crt"] :is(.footer, .appearance-control) { font-size: 11.5px; }
+html[data-look="crt"] :is(.meta, .tag) { font-size: 16px; }
+html[data-look="crt"] .ago { font-size: 15px; }
+html[data-look="crt"] :is(.footer, .appearance-control) { font-size: 15px; }
+html[data-look="crt"] :is(.meta, .tag, .ago, .footer, .appearance-control) { letter-spacing: 1px; }
+
+/* Photographs use a genuinely low-resolution source inside their unchanged
+   frames; nearest-neighbour expansion makes the portrait share the same cells
+   as the signal rather than merely receiving a grille on top. */
+html[data-look="crt"] .appearance-image img {
+  image-rendering: pixelated;
+}
+
+html[data-look="crt"] .appearance-image {
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.10),
+    0 0 calc(var(--crt-cell) * 6) color-mix(in srgb, var(--ink) var(--crt-image-halo), transparent);
+}
+
+/* The hardware-style pointer is deliberately made of square cells, including
+   its black outline, so it belongs to the same raster as the CRT signal. */
+html[data-look="crt"] :is(body, body *) {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H0V6h1z'/%3E%3Cpath fill='%23eaf7ff' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H1V6h1z'/%3E%3C/svg%3E") 1 1, default;
+}
+
+html[data-look="crt"] .appearance-image--portrait .photo {
+  top: -5%;
+  left: -5%;
+  width: 60%;
+  height: 60%;
+  transform: scale(2);
+  transform-origin: top left;
+}
 
 html[data-look="crt"] :is(.copy-markdown, .appearance-option) { border-radius: 0; }
 
@@ -1059,7 +1108,7 @@ html[data-look="crt"] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-
   font-size: 1.12em;
   font-weight: 600;
   line-height: 1;
-  text-shadow: 0 0 1.5px currentColor;
+  text-shadow: none;
 }
 
 html[data-look="crt"] a:not(.flickr-photo-link):is(:hover, :focus-visible)::after {
@@ -1177,6 +1226,7 @@ html[data-look="terminal"] a:not(.flickr-photo-link):is(:hover, :focus-visible):
   }
 
   html[data-look="crt"] .crt-mask-grille { opacity: calc(var(--crt-grille) * 0.86); }
+  html[data-look="crt"] body::before { opacity: calc(var(--grain-opacity) * 0.72); }
 }
 
 @media (prefers-reduced-motion: reduce) {

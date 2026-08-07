@@ -69,6 +69,17 @@
     return Number(value.toFixed(decimals || 0));
   }
 
+  function inverseHex(hex) {
+    var value = String(hex || "").replace("#", "");
+    if (!/^[0-9a-f]{6}$/i.test(value)) return "#7d8f5c";
+    var red = 255 - parseInt(value.slice(0, 2), 16);
+    var green = 255 - parseInt(value.slice(2, 4), 16);
+    var blue = 255 - parseInt(value.slice(4, 6), 16);
+    return "#" + [red, green, blue].map(function (channel) {
+      return channel.toString(16).padStart(2, "0");
+    }).join("");
+  }
+
   function normalizeLook(value) {
     return lookAliases[value] || null;
   }
@@ -486,36 +497,51 @@
       var crtPalettes = [
         { bg: "#020502", ink: "#b9efb1", bright: "#dcffd6", muted: "#83b77d", faint: "#628b5e", foot: "#5d8759", accent: "#91df8b", hair: "#274426", rule: "#172b17", border: "#234022", chip: "#071007" },
         { bg: "#070401", ink: "#f0c58d", bright: "#ffe3b7", muted: "#b28b5d", faint: "#98764d", foot: "#98764d", accent: "#e4aa65", hair: "#4a3320", rule: "#302012", border: "#432d1a", chip: "#120b04" },
-        { bg: "#020407", ink: "#b9d8ee", bright: "#dceeff", muted: "#809fb7", faint: "#607c92", foot: "#607c92", accent: "#8fc3e5", hair: "#273b4b", rule: "#172633", border: "#223747", chip: "#071019" }
+        { bg: "#020407", ink: "#b9d8ee", bright: "#dceeff", muted: "#809fb7", faint: "#607c92", foot: "#607c92", accent: "#8fc3e5", hair: "#273b4b", rule: "#172633", border: "#223747", chip: "#071019" },
+        { bg: "#050306", ink: "#d6c3e7", bright: "#f0ddff", muted: "#a48bb5", faint: "#7e688d", foot: "#79648a", accent: "#ae8bd0", hair: "#3a2c44", rule: "#251d2c", border: "#35283f", chip: "#0d0910" },
+        { bg: "#080304", ink: "#e4c3cc", bright: "#ffdde5", muted: "#b08894", faint: "#896b74", foot: "#82646e", accent: "#c58495", hair: "#492e36", rule: "#2e1e23", border: "#412932", chip: "#12090c" },
+        { bg: "#020606", ink: "#b9e0d7", bright: "#d8fbef", muted: "#7faf9f", faint: "#5e8679", foot: "#587c71", accent: "#78b9a6", hair: "#244239", rule: "#162a25", border: "#203c34", chip: "#06100d" },
+        { bg: "#040507", ink: "#c8ced6", bright: "#e6ebf2", muted: "#929da9", faint: "#6e7781", foot: "#68717a", accent: "#a3adb9", hair: "#303941", rule: "#20272d", border: "#2c353d", chip: "#0b0f12" }
       ];
-      edition.vars = paletteVars(pick(random, crtPalettes));
-      edition.vars["--appearance-display-size"] = pick(random, ["46px", "50px", "54px"]);
-      edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "17.5px"]);
-      edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.68]);
+      var crtPalette = pick(random, crtPalettes);
+      var crtConvergence = pick(random, [
+        { redX: -1, redY: 0, blueX: 1, blueY: 0 },
+        { redX: -1, redY: 0, blueX: 0, blueY: -1 },
+        { redX: 0, redY: 1, blueX: 1, blueY: 0 },
+        { redX: -1, redY: 1, blueX: 1, blueY: -1 }
+      ]);
+      edition.vars = paletteVars(crtPalette);
+      edition.vars["--crt-selection"] = inverseHex(crtPalette.accent);
+      /* The CRT is a physical-pixel treatment, so its source geometry stays on
+         whole CSS pixels before the one-device-pixel grille is applied. */
+      edition.vars["--appearance-display-size"] = "60px";
+      edition.vars["--appearance-body-size"] = "22px";
+      edition.vars["--appearance-line-height"] = 1.25;
       edition.vars["--page-max"] = pick(random, ["1000px", "1100px", "1180px"]);
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
-      edition.vars["--crt-pitch"] = range(random, 2.2, 3, 1) + "px";
-      edition.vars["--crt-depth"] = range(random, 66, 82, 0);
-      var crtSoftness = range(random, 80, 95, 0) / 100;
-      var crtHalfGap = 0.05 + (1 - crtSoftness) * 0.25;
-      var crtP2 = 0.62 - crtHalfGap;
-      var crtP3 = 0.62 + crtHalfGap;
-      edition.vars["--crt-p1"] = Math.max(0, crtP2 - crtSoftness * 0.30).toFixed(3);
-      edition.vars["--crt-p2"] = crtP2.toFixed(3);
-      edition.vars["--crt-p3"] = crtP3.toFixed(3);
-      edition.vars["--crt-triad"] = range(random, 1.8, 2.7, 1) + "px";
-      edition.vars["--crt-grille"] = range(random, 0.28, 0.42, 2);
-      edition.vars["--crt-bright"] = range(random, 1.55, 1.9, 2);
-      edition.vars["--crt-saturation"] = range(random, 1, 1.2, 2);
+      /* One CSS pixel on a standard display (or one device pixel on a dense
+         display) is the indivisible phosphor cell. No fractional stripe stops. */
+      edition.vars["--crt-cell"] = (1 / Math.min(Math.max(window.devicePixelRatio || 1, 1), 2)).toFixed(3) + "px";
+      edition.vars["--crt-depth"] = range(random, 38, 54, 0);
+      edition.vars["--crt-grille"] = range(random, 0.2, 0.3, 2);
+      edition.vars["--crt-halo-red"] = range(random, 28, 38, 0) + "%";
+      edition.vars["--crt-halo-blue"] = range(random, 24, 34, 0) + "%";
+      edition.vars["--crt-halo-strength"] = range(random, 36, 50, 0) + "%";
+      edition.vars["--crt-halo-radius"] = range(random, 1.6, 2.5, 1);
+      edition.vars["--crt-image-halo"] = range(random, 22, 34, 0) + "%";
+      edition.vars["--crt-red-x"] = crtConvergence.redX;
+      edition.vars["--crt-red-y"] = crtConvergence.redY;
+      edition.vars["--crt-blue-x"] = crtConvergence.blueX;
+      edition.vars["--crt-blue-y"] = crtConvergence.blueY;
+      edition.vars["--crt-triad-phase"] = pick(random, [0, 1, 2]);
       edition.vars["--crt-vignette"] = range(random, 0.38, 0.62, 2);
       edition.vars["--crt-roll-period"] = range(random, 6.5, 12.5, 1) + "s";
-      edition.vars["--crt-glow"] = range(random, 0.35, 0.85, 2) + "px";
       Object.assign(edition.vars, grainVars(random, grainBounds({
-        frequency: [0.62, 0.76], opacity: [0.012, 0.024], rate: [620, 900]
+        frequency: [0.62, 0.76], opacity: [0.026, 0.042], rate: [620, 900]
       })));
       Object.assign(edition.vars, imageVars(random, {
-        contrast: [1.1, 1.28], brightness: [0.92, 1.04], opacity: [0.9, 0.97]
+        contrast: [1.1, 1.28], brightness: [0.98, 1.08], opacity: [0.98, 1]
       }));
     }
 
