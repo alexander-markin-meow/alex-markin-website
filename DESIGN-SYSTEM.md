@@ -225,7 +225,7 @@ The homepage separates content from presentation. `index.html` remains the singl
 content source. `appearance.js` composes an edition before CSS paints, and `appearances.css`
 renders it. Do not duplicate, reorder, or rewrite content for an appearance.
 
-Six appearances have equal default probability:
+Seven appearances have equal default probability:
 
 - `smpl` (`simple` internally) — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
@@ -256,7 +256,7 @@ Six appearances have equal default probability:
 - `eno` — the complete responsive document is one luminous lightbox rather than a collection of
   decorative objects. A seed selects a vertical, horizontal, quartered, central-window, or
   softened concentric core-and-ring halo composition; one light or dark contrast family;
-  bounded divisions, diffusion, saturation,
+  bounded divisions, diffusion, and color saturation capped at `80%`,
   and curated turquoise/pink/crimson, amber/orange/red, green/lime/cyan, or
   blue/violet/magenta schemes. Three related edge-to-edge color states crossfade over
   `180–480s` with bounded `±24°` hue travel. Montserrat supplies the geometric album-art voice:
@@ -268,6 +268,18 @@ Six appearances have equal default probability:
   elastic-overscroll fallback. Controls remain transparent so the lightbox itself is their fill.
   A fine topmost diffuser grain remains visible at a restrained `0.035–0.060` opacity.
   Reduced motion shows the first seeded state.
+- `70mm` — a projected-film edition with the content framed between two horizontal perforation
+  strips. The appearance selector remains above the top strip and the footer remains below the
+  bottom strip, keeping both utilities outside the picture gate. Every seed independently chooses
+  one restrained tungsten, warm-print, or silver palette; one serif from Source Serif 4,
+  Cormorant Garamond, or Georgia; one mono from IBM Plex Mono, Courier Prime, or Roboto Mono;
+  and one of three readable serif/mono role assignments that always uses both voices. Page width,
+  spacing, display scale, grain, vignette, bloom, red halation radius, perforation pitch and height,
+  light-leak positions, and image development vary inside bounded brackets. Three large blurred
+  light fields remain behind the semantic content. Bright display elements receive a quiet white
+  bloom; link hover/focus, selected appearance controls, and utility-button hover use a brighter
+  white core with a restrained red Cinestill-like halation fringe. High-resolution grain remains
+  above all type, photographs, controls, and perforation bands.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
@@ -298,18 +310,20 @@ allowed. Each grain-bearing edition independently randomizes tile size, noise fr
 count, contrast, brightness, strength, and stepped shift rate inside tight brackets around that
 reference. Paper uses a slightly lower `0.50–0.62` frequency range for larger physical grain and blends the
 grain over the complete page with `multiply`; blobs use a topmost `screen` surface;
-Eno uses a very light, slightly finer topmost diffuser grain; terminal and CRT keep their lighter surface treatment.
+Eno uses a very light, slightly finer topmost diffuser grain; 70mm uses a visible projected-film
+surface; terminal and CRT keep their lighter surface treatment.
 Reduced motion freezes the tile.
 
 The shared random brackets are: `512–560px` tile, `0.60–0.72` frequency, four or five
 octaves, `2.20–2.60` contrast, `0.68–0.78` brightness, and `720–960ms` step rate. Paper
-may extend to `576px`; Eno uses `0.65–0.76`, CRT uses `0.62–0.76`, and
-terminal to `0.58–0.72`. Opacity stays appearance-specific: paper `0.10–0.17`, blob
-`0.08–0.14`, Eno `0.022–0.040`, CRT `0.012–0.024`, and terminal `0.030–0.055`.
+may extend to `576px`; Eno uses `0.65–0.76`, 70mm uses `0.54–0.68`, CRT uses `0.62–0.76`,
+and terminal uses `0.58–0.72`. Opacity stays appearance-specific: paper `0.10–0.17`, blob
+`0.08–0.14`, Eno `0.035–0.060`, 70mm `0.07–0.12`, CRT `0.012–0.024`, and terminal
+`0.030–0.055`.
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
 `?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases
-(`smpl`, `blob`, `>...`) and the existing internal names remain accepted so old links keep working.
+(`smpl`, `blob`, `70mm`, `>...`) and the existing internal names remain accepted so old links keep working.
 An ordinary load without these
 parameters generates a new seed. The first utility row on the homepage switches immediately,
 does not persist, and removes pinned parameters so the next reload is random again. Its reload
@@ -317,7 +331,7 @@ glyph composes a new random appearance and edition without requiring a page refr
 `appearance` and the reload glyph are one compact outlined button, not separate controls. The
 control's top inset matches the footer's bottom inset. It and `copy as markdown` share the same
 fixed height while their widths remain content-sized and never force either label to wrap.
-On mobile, seed/status text is hidden and all six style choices form a compact left cluster in
+On mobile, seed/status text is hidden and all seven style choices form a compact left cluster in
 one row, beginning exactly at the content divider's left edge. The symbol-only randomize button
 is pushed to the opposite side with its right edge aligned exactly to the divider's right edge.
 
@@ -326,7 +340,7 @@ contrast, and the minimum type sizes stay fixed. Decorative noise never receives
 Every text link on the generative homepage changes tone or color on hover/focus; do not add
 underlines or baseline effects because the layout already uses leader lines and rules. Image links
 answer with an accent border. CRT uses a phosphor selection block, Terminal uses a clean selection
-inversion, and Blob adds its documented seed-colored bloom.
+inversion, Blob adds its documented seed-colored bloom, and 70mm uses red halation.
 The blob layer never contains content. Generated columns use an appearance-aware minimum width;
 long rows may wrap instead of clipping, and the display name scales against its actual identity
 text container so it remains on one line. The homepage uses `viewport-fit=cover`: visual layers
@@ -339,7 +353,7 @@ dimensions from `styles.css`. Color development is appearance-aware and operates
 on the black-and-white source. The wrapper is transparent and must not isolate blending or
 reconstruct a miniature appearance inside the frame. Paper uses `multiply` against the actual
 stock beneath it, replacing photographic whites with paper while the page grain prints across
-the image. Blob and Eno use `luminosity` against the real pixels physically behind the image, so
+the image. Blob, Eno, and 70mm use `luminosity` against the real pixels physically behind the image, so
 color appears only where the live page artwork is present at that position. Simple applies only
 the baseline black-and-white conversion: no contrast, opacity, tint, or blend treatment. CRT and
 terminal retain bounded monochrome development, with the CRT page mask above the result. The
@@ -438,7 +452,7 @@ top of the photograph. Version its Open Graph and X metadata URL independently w
 - On non-generative pages, no new fonts, hues, or font sizes outside the base scale.
 - No borders/underlines on links (hover is a color change only).
 - No rounded corners beyond `--radius: 2px`, shadows, gradients, or uppercase on non-generative
-  pages. The bounded `blobs` and `crt` appearances are the documented exceptions.
+  pages. The bounded `blobs`, `70mm`, and `crt` appearances are documented exceptions.
 - Authored content remains lowercase everywhere; CRT and Eno may render the name and headings
   uppercase with CSS only.
 - Don't restyle with inline `style=""` attributes — extend `styles.css` via tokens.

@@ -45,8 +45,21 @@ html[data-look] {
   --eno-cycle: 300s;
   --eno-phase: 0s;
   --eno-softness: 28px;
-  --eno-saturation: 1.08;
+  --eno-saturation: 1;
   --eno-diffusion: 0.12;
+  --film-name-spacing: -0.02em;
+  --film-halation: #ff493d;
+  --film-bloom-radius: 5px;
+  --film-halation-radius: 11px;
+  --film-halation-strength: 60%;
+  --film-vignette: 0.24;
+  --film-perf-stock: #17120f;
+  --film-perf-hole: #a89272;
+  --film-perf-pitch: 44px;
+  --film-perf-hole-width: 20px;
+  --film-perf-side: 12px;
+  --film-perf-height: 32px;
+  --film-image-sepia: 0.12;
   --crt-pitch: 3.2px;
   --crt-depth: 76;
   --crt-p1: 0.27;
@@ -187,7 +200,7 @@ html[data-look]:not([data-look="crt"]) a:not(.flickr-photo-link):is(:hover, :foc
 }
 
 /* --------------------------------------------------------------------------
-   appearance-aware photographs — one monochrome source, six light systems
+   appearance-aware photographs — one monochrome source, seven light systems
    -------------------------------------------------------------------------- */
 
 .appearance-image {
@@ -264,6 +277,10 @@ html[data-look="crt"] {
 
 html[data-look="terminal"] {
   --image-blend-mode: normal;
+}
+
+html[data-look="70mm"] {
+  --image-blend-mode: luminosity;
 }
 
 /* --------------------------------------------------------------------------
@@ -722,6 +739,180 @@ html[data-look="eno"] :is(.copy-markdown, .appearance-option) {
   background-color: transparent;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+}
+
+/* --------------------------------------------------------------------------
+   70mm — projected film gate, rear-plane light leaks, bloom, and halation
+   -------------------------------------------------------------------------- */
+
+html[data-look="70mm"] body {
+  --appearance-display-mobile: 36px;
+  --grain-blend: screen;
+}
+
+/* The grain is the projected surface, so it passes over type, photographs,
+   controls, and both film strips rather than sitting behind the content. */
+html[data-look="70mm"] body::before {
+  z-index: 6;
+}
+
+html[data-look="70mm"] .name {
+  line-height: 1;
+  letter-spacing: var(--film-name-spacing);
+  text-shadow:
+    0 0 1px color-mix(in srgb, var(--ink-bright) 72%, transparent),
+    0 0 var(--film-bloom-radius) color-mix(in srgb, var(--ink-bright) 28%, transparent);
+}
+
+html[data-look="70mm"] .heading {
+  font-family: var(--appearance-display-family);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 var(--film-bloom-radius) color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+html[data-look="70mm"] :is(.meta, .tag, .ago, .dates, .footer, .appearance-control) {
+  letter-spacing: 0.055em;
+}
+
+html[data-look="70mm"] .appearance-image img {
+  filter:
+    grayscale(1)
+    contrast(var(--image-contrast))
+    brightness(var(--image-brightness))
+    sepia(var(--film-image-sepia));
+}
+
+.film-backdrop {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  height: var(--appearance-document-height);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+html[data-look="70mm"] .film-backdrop { display: block; }
+
+.film-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 42%, transparent 42%, rgb(0 0 0 / var(--film-vignette)) 100%);
+}
+
+.film-light {
+  position: absolute;
+  width: min(var(--film-light-size), 760px);
+  aspect-ratio: 1;
+  left: var(--film-light-x);
+  top: var(--film-light-y);
+  border-radius: 50%;
+  opacity: var(--film-light-opacity);
+  background: radial-gradient(circle, var(--film-light-color), transparent 68%);
+  filter: blur(var(--film-light-blur));
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.film-light:nth-child(1) {
+  --film-light-color: var(--film-light-1-color);
+  --film-light-size: var(--film-light-1-size);
+  --film-light-x: var(--film-light-1-x);
+  --film-light-y: var(--film-light-1-y);
+  --film-light-blur: var(--film-light-1-blur);
+  --film-light-opacity: var(--film-light-1-opacity);
+}
+
+.film-light:nth-child(2) {
+  --film-light-color: var(--film-light-2-color);
+  --film-light-size: var(--film-light-2-size);
+  --film-light-x: var(--film-light-2-x);
+  --film-light-y: var(--film-light-2-y);
+  --film-light-blur: var(--film-light-2-blur);
+  --film-light-opacity: var(--film-light-2-opacity);
+}
+
+.film-light:nth-child(3) {
+  --film-light-color: var(--film-light-3-color);
+  --film-light-size: var(--film-light-3-size);
+  --film-light-x: var(--film-light-3-x);
+  --film-light-y: var(--film-light-3-y);
+  --film-light-blur: var(--film-light-3-blur);
+  --film-light-opacity: var(--film-light-3-opacity);
+}
+
+.film-perforation {
+  display: none;
+  position: relative;
+  z-index: 1;
+  height: var(--film-perf-height);
+  border-block: 1px solid color-mix(in srgb, var(--film-perf-hole) 28%, transparent);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--film-perf-stock) 0 var(--film-perf-side),
+    var(--film-perf-hole) var(--film-perf-side) calc(var(--film-perf-side) + var(--film-perf-hole-width)),
+    var(--film-perf-stock) calc(var(--film-perf-side) + var(--film-perf-hole-width)) var(--film-perf-pitch)
+  );
+  box-shadow:
+    inset 0 0 8px rgb(0 0 0 / 0.72),
+    0 0 var(--film-bloom-radius) color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.film-perforation::before,
+.film-perforation::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 6px;
+  background: var(--film-perf-stock);
+}
+
+.film-perforation::before { top: 0; }
+.film-perforation::after { bottom: 0; }
+
+html[data-look="70mm"] .film-perforation { display: block; }
+html[data-look="70mm"] .appearance-control { margin-bottom: 14px; }
+html[data-look="70mm"] .film-perforation--top { margin-bottom: 34px; }
+html[data-look="70mm"] .film-perforation--bottom { margin-top: 46px; margin-bottom: 22px; }
+
+html[data-look="70mm"][data-film-gate="wide"] .film-perforation {
+  width: calc(100% + 32px);
+  margin-left: -16px;
+}
+
+/* Bright text blooms white first, then leaves the restrained red fringe that
+   gives Cinestill-like halation its recognisable edge. */
+html[data-look="70mm"] a:not(.flickr-photo-link):is(:hover, :focus-visible) {
+  color: var(--ink-bright);
+  text-shadow:
+    0 0 2px var(--ink-bright),
+    0 0 var(--film-bloom-radius) color-mix(in srgb, var(--ink-bright) 55%, transparent),
+    0 0 var(--film-halation-radius) color-mix(in srgb, var(--film-halation) var(--film-halation-strength), transparent);
+}
+
+html[data-look="70mm"] a.appearance-image:is(:hover, :focus-visible) {
+  border-color: var(--film-halation);
+  box-shadow:
+    0 0 2px color-mix(in srgb, var(--ink-bright) 60%, transparent),
+    0 0 var(--film-halation-radius) color-mix(in srgb, var(--film-halation) var(--film-halation-strength), transparent);
+}
+
+html[data-look="70mm"] :is(.appearance-reload, .copy-markdown, .appearance-option[aria-pressed="true"]) {
+  border-color: color-mix(in srgb, var(--film-halation) 54%, var(--border));
+  text-shadow: 0 0 var(--film-bloom-radius) color-mix(in srgb, var(--ink-bright) 38%, transparent);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--film-halation) 22%, transparent);
+}
+
+html[data-look="70mm"] :is(.appearance-option, .copy-markdown):is(:hover, :focus-visible) {
+  color: var(--ink-bright);
+  border-color: var(--film-halation);
+  background: color-mix(in srgb, var(--film-halation) 8%, transparent);
+  text-shadow:
+    0 0 2px var(--ink-bright),
+    0 0 var(--film-halation-radius) color-mix(in srgb, var(--film-halation) var(--film-halation-strength), transparent);
+  box-shadow: 0 0 var(--film-halation-radius) color-mix(in srgb, var(--film-halation) 42%, transparent);
 }
 
 /* --------------------------------------------------------------------------

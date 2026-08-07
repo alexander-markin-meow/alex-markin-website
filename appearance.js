@@ -6,15 +6,26 @@
   var fontEno = '"Montserrat", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
   var fontSerif = "var(--serif)";
   var fontMono = "var(--mono)";
-  var looks = ["simple", "paper", "blobs", "eno", "crt", "terminal"];
-  var lookLabels = { simple: "smpl", paper: "paper", blobs: "blob", eno: "eno", crt: "crt", terminal: ">..." };
+  var filmSerifs = [
+    '"Source Serif 4", Georgia, serif',
+    '"Cormorant Garamond", Georgia, serif',
+    'Georgia, "Times New Roman", serif'
+  ];
+  var filmMonos = [
+    '"IBM Plex Mono", monospace',
+    '"Courier Prime", "Courier New", monospace',
+    '"Roboto Mono", monospace'
+  ];
+  var looks = ["simple", "paper", "blobs", "eno", "70mm", "crt", "terminal"];
+  var lookLabels = { simple: "smpl", paper: "paper", blobs: "blob", eno: "eno", "70mm": "70mm", crt: "crt", terminal: ">..." };
   var lookAliases = {
     simple: "simple", smpl: "simple", paper: "paper", blobs: "blobs", blob: "blobs",
-    eno: "eno", crt: "crt", terminal: "terminal", ">...": "terminal"
+    eno: "eno", "70mm": "70mm", film: "70mm", crt: "crt", terminal: "terminal", ">...": "terminal"
   };
   var appearanceAttributes = [
     "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-paper-texture", "data-blob-layout",
-    "data-blob-count", "data-blob-mobile-extra", "data-eno-composition", "data-eno-contrast", "data-terminal-prompt"
+    "data-blob-count", "data-blob-mobile-extra", "data-eno-composition", "data-eno-contrast",
+    "data-film-tone", "data-film-gate", "data-terminal-prompt"
   ];
   var appliedProperties = [];
   var currentEdition;
@@ -207,7 +218,7 @@
 
   function enoColor(random, hue, contrast) {
     var adjustedHue = Math.round((hue + range(random, -8, 8, 0) + 360) % 360);
-    var saturation = range(random, contrast === "light" ? 72 : 62, contrast === "light" ? 96 : 88, 0);
+    var saturation = range(random, contrast === "light" ? 64 : 56, 80, 0);
     var lightness = range(random, contrast === "light" ? 64 : 18, contrast === "light" ? 80 : 30, 0);
     return "hsl(" + adjustedHue + " " + saturation + "% " + lightness + "%)";
   }
@@ -399,7 +410,7 @@
       edition.vars["--eno-cycle"] = enoCycle + "s";
       edition.vars["--eno-phase"] = -range(random, 0, enoCycle, 0) + "s";
       edition.vars["--eno-softness"] = range(random, 14, 46, 0) + "px";
-      edition.vars["--eno-saturation"] = range(random, 1.08, 1.26, 2);
+      edition.vars["--eno-saturation"] = range(random, 0.88, 1, 2);
       edition.vars["--eno-diffusion"] = range(random, 0.05, 0.12, 2);
       Object.assign(edition.vars, grainVars(random, grainBounds({
         frequency: [0.65, 0.76], opacity: [0.035, 0.06], rate: [780, 1080]
@@ -408,6 +419,66 @@
       edition.attrs["data-eno-contrast"] = enoContrast;
       Object.assign(edition.vars, imageVars(random, {
         contrast: [0.88, 1.06], brightness: [1.02, 1.16], opacity: [0.86, 0.95]
+      }));
+    }
+
+    if (look === "70mm") {
+      var filmPalettes = [
+        { tone: "tungsten", bg: "#08090b", ink: "#d8d2c6", bright: "#fff9ea", muted: "#aaa093", faint: "#81786e", foot: "#81786e", accent: "#ead6ac", hair: "#403a35", rule: "#292623", border: "#3b3530", chip: "#141210", halation: "#ff493d", stock: "#17120f", hole: "#a89272", lights: ["#9f382e", "#365d72", "#bf7641"] },
+        { tone: "warm", bg: "#0b0806", ink: "#ddd2bd", bright: "#fff4d9", muted: "#aa987f", faint: "#84725c", foot: "#84725c", accent: "#e0bd7a", hair: "#463827", rule: "#2f251a", border: "#413222", chip: "#17110b", halation: "#f43d32", stock: "#1b120b", hole: "#b08d59", lights: ["#b9522d", "#d3944b", "#684260"] },
+        { tone: "silver", bg: "#090909", ink: "#d5d5d1", bright: "#fffefa", muted: "#a09e98", faint: "#797770", foot: "#797770", accent: "#d8d1c2", hair: "#3d3c39", rule: "#272624", border: "#373633", chip: "#131312", halation: "#ef4037", stock: "#151413", hole: "#918b7f", lights: ["#8a302b", "#66645e", "#876b4f"] }
+      ];
+      var film = pick(random, filmPalettes);
+      var filmSerif = pick(random, filmSerifs);
+      var filmMono = pick(random, filmMonos);
+      var filmType = pick(random, [
+        { body: filmSerif, display: filmMono, annotation: filmMono, displayWeight: 500, bodyWeight: 400, nameSpacing: "0.012em", lineHeight: 1.62 },
+        { body: filmMono, display: filmSerif, annotation: filmMono, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.025em", lineHeight: 1.66 },
+        { body: filmSerif, display: filmSerif, annotation: filmMono, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.03em", lineHeight: 1.64 }
+      ]);
+      edition.vars = paletteVars(film);
+      edition.vars["--appearance-body-family"] = filmType.body;
+      edition.vars["--appearance-display-family"] = filmType.display;
+      edition.vars["--appearance-annotation-family"] = filmType.annotation;
+      edition.vars["--appearance-display-weight"] = filmType.displayWeight;
+      edition.vars["--appearance-body-weight"] = filmType.bodyWeight;
+      edition.vars["--appearance-display-size"] = pick(random, ["46px", "50px", "54px"]);
+      edition.vars["--appearance-body-size"] = pick(random, filmType.body === filmMono ? ["16px", "16.5px", "17px"] : ["16.5px", "17px", "17.5px"]);
+      edition.vars["--appearance-line-height"] = filmType.lineHeight;
+      edition.vars["--film-name-spacing"] = filmType.nameSpacing;
+      edition.vars["--page-max"] = pick(random, ["1040px", "1120px", "1200px"]);
+      edition.vars["--col-min"] = pick(random, ["370px", "390px"]);
+      edition.vars["--gap-col"] = pick(random, ["48px", "56px", "64px"]);
+      edition.vars["--gap-row"] = pick(random, ["42px", "46px", "50px"]);
+      edition.vars["--film-halation"] = film.halation;
+      edition.vars["--film-bloom-radius"] = range(random, 3, 7, 1) + "px";
+      edition.vars["--film-halation-radius"] = range(random, 8, 15, 0) + "px";
+      edition.vars["--film-halation-strength"] = range(random, 48, 72, 0) + "%";
+      edition.vars["--film-vignette"] = range(random, 0.18, 0.34, 2);
+      edition.vars["--film-perf-stock"] = film.stock;
+      edition.vars["--film-perf-hole"] = film.hole;
+      var filmPerfPitch = range(random, 38, 52, 0);
+      var filmPerfHole = range(random, 17, 24, 0);
+      edition.vars["--film-perf-pitch"] = filmPerfPitch + "px";
+      edition.vars["--film-perf-hole-width"] = filmPerfHole + "px";
+      edition.vars["--film-perf-side"] = ((filmPerfPitch - filmPerfHole) / 2).toFixed(1) + "px";
+      edition.vars["--film-perf-height"] = range(random, 28, 38, 0) + "px";
+      edition.vars["--film-image-sepia"] = range(random, 0.04, 0.22, 2);
+      for (var f = 0; f < 3; f++) {
+        edition.vars["--film-light-" + (f + 1) + "-color"] = film.lights[f];
+        edition.vars["--film-light-" + (f + 1) + "-size"] = range(random, 34, 68, 0) + "vw";
+        edition.vars["--film-light-" + (f + 1) + "-x"] = range(random, -12, 78, 0) + "%";
+        edition.vars["--film-light-" + (f + 1) + "-y"] = range(random, 4, 88, 0) + "%";
+        edition.vars["--film-light-" + (f + 1) + "-blur"] = range(random, 44, 92, 0) + "px";
+        edition.vars["--film-light-" + (f + 1) + "-opacity"] = range(random, 0.12, 0.24, 2);
+      }
+      Object.assign(edition.vars, grainVars(random, grainBounds({
+        tile: [520, 580], frequency: [0.54, 0.68], opacity: [0.07, 0.12], rate: [680, 940]
+      })));
+      edition.attrs["data-film-tone"] = film.tone;
+      edition.attrs["data-film-gate"] = pick(random, ["regular", "regular", "wide"]);
+      Object.assign(edition.vars, imageVars(random, {
+        contrast: [1.08, 1.28], brightness: [0.94, 1.06], opacity: [0.9, 0.98]
       }));
     }
 
