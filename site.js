@@ -251,23 +251,36 @@
     // the label is the only confirmation, so each click owns the full 1800ms:
     // an earlier click's pending timer would otherwise clear a later click's
     // "copied" while the visitor is still reading it
-    var defaultLabel = copyButton.textContent;
+    var defaultLabel = copyButton.getAttribute("aria-label") || copyButton.textContent.trim();
+    var feedback = copyButton.querySelector(".copy-markdown-feedback");
     var resetTimer;
 
-    function flash(label) {
-      copyButton.textContent = label;
+    function flash(label, spokenLabel) {
+      if (feedback) {
+        feedback.textContent = label;
+        copyButton.classList.add("is-feedback");
+      } else {
+        copyButton.textContent = label;
+      }
+      copyButton.setAttribute("aria-label", spokenLabel || label);
       window.clearTimeout(resetTimer);
       resetTimer = window.setTimeout(function () {
-        copyButton.textContent = defaultLabel;
+        if (feedback) {
+          feedback.textContent = "";
+          copyButton.classList.remove("is-feedback");
+        } else {
+          copyButton.textContent = defaultLabel;
+        }
+        copyButton.setAttribute("aria-label", defaultLabel);
       }, 1800);
     }
 
     copyButton.addEventListener("click", function () {
       var text = pageMarkdown();
       writeClipboard(text).then(function () {
-        flash("copied as markdown");
+        flash("copied", "copied as markdown");
       }).catch(function () {
-        flash("copy failed");
+        flash("failed", "copy failed");
       });
     });
   }

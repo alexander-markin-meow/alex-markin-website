@@ -159,14 +159,17 @@ Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between th
 ```
 
 ### footer
-Solid `--rule` top border and a three-column mono grid: a `last upd YYYY-MM-DD` link to the
+Solid `--rule` top border and a three-column mono grid: an `upd YYYY-MM-DD` link to the
 site repository at left, the document utility centered, and an optional affiliation or return
 link at right. The trials catalogue uses `alex-markin.com` to return home. Update the date when
 you ship a change. Footer links
 inherit the muted footer color and turn white on hover. The `copy as markdown` control uses a
 thin `--border` outline with no fill; the outline, pointer cursor, and color-only hover make it
-legible as clickable without drawing focus. It builds its output from the live semantic HTML at
-click time; do not add or maintain a separate Markdown copy of the page.
+legible as clickable without drawing focus. On mobile it reads `copy`, then switches to a copy
+glyph only when the measured footer cannot fit all three items on one line; an exceptionally
+narrow viewport uses a deliberate second row rather than allowing text to collide. It builds its
+output from the live semantic HTML at click time; do not add or maintain a separate Markdown copy
+of the page.
 
 ### images
 Source photographs are black-and-white. On generative homepage images, wrap the `<img>` in
@@ -178,7 +181,7 @@ Non-generative pages retain the standard slight `grayscale(0.25)` image treatmen
 ## web-1.0 flavor — the boundaries
 
 Allowed (subtle, typographic): dotted leaders, mono tags and timestamps,
-"last upd" footer, optional visitor-counter chip
+"upd" footer, optional visitor-counter chip
 (`<span class="counter-chip">004821</span>`).
 
 **Live "how long ago" timestamp (`.ago`)** — a mono `--faint` span placed inside a
@@ -192,7 +195,7 @@ before requesting fresh API data. A rate limit or offline request must never mak
 known update label disappear; refresh authored fallbacks whenever the site itself is shipped.
 Minute values use the compact `min` abbreviation for both singular and plural (e.g.
 `upd 1 min ago`, `upd 3 min ago`), never `minute` or `minutes`. Live update statuses use
-the compact `upd` prefix, never `updated`; the footer reads `last upd`.
+the compact `upd` prefix, never `updated`; the footer uses `upd YYYY-MM-DD`.
 The span starts empty and `.ago:empty` hides it, so a failed or slow fetch leaves no gap.
 
 **Live local clock (`.clock`)** — an empty span at the end of the header `.meta` line,
@@ -417,7 +420,7 @@ the deferred shared behaviour in `site.js`.
 changes shipped on the same day). GitHub Pages serves
 `styles.css` with `Cache-Control: max-age=600`, so without the query a returning visitor
 can load new HTML against a stale cached stylesheet. **Bump the `?v=` date whenever you
-edit `styles.css`** (keep it in sync with the footer's "last updated" date).
+edit `styles.css`** (keep it in sync with the footer's `upd` date).
 
 Apply the same dated `?v=` convention to `trials/_shared/trial.css` and `trial-ui.js` on
 every immersive experiment page whenever either shared trial asset changes.

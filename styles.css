@@ -65,6 +65,7 @@ body {
   max-width: var(--page-max);
   margin: 0 auto;
   padding: 36px 48px 12px;
+  container-type: inline-size;
 }
 
 .page--narrow { max-width: var(--page-narrow); }
@@ -328,10 +329,17 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 8px 24px;
+  container-type: inline-size;
   font-family: var(--mono);
   font-size: var(--fs-footer);
   letter-spacing: 0.06em;
   color: var(--footnote);
+}
+
+.footer-date,
+.footer-domain {
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .footer-domain { justify-self: end; }
@@ -354,7 +362,16 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
   text-transform: lowercase;
   cursor: pointer;
   transition: color 0.15s ease;
+  white-space: nowrap;
 }
+
+.copy-markdown-label--compact,
+.copy-markdown-label--icon,
+.copy-markdown-feedback { display: none; }
+
+.copy-markdown.is-feedback .copy-markdown-label { display: none; }
+
+.copy-markdown.is-feedback .copy-markdown-feedback { display: inline; }
 
 .copy-markdown:hover,
 .copy-markdown:focus-visible {
@@ -398,8 +415,44 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
   .row a { white-space: normal; }
   .leader { min-width: 16px; }
 
-  .footer { grid-template-columns: auto auto; justify-content: space-between; }
-  .copy-markdown { grid-column: 1 / -1; grid-row: 1; margin-bottom: 4px; }
-  .footer-date { grid-column: 1; grid-row: 2; }
-  .footer-domain { grid-column: 2; grid-row: 2; }
+  /* Use each footer item's natural width on mobile. This keeps all three
+     utilities on one line while there is room, rather than reserving equal
+     side columns for the centre control. */
+  .footer {
+    grid-template-columns: max-content max-content max-content;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .copy-markdown-label--full { display: none; }
+  .copy-markdown-label--compact { display: inline; }
+
+  /* A narrow footer is measured directly, accounting for page padding and
+     safe-area insets. The icon preserves the one-line footer on small phones. */
+  @container (max-width: 310px) {
+    .footer { gap: 0; }
+    .copy-markdown { padding-inline: 5px; }
+    .copy-markdown-label--compact { display: none; }
+    .copy-markdown-label--icon { display: inline; }
+  }
+
+  /* Below this point even the compact three-item row cannot be guaranteed.
+     Let the affiliation take a clear second row instead of overlapping text. */
+  @container (max-width: 269px) {
+    .footer {
+      grid-template-columns: max-content minmax(0, 1fr);
+      row-gap: 8px;
+    }
+
+    .copy-markdown {
+      grid-column: 2;
+      justify-self: end;
+    }
+
+    .footer-domain {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-self: end;
+    }
+  }
 }
