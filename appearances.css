@@ -48,6 +48,16 @@ html[data-look] body {
   line-height: var(--appearance-line-height);
 }
 
+/* A fixed palette-colored canvas remains behind the document during elastic
+   overscroll, so the browser never exposes an unrelated white surface. */
+.appearance-base-layer {
+  position: fixed;
+  z-index: 0;
+  inset: -100vh -100vw;
+  pointer-events: none;
+  background: var(--bg);
+}
+
 /* The composer builds a real feTurbulence tile per edition. Size, frequency,
    octave quality, contrast, brightness, strength, and shift rate are seeded. */
 html[data-look] body::before {
@@ -163,7 +173,6 @@ html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link):
   display: inline-flex;
   align-items: center;
   justify-self: start;
-  inline-size: 126px;
   gap: 4px;
   padding-inline: 7px;
   border-color: var(--border);
@@ -181,10 +190,10 @@ html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link):
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: 126px;
   min-height: 28px;
   padding: 3px 7px;
   box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .appearance-option:hover,
@@ -536,6 +545,30 @@ html[data-look="crt"] .ago { font-size: 12px; }
 html[data-look="crt"] :is(.footer, .appearance-control) { font-size: 11.5px; }
 
 html[data-look="crt"] :is(.copy-markdown, .appearance-option) { border-radius: 0; }
+
+/* CRT links respond like a phosphor selection block. The stronger marker
+   sizing remains text-only: the authored ↗︎ and → characters never change. */
+html[data-look="crt"] a:not(.flickr-photo-link):is(:hover, :focus-visible) {
+  color: var(--bg);
+  background-color: var(--accent);
+  text-shadow: none;
+  box-shadow: 0 0 0 1px var(--accent), 0 0 8px color-mix(in srgb, var(--accent) 58%, transparent);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+html[data-look="crt"] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link)::after {
+  margin-left: 0.22em;
+  color: inherit;
+  font-size: 1.12em;
+  font-weight: 600;
+  line-height: 1;
+  text-shadow: 0 0 1.5px currentColor;
+}
+
+html[data-look="crt"] a:not(.flickr-photo-link):is(:hover, :focus-visible)::after {
+  text-shadow: none;
+}
 
 /* --------------------------------------------------------------------------
    terminal — quiet all-mono typesetting, prompts, grain, no CRT glow

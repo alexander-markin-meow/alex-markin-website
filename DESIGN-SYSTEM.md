@@ -229,8 +229,10 @@ Five appearances have equal default probability:
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
-  are seed-bounded for homepage readability; reduced motion removes the rolling band. Never add
-  flicker or text displacement.
+  are seed-bounded for homepage readability. Text links invert into a clear phosphor selection
+  block on hover/focus, and their unchanged text-presentation `↗︎` / `→` markers render at body
+  scale. A fixed seed-colored signal layer covers elastic overscroll outside the document;
+  reduced motion removes the rolling band. Never add flicker or text displacement.
 - `>...` (`terminal` internally) — IBM Plex Mono throughout at 400–500 weight, with quiet prompt prefixes, solid
   leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
 
@@ -252,7 +254,8 @@ parameters generates a new seed. The first utility row on the homepage switches 
 does not persist, and removes pinned parameters so the next reload is random again. Its reload
 glyph composes a new random appearance and edition without requiring a page refresh. The word
 `appearance` and the reload glyph are one compact outlined button, not separate controls. The
-control's top inset matches the footer's bottom inset.
+control's top inset matches the footer's bottom inset. It and `copy as markdown` share the same
+fixed height while their widths remain content-sized and never force either label to wrap.
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
