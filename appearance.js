@@ -73,7 +73,7 @@
     var tile = range(random, bounds.tile[0], bounds.tile[1], 0);
     var rasterScale = 4;
     var rasterTile = tile * rasterScale;
-    var frequency = range(random, bounds.frequency[0], bounds.frequency[1], 2);
+    var frequency = range(random, bounds.frequency[0], bounds.frequency[1], 3);
     var octaves = range(random, bounds.octaves[0], bounds.octaves[1], 0);
     var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + rasterTile + "' height='" + rasterTile +
       "' viewBox='0 0 " + tile + " " + tile + "' preserveAspectRatio='none'>" +
@@ -95,6 +95,24 @@
     };
     vars[opacityProperty || "--grain-opacity"] = range(random, bounds.opacity[0], bounds.opacity[1], 3);
     return vars;
+  }
+
+  /* Louppe's crisp grain is the shared centre point. Individual appearances
+     can nudge physical scale and strength without falling back into cloudy,
+     low-contrast noise. */
+  function grainBounds(overrides) {
+    var bounds = {
+      tile: [512, 560],
+      frequency: [0.6, 0.72],
+      octaves: [4, 5],
+      contrast: [2.2, 2.6],
+      brightness: [0.68, 0.78],
+      rate: [720, 960]
+    };
+    Object.keys(overrides || {}).forEach(function (key) {
+      bounds[key] = overrides[key];
+    });
+    return bounds;
   }
 
   function imageVars(random, bounds) {
@@ -179,10 +197,9 @@
       edition.vars["--page-max"] = pick(random, ["760px", "840px", "920px"]);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
-      Object.assign(edition.vars, grainVars(random, {
-        tile: [512, 640], frequency: [0.25, 0.55], octaves: [5, 6],
-        contrast: [1.2, 1.8], brightness: [0.88, 1.08], opacity: [0.09, 0.18], rate: [480, 1400]
-      }));
+      Object.assign(edition.vars, grainVars(random, grainBounds({
+        tile: [512, 576], frequency: [0.5, 0.62], opacity: [0.1, 0.17]
+      })));
       edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
       edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
       Object.assign(edition.vars, imageVars(random, {
@@ -238,10 +255,9 @@
       edition.vars["--page-max"] = pick(random, ["1060px", "1120px", "1180px"]);
       edition.vars["--col-min"] = pick(random, ["360px", "390px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
-      Object.assign(edition.vars, grainVars(random, {
-        tile: [512, 640], frequency: [0.42, 0.75], octaves: [5, 6],
-        contrast: [1.8, 2.6], brightness: [0.65, 0.9], opacity: [0.09, 0.17], rate: [520, 1280]
-      }, "--background-grain-opacity"));
+      Object.assign(edition.vars, grainVars(random, grainBounds({
+        opacity: [0.12, 0.18]
+      }), "--background-grain-opacity"));
       edition.attrs["data-blob-layout"] = pick(random, ["diagonal", "orbit", "horizon", "scatter"]);
       edition.attrs["data-blob-count"] = pick(random, ["3", "4", "4", "5"]);
       Object.assign(edition.vars, imageVars(random, {
@@ -296,10 +312,9 @@
       edition.vars["--eno-softness"] = range(random, 14, 46, 0) + "px";
       edition.vars["--eno-saturation"] = range(random, 1.08, 1.26, 2);
       edition.vars["--eno-diffusion"] = range(random, 0.05, 0.12, 2);
-      Object.assign(edition.vars, grainVars(random, {
-        tile: [512, 640], frequency: [0.38, 0.7], octaves: [5, 6],
-        contrast: [1.15, 1.6], brightness: [0.9, 1.08], opacity: [0.012, 0.028], rate: [900, 1800]
-      }));
+      Object.assign(edition.vars, grainVars(random, grainBounds({
+        frequency: [0.58, 0.68], opacity: [0.012, 0.026], rate: [780, 1080]
+      })));
       edition.attrs["data-eno-composition"] = enoMode;
       edition.attrs["data-eno-contrast"] = enoContrast;
       Object.assign(edition.vars, imageVars(random, {
@@ -336,10 +351,9 @@
       edition.vars["--crt-vignette"] = range(random, 0.38, 0.62, 2);
       edition.vars["--crt-roll-period"] = range(random, 6.5, 12.5, 1) + "s";
       edition.vars["--crt-glow"] = range(random, 0.35, 0.85, 2) + "px";
-      Object.assign(edition.vars, grainVars(random, {
-        tile: [512, 640], frequency: [0.55, 0.9], octaves: [5, 6],
-        contrast: [1.4, 2], brightness: [0.78, 1], opacity: [0.012, 0.024], rate: [380, 900]
-      }));
+      Object.assign(edition.vars, grainVars(random, grainBounds({
+        frequency: [0.62, 0.76], opacity: [0.012, 0.024], rate: [620, 900]
+      })));
       Object.assign(edition.vars, imageVars(random, {
         contrast: [1.1, 1.28], brightness: [0.92, 1.04], opacity: [0.9, 0.97]
       }));
@@ -358,10 +372,9 @@
       edition.vars["--page-max"] = pick(random, ["900px", "1000px", "1100px"]);
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
-      Object.assign(edition.vars, grainVars(random, {
-        tile: [512, 640], frequency: [0.45, 0.8], octaves: [5, 6],
-        contrast: [1.35, 2.1], brightness: [0.72, 0.96], opacity: [0.024, 0.052], rate: [520, 1280]
-      }));
+      Object.assign(edition.vars, grainVars(random, grainBounds({
+        frequency: [0.58, 0.72], opacity: [0.03, 0.055]
+      })));
       edition.attrs["data-terminal-prompt"] = pick(random, ["tilde", "dot", "chevron"]);
       Object.assign(edition.vars, imageVars(random, {
         contrast: [1.08, 1.24], brightness: [0.92, 1.04], opacity: [0.9, 0.97]

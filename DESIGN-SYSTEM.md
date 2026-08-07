@@ -267,16 +267,24 @@ Six appearances have equal default probability:
   leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
 
 Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
-seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. Every tile is at
-least 512 CSS pixels with five or six octaves and is internally rasterized at four times that
-resolution without changing its apparent noise size. Noise is converted to monochrome before
-blending to prevent colored raster artifacts; lower-resolution grain is not allowed. Each grain-bearing
-edition independently randomizes tile size, noise frequency, octave count (quality), contrast,
-brightness, strength, and stepped shift rate within readability-safe brackets. Paper uses a
-lower frequency range for slightly larger physical grain and blends the
+seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. The shared reference
+is a 512px seamless sRGB `fractalNoise` tile at `0.65` base frequency and four octaves, processed
+near `contrast(2.4) brightness(0.72)` and shifted in discrete steps around every `840ms`.
+Every tile is at least 512 CSS pixels, uses four or five octaves, and is internally rasterized at
+four times that resolution without changing its apparent noise size. Noise is converted to
+monochrome before blending to prevent colored raster artifacts; lower-resolution grain is not
+allowed. Each grain-bearing edition independently randomizes tile size, noise frequency, octave
+count, contrast, brightness, strength, and stepped shift rate inside tight brackets around that
+reference. Paper uses a slightly lower `0.50–0.62` frequency range for larger physical grain and blends the
 grain over the complete page with `multiply`; blobs blend it behind content with `screen`;
 Eno uses a very light diffuser grain; terminal and CRT keep their lighter surface treatment.
 Reduced motion freezes the tile.
+
+The shared random brackets are: `512–560px` tile, `0.60–0.72` frequency, four or five
+octaves, `2.20–2.60` contrast, `0.68–0.78` brightness, and `720–960ms` step rate. Paper
+may extend to `576px`; Eno narrows frequency to `0.58–0.68`, CRT to `0.62–0.76`, and
+terminal to `0.58–0.72`. Opacity stays appearance-specific: paper `0.10–0.17`, blob
+`0.12–0.18`, Eno `0.012–0.026`, CRT `0.012–0.024`, and terminal `0.030–0.055`.
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
 `?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases
@@ -309,7 +317,8 @@ the image. Blob and Eno use `luminosity` against the real pixels physically behi
 color appears only where the live page artwork is present at that position. Simple applies only
 the baseline black-and-white conversion: no contrast, opacity, tint, or blend treatment. CRT and
 terminal retain bounded monochrome development, with the CRT page mask above the result. The
-homepage portrait alone scales to `1.2` inside its unchanged frame for a closer face crop. Do not
+homepage portrait alone uses a `120%` absolutely positioned inner image inside its clipped,
+unchanged frame for a closer face crop; do not use a transformed image layer. Do not
 use per-file color edits or change image-frame geometry for a look.
 
 ## pages

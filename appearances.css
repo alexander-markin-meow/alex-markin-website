@@ -178,10 +178,14 @@ html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link):
 }
 
 .appearance-image--portrait .photo {
-  width: 100%;
-  height: 100%;
-  transform: scale(1.2);
-  transform-origin: 42% 48%;
+  position: absolute;
+  z-index: 1;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  max-width: none;
+  height: 120%;
+  object-position: 46% 50%;
 }
 
 .flickr-photo-link.appearance-image { margin-bottom: 8px; }
