@@ -79,6 +79,7 @@ html[data-look="blobs"] body::before { content: none; }
 html[data-look] .page {
   position: relative;
   z-index: 1;
+  padding-top: 12px;
 }
 
 html[data-look] .name {
@@ -162,6 +163,7 @@ html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link):
   display: inline-flex;
   align-items: center;
   justify-self: start;
+  inline-size: 126px;
   gap: 4px;
   padding-inline: 7px;
   border-color: var(--border);
@@ -172,6 +174,17 @@ html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link):
   font-family: var(--mono);
   font-size: 14px;
   line-height: 1;
+}
+
+/* The top and footer utilities are one matched control size in every look. */
+.copy-markdown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 126px;
+  min-height: 28px;
+  padding: 3px 7px;
+  box-sizing: border-box;
 }
 
 .appearance-option:hover,
@@ -221,8 +234,6 @@ html[data-look="paper"] body::before {
   mix-blend-mode: var(--grain-blend);
 }
 
-html[data-look="paper"] .page { padding-top: 48px; }
-
 html[data-look="paper"] .name {
   line-height: 0.98;
   letter-spacing: -0.035em;
@@ -260,7 +271,7 @@ html[data-look="paper"] .appearance-option {
 }
 
 /* --------------------------------------------------------------------------
-   blobs — contemporary sans typography + scroll-responsive colour fields
+   blob — contemporary sans typography + scroll-responsive colour fields
    -------------------------------------------------------------------------- */
 
 html[data-look="blobs"] body {

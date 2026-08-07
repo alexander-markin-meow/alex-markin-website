@@ -212,13 +212,15 @@ renders it. Do not duplicate, reorder, or rewrite content for an appearance.
 
 Five appearances have equal default probability:
 
-- `simple` — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
+- `smpl` (`simple` internally) — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
   and spacing.
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
   bounded ink temperature, scale, width, heading treatment, and rule style. Its generated
   `feTurbulence` grain is always a top layer over the complete edition.
-- `blobs` — bold system-sans display and body type over 3–5 diffuse color fields. Every blob
+- `blob` (`blobs` internally) — bold system-sans display and body type over 3–5 diffuse color fields. Its accent is
+  independently chosen from readable violet, blue, mint, coral, rose, gold, or sage families.
+  Every blob
   independently varies in hue, saturation, lightness, opacity, size, blur, and autonomous
   drift path. As on `louppe.eu`, autonomous drift uses `transform`, while the separate
   `translate` property compensates page scroll so each blob travels at its seeded `0.45–0.85`
@@ -229,12 +231,13 @@ Five appearances have equal default probability:
   tube vignette, beam boost, and saturation. Its finer pixel pitch and enlarged type hierarchy
   are seed-bounded for homepage readability; reduced motion removes the rolling band. Never add
   flicker or text displacement.
-- `terminal` — IBM Plex Mono throughout at 400–500 weight, with quiet prompt prefixes, solid
+- `>...` (`terminal` internally) — IBM Plex Mono throughout at 400–500 weight, with quiet prompt prefixes, solid
   leaders, restrained green/blue/amber palettes, slight grain, and a narrower reading measure.
 
 Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
 seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. Every tile is at
-least 512px with at least four octaves; lower-resolution grain is not allowed. Each grain-bearing
+least 512 CSS pixels with at least four octaves and is internally rasterized at 3–4 times that
+resolution without changing its apparent noise size; lower-resolution grain is not allowed. Each grain-bearing
 edition independently randomizes tile size, noise frequency, octave count (quality), contrast,
 brightness, strength, and stepped shift rate within readability-safe brackets. Paper uses a
 lower frequency range for slightly larger physical grain and blends the
@@ -242,11 +245,14 @@ grain over the complete page with `multiply`; blobs blend it behind content with
 terminal and CRT keep their lighter surface treatment. Reduced motion freezes the tile.
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
-`?look=<name>&seed=<value>` pins both its appearance and values. An ordinary load without these
+`?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases
+(`smpl`, `blob`, `>...`) and the existing internal names remain accepted so old links keep working.
+An ordinary load without these
 parameters generates a new seed. The first utility row on the homepage switches immediately,
 does not persist, and removes pinned parameters so the next reload is random again. Its reload
 glyph composes a new random appearance and edition without requiring a page refresh. The word
-`appearance` and the reload glyph are one compact outlined button, not separate controls.
+`appearance` and the reload glyph are one compact outlined button, not separate controls. The
+control's top inset matches the footer's bottom inset.
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.

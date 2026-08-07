@@ -3,6 +3,11 @@
 (function () {
   var root = document.documentElement;
   var looks = ["simple", "paper", "blobs", "crt", "terminal"];
+  var lookLabels = { simple: "smpl", paper: "paper", blobs: "blob", crt: "crt", terminal: ">..." };
+  var lookAliases = {
+    simple: "simple", smpl: "simple", paper: "paper", blobs: "blobs", blob: "blobs",
+    crt: "crt", terminal: "terminal", ">...": "terminal"
+  };
   var appearanceAttributes = [
     "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-blob-layout",
     "data-blob-count", "data-terminal-prompt"
@@ -49,6 +54,10 @@
     return Number(value.toFixed(decimals || 0));
   }
 
+  function normalizeLook(value) {
+    return lookAliases[value] || null;
+  }
+
   function blobColor(random, hue) {
     var variedHue = Math.round((hue + range(random, -20, 20, 0) + 360) % 360);
     var saturation = range(random, 34, 62, 0);
@@ -58,15 +67,19 @@
 
   function grainVars(random, bounds, opacityProperty) {
     var tile = range(random, bounds.tile[0], bounds.tile[1], 0);
+    var rasterScale = Math.min(4, Math.max(3, Math.ceil(window.devicePixelRatio || 1)));
+    var rasterTile = tile * rasterScale;
     var frequency = range(random, bounds.frequency[0], bounds.frequency[1], 2);
     var octaves = range(random, bounds.octaves[0], bounds.octaves[1], 0);
-    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + tile + "' height='" + tile + "'>" +
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + rasterTile + "' height='" + rasterTile +
+      "' viewBox='0 0 " + tile + " " + tile + "' preserveAspectRatio='none'>" +
       "<filter id='n' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' " +
       "baseFrequency='" + frequency + "' numOctaves='" + octaves + "' stitchTiles='stitch'/></filter>" +
-      "<rect width='100%' height='100%' filter='url(#n)'/></svg>";
+      "<rect width='" + tile + "' height='" + tile + "' filter='url(#n)'/></svg>";
     var vars = {
       "--grain-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")',
       "--grain-size": tile + "px",
+      "--grain-raster-scale": rasterScale,
       "--grain-frequency": frequency,
       "--grain-octaves": octaves,
       "--grain-contrast": range(random, bounds.contrast[0], bounds.contrast[1], 2),
@@ -79,7 +92,7 @@
 
   function compose(seed, forcedLook) {
     var random = randomFrom(seed);
-    var look = looks.indexOf(forcedLook) !== -1 ? forcedLook : pick(random, looks);
+    var look = normalizeLook(forcedLook) || pick(random, looks);
     var edition = { look: look, seed: seed, attrs: {}, vars: {}, blobSpeeds: [], blobMotions: [] };
 
     if (look === "simple") {
@@ -123,11 +136,12 @@
 
     if (look === "blobs") {
       var blobPalettes = [
-        { bg: "#060807", ink: "#d8d4d5", bright: "#f4eff5", muted: "#aaa2a8", faint: "#817981", foot: "#817981", accent: "#ae91ff", hair: "#443b47", rule: "#29242b", border: "#37313a", chip: "#111012", blobHues: [166, 14, 274, 206, 330] },
-        { bg: "#07070a", ink: "#d7d5dc", bright: "#f1eff8", muted: "#a6a2ae", faint: "#817c8b", foot: "#817c8b", accent: "#8ca8ff", hair: "#3e3a4b", rule: "#27242f", border: "#34303e", chip: "#111017", blobHues: [218, 318, 42, 178, 270] },
-        { bg: "#070807", ink: "#d8d6d1", bright: "#f3f1e9", muted: "#aaa69d", faint: "#817d74", foot: "#817d74", accent: "#b1a1ff", hair: "#423d3a", rule: "#292725", border: "#383431", chip: "#12110f", blobHues: [102, 5, 234, 45, 300] }
+        { bg: "#060807", ink: "#d8d4d5", bright: "#f4eff5", muted: "#aaa2a8", faint: "#817981", foot: "#817981", accents: ["#ae91ff", "#8fcdbb", "#d7967f"], hair: "#443b47", rule: "#29242b", border: "#37313a", chip: "#111012", blobHues: [166, 14, 274, 206, 330] },
+        { bg: "#07070a", ink: "#d7d5dc", bright: "#f1eff8", muted: "#a6a2ae", faint: "#817c8b", foot: "#817c8b", accents: ["#8ca8ff", "#d98bbd", "#d2ae68"], hair: "#3e3a4b", rule: "#27242f", border: "#34303e", chip: "#111017", blobHues: [218, 318, 42, 178, 270] },
+        { bg: "#070807", ink: "#d8d6d1", bright: "#f3f1e9", muted: "#aaa69d", faint: "#817d74", foot: "#817d74", accents: ["#b1a1ff", "#a8c58a", "#cf8077", "#92a6df"], hair: "#423d3a", rule: "#292725", border: "#383431", chip: "#12110f", blobHues: [102, 5, 234, 45, 300] }
       ];
       var blob = pick(random, blobPalettes);
+      blob.accent = pick(random, blob.accents);
       edition.vars = paletteVars(blob);
       for (var b = 0; b < 5; b++) {
         edition.vars["--blob-" + (b + 1) + "-color"] = blobColor(random, blob.blobHues[b]);
@@ -272,7 +286,7 @@
       }
     });
     var status = control.querySelector("[data-appearance-status]");
-    if (status) status.textContent = currentEdition.look + " · " + currentEdition.seed.slice(0, 7);
+    if (status) status.textContent = lookLabels[currentEdition.look] + " · " + currentEdition.seed.slice(0, 7);
   }
 
   function clearPinnedUrl() {
