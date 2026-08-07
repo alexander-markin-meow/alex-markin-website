@@ -422,8 +422,11 @@ every immersive experiment page whenever either shared trial asset changes.
 
 The homepage additionally versions `appearance.js` and `appearances.css`. Bump each asset's
 own dated query whenever it changes; neither generative file belongs on the other pages.
-The shared profile photograph uses the same dated query in HTML, social metadata, and structured
-data; bump every occurrence together whenever `photo.jpg` is replaced.
+The profile photograph uses the same dated query in the visible HTML and structured data; bump
+both occurrences together whenever `photo.jpg` is replaced. Social cards use the independent
+`social-preview.png` asset so its crop and typography can remain stable when the live portrait
+changes. That preview places `#arts #photography #specialty-coffee` in white serif type across the
+top of the photograph. Version its Open Graph and X metadata URL independently whenever it changes.
 
 ## don'ts
 
