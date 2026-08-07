@@ -402,7 +402,7 @@
       edition.vars["--eno-saturation"] = range(random, 1.08, 1.26, 2);
       edition.vars["--eno-diffusion"] = range(random, 0.05, 0.12, 2);
       Object.assign(edition.vars, grainVars(random, grainBounds({
-        frequency: [0.65, 0.76], opacity: [0.022, 0.04], rate: [780, 1080]
+        frequency: [0.65, 0.76], opacity: [0.035, 0.06], rate: [780, 1080]
       })));
       edition.attrs["data-eno-composition"] = enoMode;
       edition.attrs["data-eno-contrast"] = enoContrast;
@@ -458,8 +458,8 @@
       var terminalType = pick(random, [
         {
           family: '"VT323", "Roboto Mono", monospace',
-          displaySize: ["46px", "49px", "52px"],
-          bodySize: ["18px", "18.5px", "19px"],
+          displaySize: ["48px", "52px", "56px"],
+          bodySize: ["18.5px", "19px", "19.5px"],
           lineHeight: [1.42, 1.48, 1.54],
           displayWeight: 400,
           nameSpacing: "0.005em",
@@ -467,8 +467,8 @@
         },
         {
           family: '"Fira Mono", "Roboto Mono", monospace',
-          displaySize: ["36px", "39px", "42px"],
-          bodySize: ["15px", "15.5px", "16px"],
+          displaySize: ["40px", "42px", "44px"],
+          bodySize: ["16px", "16.5px", "17px"],
           lineHeight: [1.58, 1.66, 1.72],
           displayWeight: pick(random, [400, 500]),
           nameSpacing: "-0.018em",
@@ -476,8 +476,8 @@
         },
         {
           family: '"Roboto Mono", "Fira Mono", monospace',
-          displaySize: ["36px", "38px", "41px"],
-          bodySize: ["14.5px", "15px", "15.5px"],
+          displaySize: ["40px", "42px", "44px"],
+          bodySize: ["16px", "16.5px", "17px"],
           lineHeight: [1.62, 1.68, 1.74],
           displayWeight: pick(random, [400, 500]),
           nameSpacing: "-0.014em",

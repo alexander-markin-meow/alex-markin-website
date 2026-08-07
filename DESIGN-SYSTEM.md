@@ -243,9 +243,10 @@ Six appearances have equal default probability:
   independently chosen from readable violet, blue, mint, coral, rose, gold, or sage families.
   Every blob
   independently varies in hue, saturation, lightness, opacity, size, blur, and autonomous
-  drift path. As on `louppe.eu`, autonomous drift uses `transform`, while the separate
-  `translate` property compensates page scroll so each blob travels at its seeded `0.45–0.85`
-  scroll-speed multiplier. Mobile editions reveal one or two additional seeded fields from a
+  drift path. As on `louppe.eu`, autonomous drift runs on a cached inner surface, while a
+  lightweight outer track compensates page scroll so each blob travels at its seeded `0.45–0.85`
+  scroll-speed multiplier. Keeping those compositor layers separate prevents large blurred
+  fields from being re-rasterized on mobile scroll. Mobile editions reveal one or two additional seeded fields from a
   seven-field pool to cover their longer document. A separate atmospheric grain layer prints over all content. Both
   motions become static under `prefers-reduced-motion`. Text and image links bloom on hover/focus
   using only the selected edition accent; near strength, far strength, and radius are tightly seeded.
@@ -262,6 +263,7 @@ Six appearances have equal default probability:
   desktop layout, so scrolling travels through one continuous artwork instead of keeping a
   viewport-sized pattern fixed behind the content. The root repeats the first state only as an
   elastic-overscroll fallback. Controls remain transparent so the lightbox itself is their fill.
+  A fine topmost diffuser grain remains visible at a restrained `0.035–0.060` opacity.
   Reduced motion shows the first seeded state.
 - `crt` — IBM Plex Mono throughout at 500–600 weight, using the complete fixed mask from
   `/trials/scanline/`: horizontal beam gaps, vertical RGB phosphor triads, rolling refresh band,
@@ -276,7 +278,9 @@ Six appearances have equal default probability:
   DEC-inspired VT323, workstation-like Fira Mono, or modern-console Roboto Mono. The family,
   tuned size, weight, tracking, and line spacing vary together as a bounded preset rather than
   mixing faces inside one view. Quiet prompt prefixes, solid leaders, restrained green/blue/amber
-  palettes, slight grain, and a narrower reading measure vary independently.
+  palettes, slight grain, and a narrower reading measure vary independently. Fira Mono and
+  Roboto Mono never fall below a `16px` body / `40px` display scale; VT323 stays larger to
+  compensate for its smaller raster-style x-height.
 
 Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
 seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. The shared reference
