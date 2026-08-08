@@ -16,6 +16,34 @@
     '"Courier Prime", "Courier New", monospace',
     '"Roboto Mono", monospace'
   ];
+  /* Each CRT phosphor family anchors a hue; every edition jitters it and draws
+     independent saturation/lightness per token role so no two editions of the
+     same family render identically. coolBias lifts text-role lightness for
+     hues whose WCAG luminance-per-lightness runs low (blue/violet/rose/magenta). */
+  var crtPhosphorFamilies = [
+    { name: "green", hue: 118, hueJitter: 13, satMul: 1.15, coolBias: false },
+    { name: "amber", hue: 34, hueJitter: 13, satMul: 1.15, coolBias: false },
+    { name: "blue", hue: 207, hueJitter: 13, satMul: 1.15, coolBias: true },
+    { name: "violet", hue: 274, hueJitter: 13, satMul: 1.15, coolBias: true },
+    { name: "rose", hue: 343, hueJitter: 13, satMul: 1.15, coolBias: true },
+    { name: "cyan", hue: 165, hueJitter: 12, satMul: 1.15, coolBias: false },
+    { name: "mono", hue: 210, hueJitter: 14, satMul: 0.3, coolBias: true },
+    { name: "magenta", hue: 322, hueJitter: 13, satMul: 1.6, coolBias: true },
+    { name: "acid-lime", hue: 80, hueJitter: 12, satMul: 1.45, coolBias: false }
+  ];
+  var crtRoleBands = {
+    bg: { sat: [35, 70], light: [1, 2.5], coolLight: [1, 2.5] },
+    ink: { sat: [38, 80], light: [78, 85], coolLight: [85, 90] },
+    bright: { sat: [72, 100], light: [90, 94], coolLight: [90, 94] },
+    muted: { sat: [20, 40], light: [58, 64], coolLight: [66, 70] },
+    faint: { sat: [12, 36], light: [45, 49], coolLight: [56, 60] },
+    foot: { sat: [12, 36], light: [42, 46], coolLight: [53, 57] },
+    accent: { sat: [32, 78], light: [60, 74], coolLight: [74, 82] },
+    hair: { sat: [20, 44], light: [18, 24], coolLight: [18, 24] },
+    rule: { sat: [20, 48], light: [11, 16], coolLight: [11, 16] },
+    border: { sat: [22, 48], light: [16, 22], coolLight: [16, 22] },
+    chip: { sat: [26, 68], light: [3, 7], coolLight: [3, 7] }
+  };
   var looks = ["simple", "paper", "blobs", "eno", "70mm", "crt", "terminal"];
   var lookLabels = { simple: "smpl", paper: "paper", blobs: "blob", eno: "eno", "70mm": "70mm", crt: "crt", terminal: ">..." };
   var lookAliases = {
@@ -25,7 +53,7 @@
   var appearanceAttributes = [
     "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-paper-texture", "data-blob-layout",
     "data-blob-count", "data-blob-mobile-extra", "data-eno-composition", "data-eno-contrast",
-    "data-film-tone", "data-film-gate", "data-terminal-prompt"
+    "data-film-tone", "data-terminal-prompt"
   ];
   var appliedProperties = [];
   var currentEdition;
@@ -69,6 +97,34 @@
     return Number(value.toFixed(decimals || 0));
   }
 
+  function hslToRgb(h, s, l) {
+    var hue = ((h % 360) + 360) % 360;
+    var sat = Math.min(Math.max(s, 0), 100) / 100;
+    var light = Math.min(Math.max(l, 0), 100) / 100;
+    var c = (1 - Math.abs(2 * light - 1)) * sat;
+    var x = c * (1 - Math.abs((hue / 60) % 2 - 1));
+    var m = light - c / 2;
+    var r, g, b;
+    if (hue < 60) { r = c; g = x; b = 0; }
+    else if (hue < 120) { r = x; g = c; b = 0; }
+    else if (hue < 180) { r = 0; g = c; b = x; }
+    else if (hue < 240) { r = 0; g = x; b = c; }
+    else if (hue < 300) { r = x; g = 0; b = c; }
+    else { r = c; g = 0; b = x; }
+    return [
+      Math.round((r + m) * 255),
+      Math.round((g + m) * 255),
+      Math.round((b + m) * 255)
+    ];
+  }
+
+  function hslToHex(h, s, l) {
+    var rgb = hslToRgb(h, s, l);
+    return "#" + rgb.map(function (channel) {
+      return Math.min(Math.max(channel, 0), 255).toString(16).padStart(2, "0");
+    }).join("");
+  }
+
   function inverseHex(hex) {
     var value = String(hex || "").replace("#", "");
     if (!/^[0-9a-f]{6}$/i.test(value)) return "#7d8f5c";
@@ -78,6 +134,49 @@
     return "#" + [red, green, blue].map(function (channel) {
       return channel.toString(16).padStart(2, "0");
     }).join("");
+  }
+
+  function mixHex(hexA, hexB, weightA) {
+    var a = String(hexA || "").replace("#", "");
+    var b = String(hexB || "").replace("#", "");
+    var w = Math.min(100, Math.max(0, weightA)) / 100;
+    var channels = [0, 2, 4].map(function (i) {
+      var av = parseInt(a.slice(i, i + 2), 16);
+      var bv = parseInt(b.slice(i, i + 2), 16);
+      return Math.round(av * w + bv * (1 - w));
+    });
+    return "#" + channels.map(function (c) { return c.toString(16).padStart(2, "0"); }).join("");
+  }
+
+  /* 70mm perforation geometry, derived from one seeded pitch instead of three
+     independent randoms, so hole/pitch and width/height ratios always match a
+     real perforation standard. Rendered as a colored SVG tile (not a
+     repeating-gradient) so corners can be genuinely rounded. */
+  function perfHoleVars(random, edgeColor) {
+    var pitch = range(random, 38, 52, 0);
+    var holeWidth = Math.round(pitch * 0.59 * 10) / 10;
+    var holeHeight = Math.round(holeWidth * 0.71 * 10) / 10;
+    var radius = Math.round(holeWidth * 0.18 * 10) / 10;
+    var bandHeight = Math.ceil(holeHeight * range(random, 2.8, 3.1, 2));
+    var rasterScale = 4;
+    var holeX = Math.round((pitch - holeWidth) / 2 * 10) / 10;
+    var holeY = Math.round((bandHeight - holeHeight) / 2 * 10) / 10;
+    var fill = mixHex(edgeColor, "#000000", range(random, 18, 30, 0));
+    var highlight = mixHex(edgeColor, "#000000", 78);
+    var highlightHeight = Math.max(1, Math.round(holeHeight * 0.08 * 10) / 10);
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + (pitch * rasterScale) + "' height='" + (bandHeight * rasterScale) +
+      "' viewBox='0 0 " + pitch + " " + bandHeight + "'>" +
+      "<rect x='" + holeX + "' y='" + holeY + "' width='" + holeWidth + "' height='" + holeHeight + "' rx='" + radius + "' fill='" + fill + "'/>" +
+      "<rect x='" + holeX + "' y='" + holeY + "' width='" + holeWidth + "' height='" + highlightHeight + "' rx='" + radius + "' fill='" + highlight + "'/>" +
+      "</svg>";
+    return {
+      "--film-perf-pitch": pitch + "px",
+      "--film-perf-hole-width": holeWidth + "px",
+      "--film-perf-hole-height": holeHeight + "px",
+      "--film-perf-radius": radius + "px",
+      "--film-perf-height": bandHeight + "px",
+      "--film-perf-hole-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")'
+    };
   }
 
   function normalizeLook(value) {
@@ -435,9 +534,9 @@
 
     if (look === "70mm") {
       var filmPalettes = [
-        { tone: "tungsten", bg: "#08090b", ink: "#d8d2c6", bright: "#fff9ea", muted: "#aaa093", faint: "#81786e", foot: "#81786e", accent: "#ead6ac", hair: "#403a35", rule: "#292623", border: "#3b3530", chip: "#141210", halation: "#ff493d", stock: "#0d0b0a", edge: "#d8bd90", lights: ["#9f382e", "#365d72", "#bf7641"] },
-        { tone: "warm", bg: "#0b0806", ink: "#ddd2bd", bright: "#fff4d9", muted: "#aa987f", faint: "#84725c", foot: "#84725c", accent: "#e0bd7a", hair: "#463827", rule: "#2f251a", border: "#413222", chip: "#17110b", halation: "#f43d32", stock: "#100a07", edge: "#d7b57a", lights: ["#b9522d", "#d3944b", "#684260"] },
-        { tone: "silver", bg: "#090909", ink: "#d5d5d1", bright: "#fffefa", muted: "#a09e98", faint: "#797770", foot: "#797770", accent: "#d8d1c2", hair: "#3d3c39", rule: "#272624", border: "#373633", chip: "#131312", halation: "#ef4037", stock: "#0d0d0d", edge: "#d1cbc0", lights: ["#8a302b", "#66645e", "#876b4f"] }
+        { tone: "tungsten", bg: "#000000", base: "#100f12", ink: "#d8d2c6", bright: "#fff9ea", muted: "#aaa093", faint: "#81786e", foot: "#81786e", accent: "#ead6ac", hair: "#403a35", rule: "#292623", border: "#3b3530", chip: "#141210", halation: "#ff493d", edge: "#d8bd90", lights: ["#9f382e", "#365d72", "#bf7641"] },
+        { tone: "warm", bg: "#000000", base: "#130d09", ink: "#ddd2bd", bright: "#fff4d9", muted: "#aa987f", faint: "#84725c", foot: "#84725c", accent: "#e0bd7a", hair: "#463827", rule: "#2f251a", border: "#413222", chip: "#17110b", halation: "#f43d32", edge: "#d7b57a", lights: ["#b9522d", "#d3944b", "#684260"] },
+        { tone: "silver", bg: "#000000", base: "#101010", ink: "#d5d5d1", bright: "#fffefa", muted: "#a09e98", faint: "#797770", foot: "#797770", accent: "#d8d1c2", hair: "#3d3c39", rule: "#272624", border: "#373633", chip: "#131312", halation: "#ef4037", edge: "#d1cbc0", lights: ["#8a302b", "#66645e", "#876b4f"] }
       ];
       var film = pick(random, filmPalettes);
       var filmSerif = pick(random, filmSerifs);
@@ -466,59 +565,68 @@
       edition.vars["--film-halation-radius"] = range(random, 8, 15, 0) + "px";
       edition.vars["--film-halation-strength"] = range(random, 48, 72, 0) + "%";
       edition.vars["--film-vignette"] = range(random, 0.18, 0.34, 2);
-      edition.vars["--film-stock"] = film.stock;
-      edition.vars["--film-stock-ink"] = film.ink;
-      edition.vars["--film-perf-stock"] = film.stock;
-      edition.vars["--film-perf-hole"] = "#030303";
+      edition.vars["--film-base"] = film.base;
+      edition.vars["--film-stock"] = "#000000";
+      edition.vars["--film-perf-stock"] = "#000000";
       edition.vars["--film-perf-edge"] = film.edge;
-      var filmPerfPitch = range(random, 38, 52, 0);
-      var filmPerfHole = range(random, 17, 24, 0);
-      edition.vars["--film-perf-pitch"] = filmPerfPitch + "px";
-      edition.vars["--film-perf-hole-width"] = filmPerfHole + "px";
-      edition.vars["--film-perf-side"] = ((filmPerfPitch - filmPerfHole) / 2).toFixed(1) + "px";
-      edition.vars["--film-perf-height"] = range(random, 28, 38, 0) + "px";
-      edition.vars["--film-perf-halo-blur"] = range(random, 2, 6, 1) + "px";
+      edition.vars["--film-gate-fall"] = range(random, 96, 160, 0) + "px";
+      edition.vars["--film-gate-fall-x"] = range(random, 40, 88, 0) + "px";
+      Object.assign(edition.vars, perfHoleVars(random, film.edge));
+      edition.vars["--film-perf-halo-blur"] = range(random, 5, 9, 1) + "px";
       edition.vars["--film-perf-halo-opacity"] = range(random, 0.1, 0.24, 2);
-      edition.vars["--film-image-sepia"] = range(random, 0.04, 0.22, 2);
+      edition.vars["--film-perf-bleed-opacity"] = range(random, 0.05, 0.09, 3);
+      edition.vars["--film-perf-bleed-blur"] = range(random, 10, 18, 0) + "px";
+      var filmLightEdges = ["top", "bottom", pick(random, ["top", "bottom"])];
       for (var f = 0; f < 3; f++) {
+        var filmLightOffset = range(random, -10, 22, 0) + "vh";
         edition.vars["--film-light-" + (f + 1) + "-color"] = film.lights[f];
         edition.vars["--film-light-" + (f + 1) + "-size"] = range(random, 34, 68, 0) + "vw";
-        edition.vars["--film-light-" + (f + 1) + "-x"] = range(random, -12, 78, 0) + "%";
-        edition.vars["--film-light-" + (f + 1) + "-y"] = range(random, 4, 88, 0) + "%";
+        edition.vars["--film-light-" + (f + 1) + "-ratio"] = range(random, 1.6, 3.2, 2);
+        edition.vars["--film-light-" + (f + 1) + "-x"] = range(random, 4, 88, 0) + "%";
         edition.vars["--film-light-" + (f + 1) + "-blur"] = range(random, 44, 92, 0) + "px";
         edition.vars["--film-light-" + (f + 1) + "-opacity"] = range(random, 0.12, 0.24, 2);
+        edition.vars["--film-light-" + (f + 1) + "-top"] = filmLightEdges[f] === "top" ? filmLightOffset : "auto";
+        edition.vars["--film-light-" + (f + 1) + "-bottom"] = filmLightEdges[f] === "bottom" ? filmLightOffset : "auto";
       }
+      var filmEdgeStocks = ["kodak 5219", "kodak vision3", "kodak 2383", "fuji 8552"];
+      var filmFrameNumber = String(range(random, 1, 96, 0)).padStart(2, "0");
+      var filmExpNumber = String(range(random, 12, 47, 0)).padStart(2, "0");
+      edition.vars["--film-edge-header"] = '"' + filmFrameNumber + pick(random, ["a", "b", "k"]) + '"';
+      edition.vars["--film-edge-footer"] = '"' + pick(random, filmEdgeStocks) + " · 70mm · ex " + filmExpNumber + '"';
+      edition.vars["--film-edge-print-opacity"] = range(random, 0.5, 0.75, 2);
       Object.assign(edition.vars, grainVars(random, grainBounds({
-        tile: [520, 580], frequency: [0.54, 0.68], opacity: [0.07, 0.12], rate: [680, 940]
+        tile: [520, 580], frequency: [0.54, 0.68], opacity: [0.1, 0.16], rate: [680, 940]
       })));
       edition.attrs["data-film-tone"] = film.tone;
-      edition.attrs["data-film-gate"] = pick(random, ["regular", "regular", "wide"]);
       Object.assign(edition.vars, imageVars(random, {
         contrast: [1.08, 1.28], brightness: [0.94, 1.06], opacity: [0.9, 0.98]
       }));
     }
 
     if (look === "crt") {
-      var crtPalettes = [
-        { bg: "#020502", ink: "#b9efb1", bright: "#dcffd6", muted: "#83b77d", faint: "#628b5e", foot: "#5d8759", accent: "#91df8b", hair: "#274426", rule: "#172b17", border: "#234022", chip: "#071007" },
-        { bg: "#070401", ink: "#f0c58d", bright: "#ffe3b7", muted: "#b28b5d", faint: "#98764d", foot: "#98764d", accent: "#e4aa65", hair: "#4a3320", rule: "#302012", border: "#432d1a", chip: "#120b04" },
-        { bg: "#020407", ink: "#b9d8ee", bright: "#dceeff", muted: "#809fb7", faint: "#607c92", foot: "#607c92", accent: "#8fc3e5", hair: "#273b4b", rule: "#172633", border: "#223747", chip: "#071019" },
-        { bg: "#050306", ink: "#d6c3e7", bright: "#f0ddff", muted: "#a48bb5", faint: "#7e688d", foot: "#79648a", accent: "#ae8bd0", hair: "#3a2c44", rule: "#251d2c", border: "#35283f", chip: "#0d0910" },
-        { bg: "#080304", ink: "#e4c3cc", bright: "#ffdde5", muted: "#b08894", faint: "#896b74", foot: "#82646e", accent: "#c58495", hair: "#492e36", rule: "#2e1e23", border: "#412932", chip: "#12090c" },
-        { bg: "#020606", ink: "#b9e0d7", bright: "#d8fbef", muted: "#7faf9f", faint: "#5e8679", foot: "#587c71", accent: "#78b9a6", hair: "#244239", rule: "#162a25", border: "#203c34", chip: "#06100d" },
-        { bg: "#040507", ink: "#c8ced6", bright: "#e6ebf2", muted: "#929da9", faint: "#6e7781", foot: "#68717a", accent: "#a3adb9", hair: "#303941", rule: "#20272d", border: "#2c353d", chip: "#0b0f12" }
-      ];
-      var crtPalette = pick(random, crtPalettes);
+      var crtFamily = pick(random, crtPhosphorFamilies);
+      var crtPalette = crtPhosphorPalette(random, crtFamily);
       var crtConvergence = pick(random, [
         { redX: -1, redY: 0, blueX: 1, blueY: 0 },
         { redX: -1, redY: 0, blueX: 0, blueY: -1 },
         { redX: 0, redY: 1, blueX: 1, blueY: 0 },
         { redX: -1, redY: 1, blueX: 1, blueY: -1 },
         { redX: -2, redY: 0, blueX: 1, blueY: 0 },
-        { redX: -1, redY: 0, blueX: 2, blueY: -1 }
+        { redX: -1, redY: 0, blueX: 2, blueY: -1 },
+        { redX: 1, redY: 0, blueX: -1, blueY: 0 },
+        { redX: 0, redY: -1, blueX: 0, blueY: 1 },
+        { redX: 1, redY: 1, blueX: -1, blueY: -1 },
+        { redX: 2, redY: -1, blueX: -1, blueY: 0 }
       ]);
       edition.vars = paletteVars(crtPalette);
       edition.vars["--crt-selection"] = inverseHex(crtPalette.accent);
+      edition.vars["--crt-fringe-red"] = hslToRgb(2 + range(random, -8, 12, 0), range(random, 88, 100, 0), range(random, 58, 70, 0)).join(" ");
+      edition.vars["--crt-fringe-blue"] = hslToRgb(223 + range(random, -12, 12, 0), range(random, 88, 100, 0), range(random, 58, 70, 0)).join(" ");
+      edition.vars["--crt-grille-red"] = hslToHex(0 + range(random, -8, 8, 0), range(random, 90, 100, 0), range(random, 60, 70, 0));
+      edition.vars["--crt-grille-green"] = hslToHex(120 + range(random, -10, 10, 0), range(random, 90, 100, 0), range(random, 58, 70, 0));
+      edition.vars["--crt-grille-blue"] = hslToHex(240 + range(random, -10, 10, 0), range(random, 90, 100, 0), range(random, 60, 72, 0));
+      edition.vars["--crt-cursor-url"] = crtCursorUrl(crtPalette.bright);
+      edition.vars["--crt-flecks"] = crtPhosphorFlecks(random, crtPalette.accent);
       /* The CRT is a physical-pixel treatment, so its source geometry stays on
          whole CSS pixels before the one-device-pixel grille is applied. */
       edition.vars["--appearance-display-size"] = "60px";
@@ -528,8 +636,11 @@
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
       /* One CSS pixel on a standard display (or one device pixel on a dense
-         display) is the indivisible phosphor cell. No fractional stripe stops. */
-      edition.vars["--crt-cell"] = (1 / Math.min(Math.max(window.devicePixelRatio || 1, 1), 2)).toFixed(3) + "px";
+         display) is the indivisible phosphor cell. A minority of editions
+         double it for a cheaper, coarser low-res monitor, echoing how a
+         minority of editions already extend convergence to two cells. */
+      var crtCellScale = pick(random, [1, 1, 1, 1, 2]);
+      edition.vars["--crt-cell"] = (crtCellScale / Math.min(Math.max(window.devicePixelRatio || 1, 1), 2)).toFixed(3) + "px";
       edition.vars["--crt-depth"] = range(random, 38, 54, 0);
       edition.vars["--crt-grille"] = range(random, 0.24, 0.34, 2);
       edition.vars["--crt-halo-red"] = range(random, 33, 43, 0) + "%";
@@ -544,6 +655,12 @@
       edition.vars["--crt-triad-phase"] = pick(random, [0, 1, 2]);
       edition.vars["--crt-vignette"] = range(random, 0.38, 0.62, 2);
       edition.vars["--crt-roll-period"] = range(random, 6.5, 12.5, 1) + "s";
+      edition.vars["--crt-roll-height"] = range(random, 20, 32, 0) + "vh";
+      edition.vars["--crt-roll-dir"] = pick(random, [1, -1]);
+      edition.vars["--crt-glare-angle"] = range(random, 95, 145, 0) + "deg";
+      edition.vars["--crt-glare-center"] = range(random, 42, 58, 0) + "%";
+      edition.vars["--crt-tube-x"] = range(random, 115, 135, 0) + "%";
+      edition.vars["--crt-tube-y"] = range(random, 95, 115, 0) + "%";
       Object.assign(edition.vars, grainVars(random, grainBounds({
         frequency: [0.62, 0.76], opacity: [0.034, 0.052], rate: [620, 900]
       })));
@@ -608,6 +725,45 @@
     }
 
     return edition;
+  }
+
+  function crtCursorUrl(fillHex) {
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'>" +
+      "<path fill='#000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H0V6h1z'/>" +
+      "<path fill='" + fillHex + "' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H1V6h1z'/></svg>";
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+
+  /* A worn tube's phosphor coating always carries a handful of dead (unlit)
+     or stuck (permanently lit) dots. These are fixed to the viewport, like
+     the vignette and grille, rather than the scrolling document. */
+  function crtPhosphorFlecks(random, accentHex) {
+    var count = Math.round(range(random, 5, 9, 0));
+    var layers = [];
+    for (var i = 0; i < count; i++) {
+      var x = range(random, 4, 96, 1);
+      var y = range(random, 4, 96, 1);
+      var size = range(random, 1, 2, 1);
+      var isDead = random() < 0.7;
+      var color = isDead
+        ? "rgb(0 0 0 / " + range(random, 0.5, 0.8, 2) + ")"
+        : "color-mix(in srgb, " + accentHex + " " + range(random, 35, 60, 0) + "%, transparent)";
+      layers.push("radial-gradient(" + size + "px " + size + "px at " + x + "% " + y + "%, " + color + " 100%, transparent 100%)");
+    }
+    return layers.join(", ");
+  }
+
+  function crtPhosphorPalette(random, family) {
+    var hue = Math.round((family.hue + range(random, -family.hueJitter, family.hueJitter, 0) + 360) % 360);
+    var palette = {};
+    Object.keys(crtRoleBands).forEach(function (role) {
+      var band = crtRoleBands[role];
+      var lightBand = family.coolBias ? band.coolLight : band.light;
+      var sat = Math.min(100, Math.max(4, range(random, band.sat[0], band.sat[1], 0) * family.satMul));
+      var light = range(random, lightBand[0], lightBand[1], 1);
+      palette[role] = hslToHex(hue, sat, light);
+    });
+    return palette;
   }
 
   function paletteVars(palette) {

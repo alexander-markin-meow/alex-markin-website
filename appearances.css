@@ -53,19 +53,27 @@ html[data-look] {
   --film-halation-radius: 11px;
   --film-halation-strength: 60%;
   --film-vignette: 0.24;
-  --film-stock: #0b0908;
-  --film-stock-ink: #d8d2c6;
-  --film-perf-stock: #0b0908;
-  --film-perf-hole: #030303;
+  --film-base: #100f12;
+  --film-stock: #000000;
+  --film-perf-stock: #000000;
   --film-perf-edge: #e6c99b;
+  --film-gate-margin: 12px;
+  --film-gate-line: calc(var(--film-gate-margin) + 1px);
+  --film-gate-fall: 130px;
+  --film-gate-fall-x: 60px;
   --film-perf-pitch: 44px;
-  --film-perf-hole-width: 20px;
-  --film-perf-side: 12px;
-  --film-perf-height: 32px;
-  --film-perf-halo-blur: 4px;
+  --film-perf-hole-width: 26px;
+  --film-perf-hole-height: 18px;
+  --film-perf-radius: 5px;
+  --film-perf-height: 54px;
+  --film-perf-hole-url: none;
+  --film-perf-halo-blur: 7px;
   --film-perf-halo-opacity: 0.18;
-  --film-perf-rail: 5px;
-  --film-image-sepia: 0.12;
+  --film-perf-bleed-opacity: 0.07;
+  --film-perf-bleed-blur: 14px;
+  --film-edge-header: "";
+  --film-edge-footer: "";
+  --film-edge-print-opacity: 0.6;
   --crt-cell: 1px;
   --crt-depth: 76;
   --crt-grille: 0.38;
@@ -82,6 +90,19 @@ html[data-look] {
   --crt-selection: #6e2074;
   --crt-vignette: 0.62;
   --crt-roll-period: 7s;
+  --crt-fringe-red: 255 75 70;
+  --crt-fringe-blue: 72 124 255;
+  --crt-grille-red: #ff4d4d;
+  --crt-grille-green: #4dff4d;
+  --crt-grille-blue: #4d4dff;
+  --crt-cursor-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H0V6h1z'/%3E%3Cpath fill='%23eaf7ff' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H1V6h1z'/%3E%3C/svg%3E");
+  --crt-flecks: none;
+  --crt-roll-height: 26vh;
+  --crt-roll-dir: 1;
+  --crt-glare-angle: 118deg;
+  --crt-glare-center: 49%;
+  --crt-tube-x: 125%;
+  --crt-tube-y: 105%;
   min-height: 100%;
   /* Keep the browser-owned glass and any area beyond the document dark. The
      artwork itself is supplied by the real document layers below. */
@@ -787,7 +808,6 @@ html[data-look="70mm"] :is(.film-header, .film-exposure, .film-footer, .film-per
 
 html[data-look="70mm"] :is(.film-header, .film-footer) {
   background: var(--film-stock);
-  color: var(--film-stock-ink);
 }
 
 html[data-look="70mm"] :is(.film-header-inner, .film-exposure-inner, .film-footer-inner) {
@@ -799,21 +819,58 @@ html[data-look="70mm"] :is(.film-header-inner, .film-exposure-inner, .film-foote
   padding-right: max(48px, calc(env(safe-area-inset-right) + 48px));
 }
 
+html[data-look="70mm"] :is(.film-header-inner, .film-footer-inner) {
+  position: relative;
+}
+
 html[data-look="70mm"] .film-header-inner {
   padding-top: max(12px, calc(env(safe-area-inset-top) + 12px));
-  padding-bottom: 16px;
+  padding-bottom: 28px;
 }
 
 html[data-look="70mm"] .film-exposure {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: var(--bg);
+  background: var(--film-base);
+}
+
+/* The gate is where emulsion falls off into dead black before meeting the
+   stock: a soft non-linear fade ending in a hard 1px frame line, folding in
+   the extra rebate margin so the perforation row sits inside a black field
+   rather than forming its edge. */
+.film-gate {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+html[data-look="70mm"] .film-exposure .film-gate { display: block; }
+
+html[data-look="70mm"] .film-gate {
+  background:
+    linear-gradient(to bottom,
+      #000 0, #000 var(--film-gate-line),
+      rgb(0 0 0 / 0.55) calc(var(--film-gate-line) + 0.4 * var(--film-gate-fall)),
+      transparent calc(var(--film-gate-line) + var(--film-gate-fall)),
+      transparent calc(100% - var(--film-gate-line) - var(--film-gate-fall)),
+      rgb(0 0 0 / 0.55) calc(100% - var(--film-gate-line) - 0.4 * var(--film-gate-fall)),
+      #000 calc(100% - var(--film-gate-line)),
+      #000 100%),
+    linear-gradient(to right,
+      #000 0,
+      rgb(0 0 0 / 0.55) calc(0.4 * var(--film-gate-fall-x)),
+      transparent var(--film-gate-fall-x),
+      transparent calc(100% - var(--film-gate-fall-x)),
+      rgb(0 0 0 / 0.55) calc(100% - 0.4 * var(--film-gate-fall-x)),
+      #000 100%);
 }
 
 html[data-look="70mm"] .film-exposure-inner {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   padding-top: 34px;
   padding-bottom: 46px;
 }
@@ -843,7 +900,6 @@ html[data-look="70mm"] .film-exposure::after {
   background-size: var(--grain-size) var(--grain-size);
   filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
   animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
-  will-change: transform;
 }
 
 html[data-look="70mm"] .name {
@@ -866,14 +922,6 @@ html[data-look="70mm"] :is(.meta, .tag, .ago, .dates, .footer, .appearance-contr
   letter-spacing: 0.055em;
 }
 
-html[data-look="70mm"] .appearance-image img {
-  filter:
-    grayscale(1)
-    contrast(var(--image-contrast))
-    brightness(var(--image-brightness))
-    sepia(var(--film-image-sepia));
-}
-
 .film-backdrop {
   display: none;
   position: absolute;
@@ -890,27 +938,35 @@ html[data-look="70mm"] .film-exposure .film-backdrop { display: block; }
   position: absolute;
   z-index: 1;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 42%, transparent 42%, rgb(0 0 0 / var(--film-vignette)) 100%);
+  background-image: radial-gradient(ellipse at 50% 42%, transparent 42%, rgb(0 0 0 / var(--film-vignette)) 100%);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 100% min(100%, 1100px);
 }
 
+/* Leaks enter at the film edge, elongated along the strip, anchored in px/vh
+   from the nearest frame edge rather than a percentage of document height. */
 .film-light {
   position: absolute;
   width: min(var(--film-light-size), 760px);
-  aspect-ratio: 1;
+  aspect-ratio: var(--film-light-ratio, 1.6);
   left: var(--film-light-x);
-  top: var(--film-light-y);
+  top: var(--film-light-top, auto);
+  bottom: var(--film-light-bottom, auto);
   border-radius: 50%;
   opacity: var(--film-light-opacity);
   background: radial-gradient(circle, var(--film-light-color), transparent 68%);
   filter: blur(var(--film-light-blur));
-  transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, 0, 0);
 }
 
 .film-light:nth-child(1) {
   --film-light-color: var(--film-light-1-color);
   --film-light-size: var(--film-light-1-size);
+  --film-light-ratio: var(--film-light-1-ratio);
   --film-light-x: var(--film-light-1-x);
-  --film-light-y: var(--film-light-1-y);
+  --film-light-top: var(--film-light-1-top);
+  --film-light-bottom: var(--film-light-1-bottom);
   --film-light-blur: var(--film-light-1-blur);
   --film-light-opacity: var(--film-light-1-opacity);
 }
@@ -918,8 +974,10 @@ html[data-look="70mm"] .film-exposure .film-backdrop { display: block; }
 .film-light:nth-child(2) {
   --film-light-color: var(--film-light-2-color);
   --film-light-size: var(--film-light-2-size);
+  --film-light-ratio: var(--film-light-2-ratio);
   --film-light-x: var(--film-light-2-x);
-  --film-light-y: var(--film-light-2-y);
+  --film-light-top: var(--film-light-2-top);
+  --film-light-bottom: var(--film-light-2-bottom);
   --film-light-blur: var(--film-light-2-blur);
   --film-light-opacity: var(--film-light-2-opacity);
 }
@@ -927,39 +985,55 @@ html[data-look="70mm"] .film-exposure .film-backdrop { display: block; }
 .film-light:nth-child(3) {
   --film-light-color: var(--film-light-3-color);
   --film-light-size: var(--film-light-3-size);
+  --film-light-ratio: var(--film-light-3-ratio);
   --film-light-x: var(--film-light-3-x);
-  --film-light-y: var(--film-light-3-y);
+  --film-light-top: var(--film-light-3-top);
+  --film-light-bottom: var(--film-light-3-bottom);
   --film-light-blur: var(--film-light-3-blur);
   --film-light-opacity: var(--film-light-3-opacity);
 }
 
+/* A very faint, heavily blurred echo of the hole tile, phase-locked to the
+   same pitch, seeping from the top perforation row into the frame below. */
+.film-perf-bleed {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  height: var(--film-perf-height);
+  pointer-events: none;
+  background-image: var(--film-perf-hole-url);
+  background-repeat: repeat-x;
+  background-size: var(--film-perf-pitch) var(--film-perf-height);
+  background-position: center;
+  opacity: var(--film-perf-bleed-opacity);
+  filter: blur(var(--film-perf-bleed-blur));
+}
+
+html[data-look="70mm"] .film-backdrop .film-perf-bleed { display: block; }
+
+/* Holes are the light, not an object with a glow behind an opaque rectangle:
+   a blurred warm bleed (allowed to spill past the strip, since nothing here
+   clips it) sits under a crisp dim-warm hole fill with its own top-edge catch
+   light, both cut from the same seeded rounded-rect SVG tile. */
 .film-perforation {
   display: none;
   position: relative;
   height: var(--film-perf-height);
-  overflow: hidden;
-  isolation: isolate;
   pointer-events: none;
   background: var(--film-perf-stock);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--film-perf-edge) 16%, transparent),
-    inset 0 -1px 0 color-mix(in srgb, var(--film-perf-edge) 10%, transparent),
-    inset 0 0 8px rgb(0 0 0 / 0.72);
 }
 
 .film-perforation::before,
 .film-perforation::after {
   content: "";
   position: absolute;
-  inset-block: var(--film-perf-rail);
-  inset-inline: 0;
+  inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0 var(--film-perf-side),
-    var(--film-perf-edge) var(--film-perf-side) calc(var(--film-perf-side) + var(--film-perf-hole-width)),
-    transparent calc(var(--film-perf-side) + var(--film-perf-hole-width)) var(--film-perf-pitch)
-  );
+  background-image: var(--film-perf-hole-url);
+  background-repeat: repeat-x;
+  background-size: var(--film-perf-pitch) var(--film-perf-height);
+  background-position: center;
 }
 
 .film-perforation::before {
@@ -970,15 +1044,41 @@ html[data-look="70mm"] .film-exposure .film-backdrop { display: block; }
 
 .film-perforation::after {
   z-index: 2;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0 var(--film-perf-side),
-    var(--film-perf-hole) var(--film-perf-side) calc(var(--film-perf-side) + var(--film-perf-hole-width)),
-    transparent calc(var(--film-perf-side) + var(--film-perf-hole-width)) var(--film-perf-pitch)
-  );
 }
 
 html[data-look="70mm"] .film-perforation { display: block; }
+
+/* Decorative, seeded, aria-hidden edge print — a frame counter in the header
+   stock, a keykode-style line in the footer stock. Reproduces with ?seed=. */
+.film-edge-print {
+  display: none;
+  position: absolute;
+  pointer-events: none;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--film-perf-edge) 45%, #000);
+  opacity: var(--film-edge-print-opacity);
+  white-space: nowrap;
+}
+
+html[data-look="70mm"] .film-edge-print { display: block; }
+
+.film-edge-print--header {
+  top: max(4px, calc(env(safe-area-inset-top) + 4px));
+  left: 0;
+}
+
+.film-edge-print--header::before { content: var(--film-edge-header); }
+
+.film-edge-print--footer {
+  bottom: max(4px, calc(env(safe-area-inset-bottom) + 4px));
+  right: 0;
+}
+
+.film-edge-print--footer::before { content: var(--film-edge-footer); }
+
 html[data-look="70mm"] .appearance-control {
   margin: 0;
   padding-bottom: 0;
@@ -1007,12 +1107,10 @@ html[data-look="70mm"] a.appearance-image:is(:hover, :focus-visible) {
     0 0 var(--film-halation-radius) color-mix(in srgb, var(--film-halation) var(--film-halation-strength), transparent);
 }
 
-html[data-look="70mm"] :is(.appearance-reload, .copy-markdown, .appearance-option[aria-pressed="true"]) {
-  border-color: color-mix(in srgb, var(--film-halation) 54%, var(--border));
-  text-shadow: 0 0 var(--film-bloom-radius) color-mix(in srgb, var(--ink-bright) 38%, transparent);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--film-halation) 22%, transparent);
-}
-
+/* Unexposed stock is still film, so the same halation answers it too — but
+   only where light is actually landing: on hover/focus, never at rest. A
+   resting or selected control stays the plain amber-accent voice every other
+   look already uses (see .appearance-option[aria-pressed="true"] above). */
 html[data-look="70mm"] :is(.appearance-option, .copy-markdown):is(:hover, :focus-visible) {
   color: var(--ink-bright);
   border-color: var(--film-halation);
@@ -1052,15 +1150,15 @@ html[data-look="crt"] .crt-mask-layer { display: block; }
   background-position-x: calc(var(--crt-cell) * var(--crt-triad-phase));
   background-image: repeating-linear-gradient(
     to right,
-    #ff4d4d 0 var(--crt-cell),
-    #4dff4d var(--crt-cell) calc(var(--crt-cell) * 2),
-    #4d4dff calc(var(--crt-cell) * 2) calc(var(--crt-cell) * 3)
+    var(--crt-grille-red) 0 var(--crt-cell),
+    var(--crt-grille-green) var(--crt-cell) calc(var(--crt-cell) * 2),
+    var(--crt-grille-blue) calc(var(--crt-cell) * 2) calc(var(--crt-cell) * 3)
   );
 }
 
 .crt-mask-roll {
   bottom: auto;
-  height: 26vh;
+  height: var(--crt-roll-height);
   mix-blend-mode: screen;
   background: linear-gradient(
     to bottom,
@@ -1074,14 +1172,17 @@ html[data-look="crt"] .crt-mask-layer { display: block; }
 }
 
 @keyframes appearance-crt-roll {
-  from { transform: translate3d(0, -30vh, 0); }
-  to { transform: translate3d(0, 105vh, 0); }
+  from { transform: translate3d(0, calc(var(--crt-roll-dir) * -30vh), 0); }
+  to { transform: translate3d(0, calc(var(--crt-roll-dir) * 105vh), 0); }
 }
 
+/* Dead/stuck phosphor flecks paint above the glare and vignette; both stay
+   fixed to the viewport like a real tube's coating, not the document. */
 .crt-mask-tube {
   background:
-    linear-gradient(118deg, transparent 23%, rgb(255 255 255 / 0.018) 49%, transparent 73%),
-    radial-gradient(125% 105% at 50% 50%, transparent 52%, rgb(0 0 0 / var(--crt-vignette)) 100%);
+    var(--crt-flecks),
+    linear-gradient(var(--crt-glare-angle), transparent 23%, rgb(255 255 255 / 0.018) var(--crt-glare-center), transparent 73%),
+    radial-gradient(var(--crt-tube-x) var(--crt-tube-y) at 50% 50%, transparent 52%, rgb(0 0 0 / var(--crt-vignette)) 100%);
 }
 
 html[data-look="crt"] body {
@@ -1099,8 +1200,8 @@ html[data-look="crt"] body {
   /* Per-phosphor convergence and bloom, kept to the physical cell so the
      bitmap source stays legible rather than becoming a filtered soft layer. */
   text-shadow:
-    calc(var(--crt-cell) * var(--crt-red-x)) calc(var(--crt-cell) * var(--crt-red-y)) 0 rgb(255 75 70 / var(--crt-halo-red)),
-    calc(var(--crt-cell) * var(--crt-blue-x)) calc(var(--crt-cell) * var(--crt-blue-y)) 0 rgb(72 124 255 / var(--crt-halo-blue)),
+    calc(var(--crt-cell) * var(--crt-red-x)) calc(var(--crt-cell) * var(--crt-red-y)) 0 rgb(var(--crt-fringe-red) / var(--crt-halo-red)),
+    calc(var(--crt-cell) * var(--crt-blue-x)) calc(var(--crt-cell) * var(--crt-blue-y)) 0 rgb(var(--crt-fringe-blue) / var(--crt-halo-blue)),
     0 0 calc(var(--crt-cell) * var(--crt-halo-radius)) color-mix(in srgb, currentColor var(--crt-halo-strength), transparent);
 }
 
@@ -1156,14 +1257,15 @@ html[data-look="crt"] .appearance-image {
 }
 
 /* The hardware-style pointer is deliberately made of square cells, including
-   its black outline, so it belongs to the same raster as the CRT signal. */
+   its black outline, so it belongs to the same raster as the CRT signal. Its
+   fill is the edition's own bright phosphor rather than a fixed ice-white. */
 html[data-look="crt"] :is(body, body *) {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H0V6h1z'/%3E%3Cpath fill='%23eaf7ff' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H1V6h1z'/%3E%3C/svg%3E") 1 1, default;
+  cursor: var(--crt-cursor-url) 1 1, default;
 }
 
 html[data-look="crt"] .appearance-image--portrait .photo {
-  top: -5%;
-  left: -5%;
+  top: -10%;
+  left: -10%;
   width: 60%;
   height: 60%;
   transform: scale(2);

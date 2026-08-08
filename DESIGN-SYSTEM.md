@@ -270,29 +270,49 @@ Seven appearances have equal default probability:
   Reduced motion shows the first seeded state.
 - `70mm` — one exposed projected-film frame held between full-width black film-stock header and
   footer regions. The appearance selector and seed/status sit in the upper stock; footer utilities
-  sit in the lower stock. Full-width perforation strips are their only dividers: holes stay black
-  while a dim, seeded warm or neutral edge halo catches their edges. The exposed frame alone holds
-  the generated palette, three blurred rear-plane light fields, vignette, image development, and
-  high-resolution grain. It grows with its semantic content; no image layer, grain, or light leak
-  may enter the stock regions or overscroll. Every seed independently chooses one restrained
-  tungsten, warm-print, or silver palette; one serif from Source Serif 4, Cormorant Garamond, or
-  Georgia; one mono from IBM Plex Mono, Courier Prime, or Roboto Mono; and one of three readable
-  serif/mono role assignments that always uses both voices. Page width, spacing, display scale,
-  grain, vignette, bloom, red halation radius, perforation pitch, hole width, strip height, edge
-  halo, light-leak positions, and image development vary inside bounded brackets. Bright display
-  elements receive a quiet white bloom; link hover/focus, selected appearance controls, and
-  utility-button hover use a brighter white core with a restrained red Cinestill-like halation
-  fringe.
-- `crt` — VT323 bitmap type throughout, using a fixed hardware-aligned signal treatment based on
-  `/trials/scanline/`: one-device-pixel horizontal beam gaps and vertical RGB phosphor cells,
-  a visible rolling refresh band, restrained seeded per-phosphor convergence/bloom and signal
-  noise, tube vignette, and a square-cell pixel pointer. The seed chooses from restrained green,
-  amber, blue, violet, rose, cyan-phosphor, and cool monochrome families; all retain tested text
-  contrast and avoid high saturation. Each edition rotates the RGB-cell phase and moves only the
-  red/blue phosphor fringes by one physical cell, with a minority of editions extending to two;
-  layout and source glyphs never move.
-  Native text selection uses the RGB inverse of the selected accent (amber selects blue, green
-  selects magenta, and blue selects brown). The page is never passed through a whole-page filter:
+  sit in the lower stock; both stocks also carry small seeded, decorative, `aria-hidden` edge print
+  (a frame counter, a keykode-style line) that may render uppercase even though authored content
+  stays lowercase. Full-width perforation strips divide stock from frame: holes are a dim, seeded
+  warm or neutral fill rather than black, with a soft edge halo allowed to spill past the strip.
+  Stock, perforation, and the unexposed frame base are three progressively lighter blacks, so the
+  punched edge and the image area both read against a genuinely darker rebate rather than three
+  indistinguishable blacks. The frame fades to dead black at its own top and bottom edge before
+  meeting the stock — a soft, non-linear falloff ending in a hard one-pixel frame line — so the
+  join reads as a projector gate rather than a hard-edged crop. The exposed frame alone holds the
+  generated palette, three blurred rear-plane light fields anchored to the frame edge, vignette,
+  image development, and high-resolution grain. It grows with its semantic content; no image layer,
+  grain, or light leak may enter the stock regions or overscroll. Every seed independently chooses
+  one restrained tungsten, warm-print, or silver palette; one serif from Source Serif 4, Cormorant
+  Garamond, or Georgia; one mono from IBM Plex Mono, Courier Prime, or Roboto Mono; and one of three
+  readable serif/mono role assignments that always uses both voices. Page width, spacing, display
+  scale, grain, vignette, bloom, red halation radius, gate falloff distance, perforation pitch, hole
+  geometry, edge halo, light-leak positions, and image development vary inside bounded brackets.
+  Bright display elements receive a quiet white bloom; link hover/focus and utility-button
+  hover/focus use a brighter white core with a restrained red Cinestill-like halation fringe. Stock
+  controls carry that halation only while hovered or focused; at rest — including a selected
+  appearance option — they stay the same plain amber-accent voice as every other look, since
+  unexposed stock only answers where light is actually landing.
+- `crt` — VT323 bitmap type throughout, using a hardware-aligned signal treatment based on
+  `/trials/scanline/`: one-device-pixel horizontal beam gaps and vertical RGB phosphor cells
+  (a minority of editions double the cell for a coarser, cheaper-monitor read across scanlines
+  and grille alike), a visible rolling refresh band, restrained seeded per-phosphor
+  convergence/bloom and signal noise, tube vignette, and a square-cell pixel pointer filled with
+  the edition's bright phosphor rather than a fixed color. The glass glare streak, the vignette's
+  tube aspect, and the refresh band's height and direction are all independently seeded per
+  edition, and a handful of seeded dead or stuck phosphor flecks stay fixed to the viewport, like
+  the vignette, for the look of a well-worn tube. The seed chooses one of nine phosphor
+  families — green, amber, blue, violet, rose, cyan-phosphor, cool monochrome, hot magenta, or
+  acid lime — anchored at fixed hues but expanded per edition with roughly ±12–14° hue jitter and
+  independently seeded saturation/lightness per token role, so no two editions of the same family
+  render identically. All families retain tested text contrast (body ink ≥ 11:1, accent ≥ 6.5:1
+  against the background); the hot magenta and acid lime families intentionally run a higher
+  saturation ceiling than the original seven for a punchier, more web-1.0-leaning character. The
+  red/blue phosphor fringe and the RGB grille triad stripes are also seeded per edition, with
+  small hue/saturation/lightness jitter around true red, green, and blue so the signal still
+  reads unambiguously as an RGB phosphor mask. Each edition rotates the RGB-cell phase and moves
+  only the red/blue phosphor fringes by one physical cell, with a minority of editions extending
+  to two; layout and source glyphs never move.
+  Native text selection uses the RGB inverse of the selected accent. The page is never passed through a whole-page filter:
   glyphs are pixel-shaped at the source, the portrait is rendered at half resolution with
   nearest-neighbour expansion, and the screen grid sits directly on device-pixel boundaries.
   Text links invert into a clear phosphor selection block on hover/focus, and their unchanged
@@ -330,7 +350,7 @@ The shared random brackets are: `512–560px` tile, `0.60–0.72` frequency, fou
 octaves, `2.20–2.60` contrast, `0.68–0.78` brightness, and `720–960ms` step rate. Paper
 may extend to `576px`; Eno uses `0.65–0.76`, 70mm uses `0.54–0.68`, CRT uses `0.62–0.76`,
 and terminal uses `0.58–0.72`. Opacity stays appearance-specific: paper `0.10–0.17`, blob
-`0.08–0.14`, Eno `0.035–0.060`, 70mm `0.07–0.12`, CRT `0.026–0.042`, and terminal
+`0.08–0.14`, Eno `0.035–0.060`, 70mm `0.10–0.16`, CRT `0.026–0.042`, and terminal
 `0.030–0.055`.
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
