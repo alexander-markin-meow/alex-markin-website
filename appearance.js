@@ -53,7 +53,7 @@
   var appearanceAttributes = [
     "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-paper-texture", "data-blob-layout",
     "data-blob-count", "data-blob-mobile-extra", "data-eno-composition", "data-eno-contrast",
-    "data-film-tone", "data-terminal-prompt"
+    "data-film-tone", "data-film-streaks", "data-film-stains", "data-film-scratches", "data-terminal-prompt"
   ];
   var appliedProperties = [];
   var currentEdition;
@@ -148,6 +148,36 @@
     return "#" + channels.map(function (c) { return c.toString(16).padStart(2, "0"); }).join("");
   }
 
+  function hexToHsl(hex) {
+    var value = String(hex || "").replace("#", "");
+    var r = parseInt(value.slice(0, 2), 16) / 255;
+    var g = parseInt(value.slice(2, 4), 16) / 255;
+    var b = parseInt(value.slice(4, 6), 16) / 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h = 0, s = 0, l = (max + min) / 2;
+    if (max !== min) {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h *= 60;
+    }
+    return [h, s * 100, l * 100];
+  }
+
+  /* Light leaks are never quite the palette's own swatch twice: each one
+     jitters hue away from its base color and lifts saturation/lightness, so
+     the leak family reads as genuinely varied and a little more luminous
+     than the restrained ink/accent palette around it. */
+  function filmLeakColor(random, hex) {
+    var hsl = hexToHsl(hex);
+    var hue = hsl[0] + range(random, -22, 22, 0);
+    var sat = Math.min(96, hsl[1] + range(random, 6, 22, 0));
+    var light = Math.min(88, hsl[2] + range(random, 8, 20, 0));
+    return hslToHex(hue, sat, light);
+  }
+
   /* 70mm perforation geometry, derived from one seeded pitch instead of three
      independent randoms, so hole/pitch and width/height ratios always match a
      real perforation standard. Rendered as a colored SVG tile (not a
@@ -176,6 +206,31 @@
       "--film-perf-radius": radius + "px",
       "--film-perf-height": bandHeight + "px",
       "--film-perf-hole-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")'
+    };
+  }
+
+  /* Sparse surface dust: a handful of small dark specks with a few bright
+     ones mixed in (light finding its way through a scratched fleck), tiled
+     large enough that the repeat isn't obvious across a normal frame. */
+  function dustVars(random) {
+    var tile = range(random, 220, 380, 0);
+    var rasterScale = 3;
+    var count = range(random, 7, 18, 0);
+    var shapes = "";
+    for (var i = 0; i < count; i++) {
+      var bright = random() < 0.28;
+      var x = range(random, 0, tile, 1);
+      var y = range(random, 0, tile, 1);
+      var r = range(random, 0.4, bright ? 1.1 : 1.8, 2);
+      var op = range(random, bright ? 0.35 : 0.3, bright ? 0.7 : 0.72, 2);
+      shapes += "<circle cx='" + x + "' cy='" + y + "' r='" + r + "' fill='" + (bright ? "#fff" : "#000") + "' opacity='" + op + "'/>";
+    }
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + (tile * rasterScale) + "' height='" + (tile * rasterScale) +
+      "' viewBox='0 0 " + tile + " " + tile + "'>" + shapes + "</svg>";
+    return {
+      "--film-dust-url": 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")',
+      "--film-dust-size": tile + "px",
+      "--film-dust-opacity": range(random, 0.3, 0.6, 2)
     };
   }
 
@@ -579,7 +634,7 @@
       var filmLightEdges = ["top", "bottom", pick(random, ["top", "bottom"])];
       for (var f = 0; f < 3; f++) {
         var filmLightOffset = range(random, -10, 22, 0) + "vh";
-        edition.vars["--film-light-" + (f + 1) + "-color"] = film.lights[f];
+        edition.vars["--film-light-" + (f + 1) + "-color"] = filmLeakColor(random, film.lights[f]);
         edition.vars["--film-light-" + (f + 1) + "-size"] = range(random, 34, 68, 0) + "vw";
         edition.vars["--film-light-" + (f + 1) + "-ratio"] = range(random, 1.6, 3.2, 2);
         edition.vars["--film-light-" + (f + 1) + "-x"] = range(random, 4, 88, 0) + "%";
@@ -594,8 +649,60 @@
       edition.vars["--film-edge-header"] = '"' + filmFrameNumber + pick(random, ["a", "b", "k"]) + '"';
       edition.vars["--film-edge-footer"] = '"' + pick(random, filmEdgeStocks) + " · 70mm · ex " + filmExpNumber + '"';
       edition.vars["--film-edge-print-opacity"] = range(random, 0.5, 0.75, 2);
+
+      /* Weirdly-behaving old exposed film: independent, mostly-absent damage
+         systems layered under (streaks, stains) and over (scratches, dust)
+         the content. Each edition rolls how many of each it shows; unused
+         slots still draw values (harmless) so the random sequence stays
+         simple, and CSS hides whatever the seed didn't choose to show. */
+      var filmStreakCount = pick(random, [0, 1, 1, 1, 2]);
+      for (var st = 0; st < 2; st++) {
+        var streakEdge = pick(random, ["top", "bottom"]);
+        var streakOffset = range(random, -14, 18, 0) + "vh";
+        edition.vars["--film-streak-" + (st + 1) + "-color"] = filmLeakColor(random, pick(random, film.lights));
+        edition.vars["--film-streak-" + (st + 1) + "-length"] = range(random, 70, 150, 0) + "vw";
+        edition.vars["--film-streak-" + (st + 1) + "-thickness"] = range(random, 40, 140, 0) + "px";
+        edition.vars["--film-streak-" + (st + 1) + "-angle"] = (pick(random, [1, -1]) * range(random, 10, 46, 0)) + "deg";
+        edition.vars["--film-streak-" + (st + 1) + "-x"] = range(random, 10, 90, 0) + "%";
+        edition.vars["--film-streak-" + (st + 1) + "-blur"] = range(random, 26, 60, 0) + "px";
+        edition.vars["--film-streak-" + (st + 1) + "-opacity"] = range(random, 0.08, 0.22, 2);
+        edition.vars["--film-streak-" + (st + 1) + "-top"] = streakEdge === "top" ? streakOffset : "auto";
+        edition.vars["--film-streak-" + (st + 1) + "-bottom"] = streakEdge === "bottom" ? streakOffset : "auto";
+      }
+      edition.attrs["data-film-streaks"] = String(filmStreakCount);
+
+      var filmStainCount = pick(random, [0, 0, 1, 1, 2]);
+      for (var sn = 0; sn < 2; sn++) {
+        var stainEdge = pick(random, ["top", "bottom"]);
+        var stainOffset = range(random, -8, 26, 0) + "vh";
+        edition.vars["--film-stain-" + (sn + 1) + "-color"] = mixHex(pick(random, film.lights), film.base, range(random, 30, 55, 0));
+        edition.vars["--film-stain-" + (sn + 1) + "-size"] = range(random, 26, 54, 0) + "vw";
+        edition.vars["--film-stain-" + (sn + 1) + "-ratio"] = range(random, 0.6, 1.8, 2);
+        edition.vars["--film-stain-" + (sn + 1) + "-x"] = range(random, 6, 94, 0) + "%";
+        edition.vars["--film-stain-" + (sn + 1) + "-angle"] = range(random, -28, 28, 0) + "deg";
+        edition.vars["--film-stain-" + (sn + 1) + "-focal-x"] = range(random, 25, 75, 0) + "%";
+        edition.vars["--film-stain-" + (sn + 1) + "-focal-y"] = range(random, 25, 75, 0) + "%";
+        edition.vars["--film-stain-" + (sn + 1) + "-blur"] = range(random, 50, 100, 0) + "px";
+        edition.vars["--film-stain-" + (sn + 1) + "-opacity"] = range(random, 0.1, 0.22, 2);
+        edition.vars["--film-stain-" + (sn + 1) + "-top"] = stainEdge === "top" ? stainOffset : "auto";
+        edition.vars["--film-stain-" + (sn + 1) + "-bottom"] = stainEdge === "bottom" ? stainOffset : "auto";
+      }
+      edition.attrs["data-film-stains"] = String(filmStainCount);
+
+      var filmScratchCount = pick(random, [0, 1, 1, 2, 2, 3]);
+      for (var sc = 0; sc < 3; sc++) {
+        edition.vars["--film-scratch-" + (sc + 1) + "-x"] = range(random, 4, 96, 0) + "%";
+        edition.vars["--film-scratch-" + (sc + 1) + "-width"] = range(random, 1, 2, 1) + "px";
+        edition.vars["--film-scratch-" + (sc + 1) + "-angle"] = range(random, -2.5, 2.5, 1) + "deg";
+        edition.vars["--film-scratch-" + (sc + 1) + "-opacity"] = range(random, 0.05, 0.16, 2);
+        edition.vars["--film-scratch-" + (sc + 1) + "-top"] = range(random, 0, 26, 0) + "%";
+        edition.vars["--film-scratch-" + (sc + 1) + "-bottom"] = range(random, 0, 26, 0) + "%";
+      }
+      edition.attrs["data-film-scratches"] = String(filmScratchCount);
+
+      Object.assign(edition.vars, dustVars(random));
       Object.assign(edition.vars, grainVars(random, grainBounds({
-        tile: [520, 580], frequency: [0.54, 0.68], opacity: [0.1, 0.16], rate: [680, 940]
+        tile: [512, 660], frequency: [0.46, 0.78], opacity: [0.1, 0.16], rate: [680, 940]
       })));
       edition.attrs["data-film-tone"] = film.tone;
       Object.assign(edition.vars, imageVars(random, {

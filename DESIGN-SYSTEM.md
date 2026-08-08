@@ -279,15 +279,21 @@ Seven appearances have equal default probability:
   indistinguishable blacks. The frame fades to dead black at its own top and bottom edge before
   meeting the stock — a soft, non-linear falloff ending in a hard one-pixel frame line — so the
   join reads as a projector gate rather than a hard-edged crop. The exposed frame alone holds the
-  generated palette, three blurred rear-plane light fields anchored to the frame edge, vignette,
-  image development, and high-resolution grain. It grows with its semantic content; no image layer,
-  grain, or light leak may enter the stock regions or overscroll. Every seed independently chooses
-  one restrained tungsten, warm-print, or silver palette; one serif from Source Serif 4, Cormorant
-  Garamond, or Georgia; one mono from IBM Plex Mono, Courier Prime, or Roboto Mono; and one of three
-  readable serif/mono role assignments that always uses both voices. Page width, spacing, display
-  scale, grain, vignette, bloom, red halation radius, gate falloff distance, perforation pitch, hole
-  geometry, edge halo, light-leak positions, and image development vary inside bounded brackets.
-  Bright display elements receive a quiet white bloom; link hover/focus and utility-button
+  generated palette, image development, vignette, and high-resolution grain, plus independent,
+  mostly-absent analog damage systems: three blurred radial light fields anchored to the frame
+  edge; zero to two elongated linear streaks, the directional counterpart to the radial leaks;
+  zero to two soft, irregular development stains, multiplied against the frame rather than
+  glowing; sparse surface dust (a seeded SVG tile, mixing dark flecks and a few bright ones); and
+  zero to three faint hairline scratches. Each system rolls its own count and parameters per seed,
+  so most editions show a little wear, a few show none, and a few show a lot. It grows with its
+  semantic content; no image layer, grain, or light leak may enter the stock regions or overscroll.
+  Every seed independently chooses one restrained tungsten, warm-print, or silver palette; one
+  serif from Source Serif 4, Cormorant Garamond, or Georgia; one mono from IBM Plex Mono, Courier
+  Prime, or Roboto Mono; and one of three readable serif/mono role assignments that always uses
+  both voices. Page width, spacing, display scale, grain, vignette, bloom, red halation radius,
+  gate falloff distance, perforation pitch, hole geometry, edge halo, leak/streak/stain placement
+  and count, scratch count and placement, dust density, and image development vary inside bounded
+  brackets. Bright display elements receive a quiet white bloom; link hover/focus and utility-button
   hover/focus use a brighter white core with a restrained red Cinestill-like halation fringe. Stock
   controls carry that halation only while hovered or focused; at rest — including a selected
   appearance option — they stay the same plain amber-accent voice as every other look, since
@@ -347,10 +353,11 @@ Reduced motion freezes the tile.
 
 The shared random brackets are: `512–560px` tile, `0.60–0.72` frequency, four or five
 octaves, `2.20–2.60` contrast, `0.68–0.78` brightness, and `720–960ms` step rate. Paper
-may extend to `576px`; Eno uses `0.65–0.76`, 70mm uses `0.54–0.68`, CRT uses `0.62–0.76`,
-and terminal uses `0.58–0.72`. Opacity stays appearance-specific: paper `0.10–0.17`, blob
-`0.08–0.14`, Eno `0.035–0.060`, 70mm `0.10–0.16`, CRT `0.026–0.042`, and terminal
-`0.030–0.055`.
+may extend to `576px` and 70mm's physical grain size varies further still, to `512–660px`;
+Eno uses `0.65–0.76`, 70mm uses a wider `0.46–0.78` for visibly coarser-or-finer grain between
+editions, CRT uses `0.62–0.76`, and terminal uses `0.58–0.72`. Opacity stays appearance-specific:
+paper `0.10–0.17`, blob `0.08–0.14`, Eno `0.035–0.060`, 70mm `0.10–0.16`, CRT `0.026–0.042`, and
+terminal `0.030–0.055`.
 
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
 `?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases

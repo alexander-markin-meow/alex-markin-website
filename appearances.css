@@ -74,6 +74,9 @@ html[data-look] {
   --film-edge-header: "";
   --film-edge-footer: "";
   --film-edge-print-opacity: 0.6;
+  --film-dust-url: none;
+  --film-dust-size: 300px;
+  --film-dust-opacity: 0.45;
   --crt-cell: 1px;
   --crt-depth: 76;
   --crt-grille: 0.38;
@@ -886,6 +889,67 @@ html[data-look="70mm"] body::before {
   content: none;
 }
 
+/* Surface debris sits just under the grain: sparse dust (a seeded SVG tile,
+   same technique as the perforation holes) plus a few hairline scratches.
+   Both are a print-surface phenomenon, so — like grain — they sit above the
+   content rather than behind it, kept faint enough not to fight legibility. */
+.film-emulsion {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--film-dust-url);
+  background-repeat: repeat;
+  background-size: var(--film-dust-size) var(--film-dust-size);
+  opacity: var(--film-dust-opacity);
+}
+
+html[data-look="70mm"] .film-exposure .film-emulsion { display: block; }
+
+.film-scratch {
+  position: absolute;
+  top: var(--film-scratch-top, 0%);
+  bottom: var(--film-scratch-bottom, 0%);
+  left: var(--film-scratch-x);
+  width: var(--film-scratch-width);
+  background: linear-gradient(to bottom, transparent, var(--ink-bright) 12%, var(--ink-bright) 88%, transparent);
+  opacity: var(--film-scratch-opacity);
+  transform: rotate(var(--film-scratch-angle));
+  pointer-events: none;
+}
+
+.film-scratch:nth-child(1) {
+  --film-scratch-x: var(--film-scratch-1-x);
+  --film-scratch-width: var(--film-scratch-1-width);
+  --film-scratch-angle: var(--film-scratch-1-angle);
+  --film-scratch-opacity: var(--film-scratch-1-opacity);
+  --film-scratch-top: var(--film-scratch-1-top);
+  --film-scratch-bottom: var(--film-scratch-1-bottom);
+}
+
+.film-scratch:nth-child(2) {
+  --film-scratch-x: var(--film-scratch-2-x);
+  --film-scratch-width: var(--film-scratch-2-width);
+  --film-scratch-angle: var(--film-scratch-2-angle);
+  --film-scratch-opacity: var(--film-scratch-2-opacity);
+  --film-scratch-top: var(--film-scratch-2-top);
+  --film-scratch-bottom: var(--film-scratch-2-bottom);
+}
+
+.film-scratch:nth-child(3) {
+  --film-scratch-x: var(--film-scratch-3-x);
+  --film-scratch-width: var(--film-scratch-3-width);
+  --film-scratch-angle: var(--film-scratch-3-angle);
+  --film-scratch-opacity: var(--film-scratch-3-opacity);
+  --film-scratch-top: var(--film-scratch-3-top);
+  --film-scratch-bottom: var(--film-scratch-3-bottom);
+}
+
+html[data-film-scratches="0"] .film-scratch,
+html[data-film-scratches="1"] .film-scratch:nth-child(n + 2),
+html[data-film-scratches="2"] .film-scratch:nth-child(n + 3) { display: none; }
+
 html[data-look="70mm"] .film-exposure::after {
   content: "";
   position: absolute;
@@ -898,6 +962,12 @@ html[data-look="70mm"] .film-exposure::after {
   background-size: var(--grain-size) var(--grain-size);
   filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
   animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
+  /* Without its own stable compositor layer, each steps(1) jump forces a
+     wider recomposite that can show a one-frame sub-pixel seam at the
+     document edges — the pure-black overscroll fallback peeking through.
+     Pin it to its own layer; the memory cost of one promoted layer is worth
+     losing the flicker. */
+  will-change: transform;
 }
 
 html[data-look="70mm"] .name {
@@ -941,6 +1011,65 @@ html[data-look="70mm"] .film-exposure .film-backdrop { display: block; }
   background-position: center top;
   background-size: 100% min(100%, 1100px);
 }
+
+/* Grouping wrappers only exist so each damage system gets its own clean
+   :nth-child count — display:contents removes them from layout/stacking
+   entirely (their position:absolute children still resolve against
+   .film-backdrop) while keeping each system's siblings unmixed. */
+.film-stains,
+.film-lights,
+.film-streaks {
+  display: contents;
+}
+
+/* Soft, irregular development staining — desaturated toward the frame base
+   and multiplied against it, so it reads as chemical unevenness rather than
+   a light source. Anchored to the frame edge in vh, like the leaks below. */
+.film-stain {
+  position: absolute;
+  width: min(var(--film-stain-size), 640px);
+  aspect-ratio: var(--film-stain-ratio);
+  left: var(--film-stain-x);
+  top: var(--film-stain-top, auto);
+  bottom: var(--film-stain-bottom, auto);
+  background: radial-gradient(ellipse at var(--film-stain-focal-x) var(--film-stain-focal-y), var(--film-stain-color), transparent 70%);
+  filter: blur(var(--film-stain-blur));
+  opacity: var(--film-stain-opacity);
+  mix-blend-mode: multiply;
+  transform: translate3d(-50%, 0, 0) rotate(var(--film-stain-angle));
+  pointer-events: none;
+}
+
+.film-stain:nth-child(1) {
+  --film-stain-color: var(--film-stain-1-color);
+  --film-stain-size: var(--film-stain-1-size);
+  --film-stain-ratio: var(--film-stain-1-ratio);
+  --film-stain-x: var(--film-stain-1-x);
+  --film-stain-top: var(--film-stain-1-top);
+  --film-stain-bottom: var(--film-stain-1-bottom);
+  --film-stain-angle: var(--film-stain-1-angle);
+  --film-stain-focal-x: var(--film-stain-1-focal-x);
+  --film-stain-focal-y: var(--film-stain-1-focal-y);
+  --film-stain-blur: var(--film-stain-1-blur);
+  --film-stain-opacity: var(--film-stain-1-opacity);
+}
+
+.film-stain:nth-child(2) {
+  --film-stain-color: var(--film-stain-2-color);
+  --film-stain-size: var(--film-stain-2-size);
+  --film-stain-ratio: var(--film-stain-2-ratio);
+  --film-stain-x: var(--film-stain-2-x);
+  --film-stain-top: var(--film-stain-2-top);
+  --film-stain-bottom: var(--film-stain-2-bottom);
+  --film-stain-angle: var(--film-stain-2-angle);
+  --film-stain-focal-x: var(--film-stain-2-focal-x);
+  --film-stain-focal-y: var(--film-stain-2-focal-y);
+  --film-stain-blur: var(--film-stain-2-blur);
+  --film-stain-opacity: var(--film-stain-2-opacity);
+}
+
+html[data-film-stains="0"] .film-stain,
+html[data-film-stains="1"] .film-stain:nth-child(n + 2) { display: none; }
 
 /* Leaks enter at the film edge, elongated along the strip, anchored in px/vh
    from the nearest frame edge rather than a percentage of document height. */
@@ -990,6 +1119,50 @@ html[data-look="70mm"] .film-exposure .film-backdrop { display: block; }
   --film-light-blur: var(--film-light-3-blur);
   --film-light-opacity: var(--film-light-3-opacity);
 }
+
+/* Linear leaks — a directional counterpart to the radial ones above: the
+   kind of light that got in along a straight edge of the magazine. Most
+   editions show one or none; a few show two. */
+.film-streak {
+  position: absolute;
+  width: min(var(--film-streak-length), 1400px);
+  height: var(--film-streak-thickness);
+  left: var(--film-streak-x);
+  top: var(--film-streak-top, auto);
+  bottom: var(--film-streak-bottom, auto);
+  background: linear-gradient(90deg, transparent, var(--film-streak-color), transparent);
+  opacity: var(--film-streak-opacity);
+  filter: blur(var(--film-streak-blur));
+  transform: translate3d(-50%, 0, 0) rotate(var(--film-streak-angle));
+  pointer-events: none;
+}
+
+.film-streak:nth-child(1) {
+  --film-streak-color: var(--film-streak-1-color);
+  --film-streak-length: var(--film-streak-1-length);
+  --film-streak-thickness: var(--film-streak-1-thickness);
+  --film-streak-angle: var(--film-streak-1-angle);
+  --film-streak-x: var(--film-streak-1-x);
+  --film-streak-top: var(--film-streak-1-top);
+  --film-streak-bottom: var(--film-streak-1-bottom);
+  --film-streak-blur: var(--film-streak-1-blur);
+  --film-streak-opacity: var(--film-streak-1-opacity);
+}
+
+.film-streak:nth-child(2) {
+  --film-streak-color: var(--film-streak-2-color);
+  --film-streak-length: var(--film-streak-2-length);
+  --film-streak-thickness: var(--film-streak-2-thickness);
+  --film-streak-angle: var(--film-streak-2-angle);
+  --film-streak-x: var(--film-streak-2-x);
+  --film-streak-top: var(--film-streak-2-top);
+  --film-streak-bottom: var(--film-streak-2-bottom);
+  --film-streak-blur: var(--film-streak-2-blur);
+  --film-streak-opacity: var(--film-streak-2-opacity);
+}
+
+html[data-film-streaks="0"] .film-streak,
+html[data-film-streaks="1"] .film-streak:nth-child(n + 2) { display: none; }
 
 /* A very faint, heavily blurred echo of the hole tile, phase-locked to the
    same pitch, seeping from the top perforation row into the frame below. */
