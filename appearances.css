@@ -890,6 +890,13 @@ html[data-look="70mm"] .film-exposure-inner {
   z-index: 2;
   padding-top: 34px;
   padding-bottom: 46px;
+  /* Give the actual content its own stable compositor layer via a static 3D
+     transform (not will-change — that pairing is what's now suspected on
+     the grain layer above it). If WebKit is mishandling this layer's own
+     backing store inside the isolated stacking context while grain's
+     animation keeps ticking above it, an independent layer here should stop
+     it from being caught up in that. */
+  transform: translateZ(0);
 }
 
 html[data-look="70mm"] .film-exposure .columns { margin-bottom: 0; }
