@@ -254,20 +254,23 @@ Seven appearances have equal default probability:
   motions become static under `prefers-reduced-motion`. Text and image links bloom on hover/focus
   using only the selected edition accent; near strength, far strength, and radius are tightly seeded.
 - `eno` — the complete responsive document is one luminous lightbox rather than a collection of
-  decorative objects. A seed selects a vertical, horizontal, quartered, central-window, or
-  softened concentric core-and-ring halo composition; one light or dark contrast family;
-  bounded divisions, diffusion, and color saturation capped at `80%`,
-  and curated turquoise/pink/crimson, amber/orange/red, green/lime/cyan, or
-  blue/violet/magenta schemes. Three related edge-to-edge color states crossfade over
-  `180–480s` with bounded `±24°` hue travel. Montserrat supplies the geometric album-art voice:
-  the display name and headings render uppercase through CSS with wide tracking, while authored
-  content remains lowercase. Text colors remain fixed inside the selected contrast family.
-  The absolute lightbox recalculates to the body's full height at every mobile, tablet, and
-  desktop layout, so scrolling travels through one continuous artwork instead of keeping a
-  viewport-sized pattern fixed behind the content. The root repeats the first state only as an
-  elastic-overscroll fallback. Controls remain transparent so the lightbox itself is their fill.
-  A fine topmost diffuser grain remains visible at a restrained `0.035–0.060` opacity.
-  Reduced motion shows the first seeded state.
+  decorative objects. Its only shapes are three soft-edged circles of independently seeded
+  position and radius, floating over a fourth flat wash color; no bands, quarters, or windows.
+  One light or dark contrast family; color saturation seeded within `50–80%`, and curated
+  turquoise/pink/crimson, amber/orange/red, green/lime/cyan, or blue/violet/magenta schemes.
+  Three related circle-color states crossfade over `180–480s` with bounded `±24°` hue travel
+  while the circles' position and radius stay fixed, and a continuous, independent
+  `hue-rotate` drift sweeps the whole composition through a full turn every `240–720s`, so the
+  palette keeps sliding rather than settling on the three seeded states — closer to the never-
+  quite-repeating drift of an actual Brian Eno light work. Montserrat supplies the geometric
+  album-art voice: the display name and headings render uppercase through CSS with wide
+  tracking, while authored content remains lowercase. Text colors remain fixed inside the
+  selected contrast family. The absolute lightbox recalculates to the body's full height at
+  every mobile, tablet, and desktop layout, so scrolling travels through one continuous artwork
+  instead of keeping a viewport-sized pattern fixed behind the content. The root repeats the
+  first state only as an elastic-overscroll fallback. Controls remain transparent so the
+  lightbox itself is their fill. A fine topmost diffuser grain remains visible at a restrained
+  `0.035–0.060` opacity. Reduced motion shows the first seeded state with no hue drift.
 - `70mm` — one exposed projected-film frame held between full-width black film-stock header and
   footer regions. The appearance selector and seed/status sit in the upper stock; footer utilities
   sit in the lower stock; both stocks also carry small seeded, decorative, `aria-hidden` edge print
@@ -353,9 +356,11 @@ Reduced motion freezes the tile.
 
 The shared random brackets are: `512–560px` tile, `0.60–0.72` frequency, four or five
 octaves, `2.20–2.60` contrast, `0.68–0.78` brightness, and `720–960ms` step rate. Paper
-may extend to `576px` and 70mm's physical grain size varies further still, to `512–660px`;
-Eno uses `0.65–0.76`, 70mm uses a wider `0.46–0.78` for visibly coarser-or-finer grain between
-editions, CRT uses `0.62–0.76`, and terminal uses `0.58–0.72`. Opacity stays appearance-specific:
+may extend to `576px`; 70mm's tile stays `512–580px` — its grain layer is edge-to-edge on
+mobile with no page gutter, so the tile must stay reliably narrower than a small phone
+viewport or the background tiles incorrectly on WebKit — but 70mm uses a wider `0.46–0.78`
+frequency for visibly coarser-or-finer grain between editions. Eno uses `0.65–0.76`, CRT
+uses `0.62–0.76`, and terminal uses `0.58–0.72`. Opacity stays appearance-specific:
 paper `0.10–0.17`, blob `0.08–0.14`, Eno `0.035–0.060`, 70mm `0.10–0.16`, CRT `0.026–0.042`, and
 terminal `0.030–0.055`.
 

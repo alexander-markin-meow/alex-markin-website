@@ -44,6 +44,8 @@ html[data-look] {
   --eno-gradient-c: none;
   --eno-cycle: 300s;
   --eno-phase: 0s;
+  --eno-hue-cycle: 420s;
+  --eno-hue-phase: 0s;
   --eno-softness: 28px;
   --eno-saturation: 1;
   --eno-diffusion: 0.12;
@@ -679,6 +681,8 @@ html[data-blob-layout="scatter"] .appearance-blob-track:nth-child(7) { top: 96%;
   overflow: hidden;
   pointer-events: none;
   background: var(--eno-gradient-a);
+  animation: eno-hue-drift var(--eno-hue-cycle) linear var(--eno-hue-phase) infinite;
+  will-change: filter;
 }
 
 html[data-look="eno"] .eno-lightbox { display: block; }
@@ -738,6 +742,11 @@ html[data-look="eno"] {
 @keyframes eno-lightbox-state-c {
   0%, 44%, 100% { opacity: 0; }
   66%, 84% { opacity: 1; }
+}
+
+@keyframes eno-hue-drift {
+  from { filter: hue-rotate(0deg); }
+  to { filter: hue-rotate(360deg); }
 }
 
 html[data-look="eno"] body {
@@ -959,6 +968,7 @@ html[data-look="70mm"] .film-exposure::after {
   opacity: var(--grain-opacity);
   mix-blend-mode: var(--grain-blend);
   background-image: var(--grain-url);
+  background-repeat: repeat;
   background-size: var(--grain-size) var(--grain-size);
   filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
   animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
@@ -1615,6 +1625,7 @@ html[data-look="terminal"] a:not(.flickr-photo-link):is(:hover, :focus-visible):
 @media (prefers-reduced-motion: reduce) {
   .appearance-blob-track { transform: none !important; will-change: auto; }
   .appearance-blob { animation: none !important; will-change: auto; }
+  .eno-lightbox { animation: none !important; will-change: auto; }
   .eno-lightbox-state { animation: none !important; will-change: auto; }
   .eno-lightbox-state:nth-child(n + 2) { opacity: 0; }
   html[data-look] body::before,
