@@ -96,9 +96,7 @@ html[data-look] {
   --crt-grille-green: #4dff4d;
   --crt-grille-blue: #4d4dff;
   --crt-cursor-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H0V6h1z'/%3E%3Cpath fill='%23eaf7ff' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H1V6h1z'/%3E%3C/svg%3E");
-  --crt-flecks: none;
   --crt-roll-height: 26vh;
-  --crt-roll-dir: 1;
   --crt-glare-angle: 118deg;
   --crt-glare-center: 49%;
   --crt-tube-x: 125%;
@@ -1172,15 +1170,12 @@ html[data-look="crt"] .crt-mask-layer { display: block; }
 }
 
 @keyframes appearance-crt-roll {
-  from { transform: translate3d(0, calc(var(--crt-roll-dir) * -30vh), 0); }
-  to { transform: translate3d(0, calc(var(--crt-roll-dir) * 105vh), 0); }
+  from { transform: translate3d(0, -30vh, 0); }
+  to { transform: translate3d(0, 105vh, 0); }
 }
 
-/* Dead/stuck phosphor flecks paint above the glare and vignette; both stay
-   fixed to the viewport like a real tube's coating, not the document. */
 .crt-mask-tube {
   background:
-    var(--crt-flecks),
     linear-gradient(var(--crt-glare-angle), transparent 23%, rgb(255 255 255 / 0.018) var(--crt-glare-center), transparent 73%),
     radial-gradient(var(--crt-tube-x) var(--crt-tube-y) at 50% 50%, transparent 52%, rgb(0 0 0 / var(--crt-vignette)) 100%);
 }

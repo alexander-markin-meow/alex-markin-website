@@ -626,7 +626,6 @@
       edition.vars["--crt-grille-green"] = hslToHex(120 + range(random, -10, 10, 0), range(random, 90, 100, 0), range(random, 58, 70, 0));
       edition.vars["--crt-grille-blue"] = hslToHex(240 + range(random, -10, 10, 0), range(random, 90, 100, 0), range(random, 60, 72, 0));
       edition.vars["--crt-cursor-url"] = crtCursorUrl(crtPalette.bright);
-      edition.vars["--crt-flecks"] = crtPhosphorFlecks(random, crtPalette.accent);
       /* The CRT is a physical-pixel treatment, so its source geometry stays on
          whole CSS pixels before the one-device-pixel grille is applied. */
       edition.vars["--appearance-display-size"] = "60px";
@@ -656,7 +655,6 @@
       edition.vars["--crt-vignette"] = range(random, 0.38, 0.62, 2);
       edition.vars["--crt-roll-period"] = range(random, 6.5, 12.5, 1) + "s";
       edition.vars["--crt-roll-height"] = range(random, 20, 32, 0) + "vh";
-      edition.vars["--crt-roll-dir"] = pick(random, [1, -1]);
       edition.vars["--crt-glare-angle"] = range(random, 95, 145, 0) + "deg";
       edition.vars["--crt-glare-center"] = range(random, 42, 58, 0) + "%";
       edition.vars["--crt-tube-x"] = range(random, 115, 135, 0) + "%";
@@ -732,25 +730,6 @@
       "<path fill='#000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H0V6h1z'/>" +
       "<path fill='" + fillHex + "' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H1V6h1z'/></svg>";
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
-  }
-
-  /* A worn tube's phosphor coating always carries a handful of dead (unlit)
-     or stuck (permanently lit) dots. These are fixed to the viewport, like
-     the vignette and grille, rather than the scrolling document. */
-  function crtPhosphorFlecks(random, accentHex) {
-    var count = Math.round(range(random, 5, 9, 0));
-    var layers = [];
-    for (var i = 0; i < count; i++) {
-      var x = range(random, 4, 96, 1);
-      var y = range(random, 4, 96, 1);
-      var size = range(random, 1, 2, 1);
-      var isDead = random() < 0.7;
-      var color = isDead
-        ? "rgb(0 0 0 / " + range(random, 0.5, 0.8, 2) + ")"
-        : "color-mix(in srgb, " + accentHex + " " + range(random, 35, 60, 0) + "%, transparent)";
-      layers.push("radial-gradient(" + size + "px " + size + "px at " + x + "% " + y + "%, " + color + " 100%, transparent 100%)");
-    }
-    return layers.join(", ");
   }
 
   function crtPhosphorPalette(random, family) {

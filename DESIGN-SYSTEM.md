@@ -298,9 +298,8 @@ Seven appearances have equal default probability:
   and grille alike), a visible rolling refresh band, restrained seeded per-phosphor
   convergence/bloom and signal noise, tube vignette, and a square-cell pixel pointer filled with
   the edition's bright phosphor rather than a fixed color. The glass glare streak, the vignette's
-  tube aspect, and the refresh band's height and direction are all independently seeded per
-  edition, and a handful of seeded dead or stuck phosphor flecks stay fixed to the viewport, like
-  the vignette, for the look of a well-worn tube. The seed chooses one of nine phosphor
+  tube aspect, and the refresh band's height are all independently seeded per edition. The refresh
+  band always rolls top to bottom. The seed chooses one of nine phosphor
   families — green, amber, blue, violet, rose, cyan-phosphor, cool monochrome, hot magenta, or
   acid lime — anchored at fixed hues but expanded per edition with roughly ±12–14° hue jitter and
   independently seeded saturation/lightness per token role, so no two editions of the same family
