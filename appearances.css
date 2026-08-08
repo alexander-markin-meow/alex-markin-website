@@ -984,12 +984,12 @@ html[data-look="70mm"] .film-exposure::after {
   background-size: min(var(--grain-size), 100%) var(--grain-size);
   filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
   animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
-  /* Without its own stable compositor layer, each steps(1) jump forces a
-     wider recomposite that can show a one-frame sub-pixel seam at the
-     document edges — the pure-black overscroll fallback peeking through.
-     Pin it to its own layer; the memory cost of one promoted layer is worth
-     losing the flicker. */
-  will-change: transform;
+  /* No will-change here on purpose. It was added for a suspected compositor
+     seam, but the will-change + mix-blend-mode + steps() animation
+     combination is a known troublesome one in WebKit specifically, and later
+     evidence (same fault on desktop Safari, unaffected by blur/contain
+     changes) points at that combination rather than paint cost. Revisit only
+     with a confirmed repro. */
 }
 
 html[data-look="70mm"] .name {
