@@ -650,7 +650,7 @@
         edition.vars["--film-streak-" + (st + 1) + "-thickness"] = range(random, 40, 140, 0) + "px";
         edition.vars["--film-streak-" + (st + 1) + "-angle"] = (pick(random, [1, -1]) * range(random, 10, 46, 0)) + "deg";
         edition.vars["--film-streak-" + (st + 1) + "-x"] = range(random, 10, 90, 0) + "%";
-        edition.vars["--film-streak-" + (st + 1) + "-blur"] = range(random, 26, 60, 0) + "px";
+        edition.vars["--film-streak-" + (st + 1) + "-blur"] = range(random, 18, 36, 0) + "px";
         edition.vars["--film-streak-" + (st + 1) + "-opacity"] = range(random, 0.08, 0.22, 2);
         edition.vars["--film-streak-" + (st + 1) + "-top"] = streakEdge === "top" ? streakOffset : "auto";
         edition.vars["--film-streak-" + (st + 1) + "-bottom"] = streakEdge === "bottom" ? streakOffset : "auto";
@@ -668,7 +668,7 @@
         edition.vars["--film-stain-" + (sn + 1) + "-angle"] = range(random, -28, 28, 0) + "deg";
         edition.vars["--film-stain-" + (sn + 1) + "-focal-x"] = range(random, 25, 75, 0) + "%";
         edition.vars["--film-stain-" + (sn + 1) + "-focal-y"] = range(random, 25, 75, 0) + "%";
-        edition.vars["--film-stain-" + (sn + 1) + "-blur"] = range(random, 50, 100, 0) + "px";
+        edition.vars["--film-stain-" + (sn + 1) + "-blur"] = range(random, 32, 58, 0) + "px";
         edition.vars["--film-stain-" + (sn + 1) + "-opacity"] = range(random, 0.1, 0.22, 2);
         edition.vars["--film-stain-" + (sn + 1) + "-top"] = stainEdge === "top" ? stainOffset : "auto";
         edition.vars["--film-stain-" + (sn + 1) + "-bottom"] = stainEdge === "bottom" ? stainOffset : "auto";

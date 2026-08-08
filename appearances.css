@@ -842,6 +842,13 @@ html[data-look="70mm"] .film-exposure {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+  /* This subtree carries several blur-heavy, animated layers (gate,
+     perforation bleed, grain, streaks, stains). Containment scopes their
+     paint to this box explicitly, so the browser can cache/tile it
+     independently instead of re-rasterizing it as part of a larger region
+     during scroll — the likely cause of tiles briefly showing unpainted on
+     real mobile hardware. */
+  contain: paint;
   background: var(--film-base);
 }
 
