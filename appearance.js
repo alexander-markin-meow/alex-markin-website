@@ -394,17 +394,13 @@
     });
   }
 
-  function enoCircle(color, circle, feather) {
-    var edge = Math.min(circle.r + feather, 100);
-    return "radial-gradient(circle at " + circle.x + "% " + circle.y + "%, " + color +
-      " 0%, " + color + " " + circle.r + "%, transparent " + edge + "%)";
-  }
-
   function enoGradient(colors, geometry) {
-    return enoCircle(colors[0], geometry.c1, geometry.feather) + ", " +
-      enoCircle(colors[1], geometry.c2, geometry.feather) + ", " +
-      enoCircle(colors[2], geometry.c3, geometry.feather) + ", " +
-      "radial-gradient(circle at 50% 50%, " + colors[3] + " 0%, " + colors[3] + " 100%)";
+    var ringStart = Math.min(geometry.coreR + geometry.feather * 0.5, geometry.haloR - 2);
+    var bgStart = Math.min(geometry.haloR + geometry.feather, 100);
+    return "radial-gradient(circle at " + geometry.x + "% " + geometry.y + "%, " +
+      colors[0] + " 0%, " + colors[0] + " " + geometry.coreR + "%, " +
+      colors[1] + " " + ringStart + "%, " + colors[1] + " " + geometry.haloR + "%, " +
+      colors[3] + " " + bgStart + "%, " + colors[3] + " 100%)";
   }
 
   function compose(seed, forcedLook) {
@@ -530,10 +526,11 @@
       var enoHues = pick(random, enoFamilies);
       var enoContrast = pick(random, ["light", "light", "light", "dark"]);
       var enoGeometry = {
-        feather: range(random, 20, 34, 0),
-        c1: { x: range(random, 12, 88, 0), y: range(random, 12, 88, 0), r: range(random, 46, 64, 0) },
-        c2: { x: range(random, 12, 88, 0), y: range(random, 12, 88, 0), r: range(random, 34, 50, 0) },
-        c3: { x: range(random, 12, 88, 0), y: range(random, 12, 88, 0), r: range(random, 24, 38, 0) }
+        x: range(random, 42, 58, 0),
+        y: range(random, 38, 62, 0),
+        coreR: range(random, 14, 24, 0),
+        haloR: range(random, 46, 66, 0),
+        feather: range(random, 14, 26, 0)
       };
       var enoPhaseB = range(random, -24, 24, 0);
       var enoPhaseC = range(random, -24, 24, 0);

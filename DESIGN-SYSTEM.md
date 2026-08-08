@@ -254,15 +254,18 @@ Seven appearances have equal default probability:
   motions become static under `prefers-reduced-motion`. Text and image links bloom on hover/focus
   using only the selected edition accent; near strength, far strength, and radius are tightly seeded.
 - `eno` — the complete responsive document is one luminous lightbox rather than a collection of
-  decorative objects. Its only shapes are three soft-edged circles of independently seeded
-  position and radius, floating over a fourth flat wash color; no bands, quarters, or windows.
-  One light or dark contrast family; color saturation seeded within `50–80%`, and curated
-  turquoise/pink/crimson, amber/orange/red, green/lime/cyan, or blue/violet/magenta schemes.
-  Three related circle-color states crossfade over `180–480s` with bounded `±24°` hue travel
-  while the circles' position and radius stay fixed, and a continuous, independent
-  `hue-rotate` drift sweeps the whole composition through a full turn every `240–720s`, so the
-  palette keeps sliding rather than settling on the three seeded states — closer to the never-
-  quite-repeating drift of an actual Brian Eno light work. Montserrat supplies the geometric
+  decorative objects. Its only shape is a concentric core-and-halo bullseye — a small solid
+  core circle inside a larger soft-edged halo ring, both centered near the middle of the frame
+  over a flat wash background — echoing the Brian Eno & Beatie Wolfe "Liminal/Luminal/Lateral"
+  cover art, though never limited to that trio's exact colors: no bands, quarters, windows, or
+  scattered shapes. One light or dark contrast family; color saturation seeded within `50–80%`,
+  and curated turquoise/pink/crimson, amber/orange/red, green/lime/cyan, or blue/violet/magenta
+  schemes. Three related core/halo/background color states crossfade over `180–480s` with
+  bounded `±24°` hue travel while the bullseye's position and radii stay fixed, and a continuous,
+  independent `hue-rotate` drift sweeps the whole composition through a full turn every
+  `240–720s`, so the palette keeps sliding rather than settling on the three seeded states —
+  closer to the never-quite-repeating drift of an actual Brian Eno light work. Montserrat
+  supplies the geometric
   album-art voice: the display name and headings render uppercase through CSS with wide
   tracking, while authored content remains lowercase. Text colors remain fixed inside the
   selected contrast family. The absolute lightbox recalculates to the body's full height at

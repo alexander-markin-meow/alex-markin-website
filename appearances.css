@@ -969,7 +969,12 @@ html[data-look="70mm"] .film-exposure::after {
   mix-blend-mode: var(--grain-blend);
   background-image: var(--grain-url);
   background-repeat: repeat;
-  background-size: var(--grain-size) var(--grain-size);
+  /* Cap the tile's width to the frame's own width, never a seeded px value
+     alone: this layer is edge-to-edge with no gutter on mobile, so a tile
+     wider than the phone's own viewport left a real gap where WebKit failed
+     to repeat it, showing as a bare, ungrained band. Height keeps the full
+     seeded size — only width was ever the failure mode. */
+  background-size: min(var(--grain-size), 100%) var(--grain-size);
   filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
   animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
   /* Without its own stable compositor layer, each steps(1) jump forces a
