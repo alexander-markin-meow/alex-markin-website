@@ -383,7 +383,7 @@
 
   function enoColor(random, hue, contrast) {
     var adjustedHue = Math.round((hue + range(random, -8, 8, 0) + 360) % 360);
-    var saturation = range(random, 50, 80, 0);
+    var saturation = range(random, 50, 70, 0);
     var lightness = range(random, contrast === "light" ? 64 : 18, contrast === "light" ? 80 : 30, 0);
     return "hsl(" + adjustedHue + " " + saturation + "% " + lightness + "%)";
   }
@@ -718,7 +718,18 @@
       edition.vars["--crt-grille-red"] = hslToHex(0 + range(random, -8, 8, 0), range(random, 90, 100, 0), range(random, 60, 70, 0));
       edition.vars["--crt-grille-green"] = hslToHex(120 + range(random, -10, 10, 0), range(random, 90, 100, 0), range(random, 58, 70, 0));
       edition.vars["--crt-grille-blue"] = hslToHex(240 + range(random, -10, 10, 0), range(random, 90, 100, 0), range(random, 60, 72, 0));
-      edition.vars["--crt-cursor-url"] = crtCursorUrl(crtPalette.bright);
+      /* One CSS pixel on a standard display (or one device pixel on a dense
+         display) is the indivisible phosphor cell. A minority of editions
+         double it for a cheaper, coarser low-res monitor, echoing how a
+         minority of editions already extend convergence to two cells. */
+      var crtCellScale = pick(random, [1, 1, 1, 1, 2]);
+      var crtCellPx = crtCellScale / Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
+      edition.vars["--crt-cell"] = crtCellPx.toFixed(3) + "px";
+      /* The pointer is built from the same phosphor cells as the rest of the
+         signal, so its bitmap is authored at 16x16 cells and rasterized at
+         exactly --crt-cell per unit rather than a fixed CSS-pixel size. */
+      edition.vars["--crt-cursor-url"] = crtCursorUrl(crtPalette.bright, crtCellPx);
+      edition.vars["--crt-cursor-hotspot"] = crtCellPx.toFixed(3) + " " + crtCellPx.toFixed(3);
       /* The CRT is a physical-pixel treatment, so its source geometry stays on
          whole CSS pixels before the one-device-pixel grille is applied. */
       edition.vars["--appearance-display-size"] = "60px";
@@ -727,12 +738,6 @@
       edition.vars["--page-max"] = pick(random, ["1000px", "1100px", "1180px"]);
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
-      /* One CSS pixel on a standard display (or one device pixel on a dense
-         display) is the indivisible phosphor cell. A minority of editions
-         double it for a cheaper, coarser low-res monitor, echoing how a
-         minority of editions already extend convergence to two cells. */
-      var crtCellScale = pick(random, [1, 1, 1, 1, 2]);
-      edition.vars["--crt-cell"] = (crtCellScale / Math.min(Math.max(window.devicePixelRatio || 1, 1), 2)).toFixed(3) + "px";
       edition.vars["--crt-depth"] = range(random, 38, 54, 0);
       edition.vars["--crt-grille"] = range(random, 0.24, 0.34, 2);
       edition.vars["--crt-halo-red"] = range(random, 33, 43, 0) + "%";
@@ -818,10 +823,11 @@
     return edition;
   }
 
-  function crtCursorUrl(fillHex) {
-    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'>" +
-      "<path fill='#000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H0V6h1z'/>" +
-      "<path fill='" + fillHex + "' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H1V6h1z'/></svg>";
+  function crtCursorUrl(fillHex, cellPx) {
+    var size = (16 * cellPx).toFixed(3);
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + size + "' height='" + size + "' viewBox='0 0 16 16' shape-rendering='crispEdges'>" +
+      "<path fill='#000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H1z'/>" +
+      "<path fill='" + fillHex + "' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H2z'/></svg>";
     return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
   }
 

@@ -258,7 +258,7 @@ Seven appearances have equal default probability:
   core circle inside a larger soft-edged halo ring, both centered near the middle of the frame
   over a flat wash background — echoing the Brian Eno & Beatie Wolfe "Liminal/Luminal/Lateral"
   cover art, though never limited to that trio's exact colors: no bands, quarters, windows, or
-  scattered shapes. One light or dark contrast family; color saturation seeded within `50–80%`,
+  scattered shapes. One light or dark contrast family; color saturation seeded within `50–70%`,
   and curated turquoise/pink/crimson, amber/orange/red, green/lime/cyan, or blue/violet/magenta
   schemes. Three related core/halo/background color states crossfade over `180–480s` with
   bounded `±24°` hue travel while the bullseye's position and radii stay fixed, and a continuous,

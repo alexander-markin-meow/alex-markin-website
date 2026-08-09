@@ -100,7 +100,8 @@ html[data-look] {
   --crt-grille-red: #ff4d4d;
   --crt-grille-green: #4dff4d;
   --crt-grille-blue: #4d4dff;
-  --crt-cursor-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H0V6h1z'/%3E%3Cpath fill='%23eaf7ff' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H1V6h1z'/%3E%3C/svg%3E");
+  --crt-cursor-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M1 0h3v2h2v2h2v2h2v2H6v2H4v2H2V8H1z'/%3E%3Cpath fill='%23eaf7ff' d='M2 1h1v2h2v2h2v2h2v1H5v2H3V7H2z'/%3E%3C/svg%3E");
+  --crt-cursor-hotspot: 1 1;
   --crt-roll-height: 26vh;
   --crt-glare-angle: 118deg;
   --crt-glare-center: 49%;
@@ -1454,10 +1455,12 @@ html[data-look="crt"] .appearance-image {
 }
 
 /* The hardware-style pointer is deliberately made of square cells, including
-   its black outline, so it belongs to the same raster as the CRT signal. Its
-   fill is the edition's own bright phosphor rather than a fixed ice-white. */
+   its black outline, so it belongs to the same raster as the CRT signal: its
+   bitmap is rasterized at exactly --crt-cell per unit (see appearance.js),
+   not a fixed CSS-pixel size. Its fill is the edition's own bright phosphor
+   rather than a fixed ice-white. */
 html[data-look="crt"] :is(body, body *) {
-  cursor: var(--crt-cursor-url) 1 1, default;
+  cursor: var(--crt-cursor-url) var(--crt-cursor-hotspot), default;
 }
 
 html[data-look="crt"] .appearance-image--portrait .photo {
