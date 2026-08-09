@@ -1455,10 +1455,11 @@ html[data-look="crt"] .appearance-image {
 }
 
 /* The hardware-style pointer is deliberately made of square cells, including
-   its black outline, so it belongs to the same raster as the CRT signal: its
-   bitmap is rasterized at exactly --crt-cell per unit (see appearance.js),
-   not a fixed CSS-pixel size. Its fill is the edition's own bright phosphor
-   rather than a fixed ice-white. */
+   its black outline, echoing the same "coarser monitor" cell doubling as the
+   signal (see appearance.js) but sized in whole CSS pixels rather than
+   --crt-cell's sub-pixel size, so it stays a legible, clickable size on
+   retina displays. Its fill is the edition's own bright phosphor rather than
+   a fixed ice-white. */
 html[data-look="crt"] :is(body, body *) {
   cursor: var(--crt-cursor-url) var(--crt-cursor-hotspot), default;
 }

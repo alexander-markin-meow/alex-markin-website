@@ -728,11 +728,14 @@
       var crtCellScale = pick(random, [1, 1, 1, 1, 2]);
       var crtCellPx = crtCellScale / Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
       edition.vars["--crt-cell"] = crtCellPx.toFixed(3) + "px";
-      /* The pointer is built from the same phosphor cells as the rest of the
-         signal, so its bitmap is authored at 16x16 cells and rasterized at
-         exactly --crt-cell per unit rather than a fixed CSS-pixel size. */
-      edition.vars["--crt-cursor-url"] = crtCursorUrl(crtPalette.bright, crtCellPx);
-      edition.vars["--crt-cursor-hotspot"] = crtCellPx.toFixed(3) + " " + crtCellPx.toFixed(3);
+      /* The pointer is built from square cells like the rest of the signal,
+         but stays sized in whole CSS pixels (crtCellScale alone, no DPR
+         division): --crt-cell's sub-CSS-pixel size is right for a repeating
+         scanline texture but would shrink an interactive pointer to an
+         illegible 8px on most retina displays. shape-rendering: crispEdges
+         already keeps its edges crisp at whatever the real screen density is. */
+      edition.vars["--crt-cursor-url"] = crtCursorUrl(crtPalette.bright, crtCellScale);
+      edition.vars["--crt-cursor-hotspot"] = crtCellScale + " " + crtCellScale;
       /* The CRT is a physical-pixel treatment, so its source geometry stays on
          whole CSS pixels before the one-device-pixel grille is applied. */
       edition.vars["--appearance-display-size"] = "60px";
