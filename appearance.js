@@ -381,22 +381,22 @@
     };
   }
 
-  function enoColor(random, hue, contrast) {
+  function enoColor(random, hue, contrast, satRange) {
     var adjustedHue = Math.round((hue + range(random, -8, 8, 0) + 360) % 360);
-    var saturation = range(random, 50, 70, 0);
+    var saturation = range(random, satRange.min, satRange.max, 0);
     var lightness = range(random, contrast === "light" ? 64 : 18, contrast === "light" ? 80 : 30, 0);
     return "hsl(" + adjustedHue + " " + saturation + "% " + lightness + "%)";
   }
 
-  function enoColors(random, hues, contrast, phase) {
-    return hues.map(function (hue) {
-      return enoColor(random, hue + phase, contrast);
+  function enoColors(random, hues, contrast, phases, satRange) {
+    return hues.map(function (hue, i) {
+      return enoColor(random, hue + (phases ? phases[i] : 0), contrast, satRange);
     });
   }
 
   function enoGradient(colors, geometry) {
-    var ringStart = Math.min(geometry.coreR + geometry.feather * 0.5, geometry.haloR - 2);
-    var bgStart = Math.min(geometry.haloR + geometry.feather, 100);
+    var ringStart = Math.min(geometry.coreR + geometry.featherCore, geometry.haloR - 2);
+    var bgStart = Math.min(geometry.haloR + geometry.featherHalo, 100);
     return "radial-gradient(circle at " + geometry.x + "% " + geometry.y + "%, " +
       colors[0] + " 0%, " + colors[0] + " " + geometry.coreR + "%, " +
       colors[1] + " " + ringStart + "%, " + colors[1] + " " + geometry.haloR + "%, " +
@@ -530,13 +530,16 @@
         y: range(random, 38, 62, 0),
         coreR: range(random, 14, 24, 0),
         haloR: range(random, 46, 66, 0),
-        feather: range(random, 14, 26, 0)
+        featherCore: range(random, 6, 14, 0),
+        featherHalo: range(random, 8, 18, 0)
       };
-      var enoPhaseB = range(random, -24, 24, 0);
-      var enoPhaseC = range(random, -24, 24, 0);
-      var enoA = enoColors(random, enoHues, enoContrast, 0);
-      var enoB = enoColors(random, enoHues, enoContrast, enoPhaseB);
-      var enoC = enoColors(random, enoHues, enoContrast, enoPhaseC);
+      var enoSaturationCap = range(random, 40, 70, 0);
+      var enoSaturation = { min: Math.max(20, enoSaturationCap - 20), max: enoSaturationCap };
+      var enoPhaseB = enoHues.map(function () { return range(random, -24, 24, 0); });
+      var enoPhaseC = enoHues.map(function () { return range(random, -24, 24, 0); });
+      var enoA = enoColors(random, enoHues, enoContrast, null, enoSaturation);
+      var enoB = enoColors(random, enoHues, enoContrast, enoPhaseB, enoSaturation);
+      var enoC = enoColors(random, enoHues, enoContrast, enoPhaseC, enoSaturation);
       var enoPalette = enoContrast === "light"
         ? { bg: enoA[3], ink: "#191522", bright: "#09070d", muted: "#403748", faint: "#53475d", foot: "#53475d", accent: "hsl(" + enoHues[1] + " 55% 28%)", hair: "rgb(25 20 34 / 0.34)", rule: "rgb(25 20 34 / 0.28)", border: "rgb(25 20 34 / 0.38)", chip: "rgb(255 255 255 / 0.18)" }
         : { bg: enoA[3], ink: "#ece9f1", bright: "#ffffff", muted: "#d5cfdb", faint: "#bdb4c5", foot: "#bdb4c5", accent: "hsl(" + enoHues[1] + " 74% 80%)", hair: "rgb(255 255 255 / 0.30)", rule: "rgb(255 255 255 / 0.24)", border: "rgb(255 255 255 / 0.36)", chip: "rgb(0 0 0 / 0.16)" };
@@ -557,10 +560,10 @@
       var enoCycle = range(random, 180, 480, 0);
       edition.vars["--eno-cycle"] = enoCycle + "s";
       edition.vars["--eno-phase"] = -range(random, 0, enoCycle, 0) + "s";
-      edition.vars["--eno-softness"] = range(random, 14, 46, 0) + "px";
+      edition.vars["--eno-softness"] = range(random, 6, 18, 0) + "px";
       edition.vars["--eno-saturation"] = range(random, 0.88, 1, 2);
       edition.vars["--eno-diffusion"] = range(random, 0.05, 0.12, 2);
-      var enoHueCycle = range(random, 240, 720, 0);
+      var enoHueCycle = range(random, 120, 300, 0);
       edition.vars["--eno-hue-cycle"] = enoHueCycle + "s";
       edition.vars["--eno-hue-phase"] = -range(random, 0, enoHueCycle, 0) + "s";
       Object.assign(edition.vars, grainVars(random, grainBounds({
