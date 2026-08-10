@@ -160,6 +160,18 @@ html[data-look] body::before {
   100% { transform: translate3d(3%, 1%, 0); }
 }
 
+/* Shifting the tile itself keeps the 70mm grain alive without translating a
+   screen-blended layer. Safari can intermittently clip that transformed
+   layer to its backing-store bounds, exposing dead-black bands at the frame
+   edge on every animation step. */
+@keyframes appearance-film-grain-shift {
+  0% { background-position: 0 0; }
+  25% { background-position: -17px 11px; }
+  50% { background-position: 13px -19px; }
+  75% { background-position: -11px -13px; }
+  100% { background-position: 19px 7px; }
+}
+
 html[data-look="simple"] body::before { content: none; }
 
 /* Paper fibre belongs to the physical document rather than the viewport. This
@@ -991,13 +1003,9 @@ html[data-look="70mm"] .film-exposure::after {
      seeded size — only width was ever the failure mode. */
   background-size: min(var(--grain-size), 100%) var(--grain-size);
   filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
-  animation: appearance-grain-shift var(--grain-rate) steps(1) infinite;
-  /* No will-change here on purpose. It was added for a suspected compositor
-     seam, but the will-change + mix-blend-mode + steps() animation
-     combination is a known troublesome one in WebKit specifically, and later
-     evidence (same fault on desktop Safari, unaffected by blur/contain
-     changes) points at that combination rather than paint cost. Revisit only
-     with a confirmed repro. */
+  animation: appearance-film-grain-shift var(--grain-rate) steps(1) infinite;
+  /* Keep this paint-driven. Promoting or translating a screen-blended layer
+     reintroduces the WebKit backing-store clipping fixed above. */
 }
 
 html[data-look="70mm"] .name {
