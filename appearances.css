@@ -872,7 +872,10 @@ html[data-look="70mm"] .film-exposure {
 .film-gate {
   display: none;
   position: absolute;
-  z-index: 1;
+  /* The gate must sit above the complete exposure. Keeping it below the
+     content and surface grain leaves a sharp horizontal grain boundary even
+     though the emulsion beneath it is fading correctly. */
+  z-index: 7;
   inset: 0;
   pointer-events: none;
 }
