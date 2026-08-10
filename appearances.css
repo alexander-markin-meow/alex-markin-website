@@ -63,6 +63,7 @@ html[data-look] {
   --film-gate-line: calc(var(--film-gate-margin) + 1px);
   --film-gate-fall: 130px;
   --film-gate-fall-x: 60px;
+  --film-header-rebate: 13px;
   --film-perf-pitch: 44px;
   --film-perf-hole-width: 26px;
   --film-perf-hole-height: 18px;
@@ -848,7 +849,7 @@ html[data-look="70mm"] :is(.film-header-inner, .film-footer-inner) {
 
 html[data-look="70mm"] .film-header-inner {
   padding-top: max(12px, calc(env(safe-area-inset-top) + 12px));
-  padding-bottom: 28px;
+  padding-bottom: var(--film-header-rebate);
 }
 
 html[data-look="70mm"] .film-exposure {
@@ -872,9 +873,8 @@ html[data-look="70mm"] .film-exposure {
 .film-gate {
   display: none;
   position: absolute;
-  /* The gate must sit above the complete exposure. Keeping it below the
-     content and surface grain leaves a sharp horizontal grain boundary even
-     though the emulsion beneath it is fading correctly. */
+  /* The gate sits above the film surface but below semantic content. This
+     softens grain and damage at the frame edge without dimming the page. */
   z-index: 7;
   inset: 0;
   pointer-events: none;
@@ -903,7 +903,7 @@ html[data-look="70mm"] .film-gate {
 
 html[data-look="70mm"] .film-exposure-inner {
   position: relative;
-  z-index: 2;
+  z-index: 8;
   padding-top: 34px;
   padding-bottom: 46px;
   /* Give the actual content its own stable compositor layer via a static 3D

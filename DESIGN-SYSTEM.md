@@ -300,7 +300,9 @@ Seven appearances have equal default probability:
   Every seed independently chooses one restrained tungsten, warm-print, or silver palette; one
   serif from Source Serif 4, Cormorant Garamond, or Georgia; one mono from IBM Plex Mono, Courier
   Prime, or Roboto Mono; and one of three readable serif/mono role assignments that always uses
-  both voices. Page width, spacing, display scale, grain, vignette, bloom, red halation radius,
+  both voices. The upper-stock rebate between the appearance controls and the perforation strip
+  varies from `8–18px`, keeping the film compact while avoiding a mechanically fixed join. Page
+  width, spacing, display scale, grain, vignette, bloom, red halation radius,
   gate falloff distance, perforation pitch, hole geometry, edge halo, leak/streak/stain placement
   and count, scratch count and placement, dust density, and image development vary inside bounded
   brackets. Bright display elements receive a quiet white bloom; link hover/focus and utility-button

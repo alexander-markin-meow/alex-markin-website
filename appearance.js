@@ -615,6 +615,7 @@
       edition.vars["--film-perf-edge"] = film.edge;
       edition.vars["--film-gate-fall"] = range(random, 96, 160, 0) + "px";
       edition.vars["--film-gate-fall-x"] = range(random, 40, 88, 0) + "px";
+      edition.vars["--film-header-rebate"] = range(random, 8, 18, 0) + "px";
       Object.assign(edition.vars, perfHoleVars(random, film.edge));
       edition.vars["--film-perf-halo-blur"] = range(random, 5, 9, 1) + "px";
       edition.vars["--film-perf-halo-opacity"] = range(random, 0.1, 0.24, 2);
