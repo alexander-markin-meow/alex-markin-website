@@ -8,6 +8,7 @@
 
 ## selected work
 
+- [coffee recipes](https://alex-markin.com/coffee): working recipes kept by alex as a specialty coffee barista at darcy's kaffe in copenhagen
 - [webdesign trials](https://alex-markin.com/trials/): studies in texture, motion, display, and pointer effects
 - [louppe app](https://louppe.eu/): free, open-source, keyboard-first photo and video culler for macOS
 - [new york times summer reading contest winner](https://www.nytimes.com/2025/06/24/learning/the-authoritarian-playbook-is-always-the-same-the-week-1-winner-of-our-summer-reading-contest.html): “the authoritarian playbook is always the same”

@@ -121,6 +121,30 @@
     document.body.appendChild(albumFeed);
   }
 
+  // Selected internal routes carry the active generated edition with them.
+  // Watching the root keeps their URLs current after the homepage control
+  // composes a new look without reloading the document.
+  function syncAppearanceLinks() {
+    var root = document.documentElement;
+    var look = root.getAttribute("data-look");
+    var seed = root.getAttribute("data-edition-seed");
+    if (!look || !seed) return;
+    document.querySelectorAll("a[data-preserve-appearance]").forEach(function (link) {
+      var url = new URL(link.getAttribute("href"), window.location.href);
+      url.searchParams.set("look", look);
+      url.searchParams.set("seed", seed);
+      link.href = url.pathname + url.search + url.hash;
+    });
+  }
+
+  syncAppearanceLinks();
+  if (window.MutationObserver) {
+    new MutationObserver(syncAppearanceLinks).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-look", "data-edition-seed"]
+    });
+  }
+
   // Build the Markdown from the page's semantic HTML at click time, so edits
   // to the page content are automatically reflected in the copied version.
   var copyButton = document.querySelector("[data-copy-markdown]");
@@ -130,7 +154,7 @@
         if (node.nodeType === Node.TEXT_NODE) return node.textContent;
         if (node.nodeType !== Node.ELEMENT_NODE) return "";
         // machine-voice annotations are re-attached by the caller, never inlined
-        if (node.matches(".leader, .ago, .clock, .tag, .dates")) return "";
+        if (node.matches(".leader, .ago, .clock, .tag, .dates, .measure")) return "";
         if (node.tagName === "A") {
           var label = node.textContent.trim();
           // an anchor without href resolves to the current page, which would
@@ -150,7 +174,7 @@
 
     function pageMarkdown() {
       var lines = [];
-      var intro = document.querySelector(".intro");
+      var intro = document.querySelector(".intro, .catalogue-header");
       var title = intro ? intro.querySelector(".name") : document.querySelector(".columns h1");
       var tagline = intro && intro.querySelector(".tagline");
       var meta = intro && intro.querySelector(".meta");
@@ -188,8 +212,8 @@
           var row = item.matches(".row") ? item : item.querySelector(":scope > .row");
           if (!row) return;
           var link = row.querySelector("a");
-          // a row is annotated on the right by either a tag or a date range
-          var tag = row.querySelector(".tag") || row.querySelector(".dates");
+          // rows may be annotated by a category, date range, or recipe measure
+          var tag = row.querySelector(".tag") || row.querySelector(".dates") || row.querySelector(".measure");
           var desc = item.querySelector(":scope > .desc");
           var notes = item.querySelector(":scope > .notes");
           var text = link && link.getAttribute("href")
@@ -205,6 +229,17 @@
             });
           }
         });
+
+        var recipeMethod = section.querySelector(":scope > .recipe-method");
+        if (recipeMethod) {
+          lines.push("", "### method", "");
+          recipeMethod.querySelectorAll(":scope > li").forEach(function (step, index) {
+            push(lines, (index + 1) + ". ", inlineMarkdown(step));
+          });
+        }
+
+        var recipeNote = section.querySelector(":scope > .recipe-note");
+        if (recipeNote) push(lines, "", inlineMarkdown(recipeNote));
       });
 
       var updated = document.querySelector(".footer > .footer-date");

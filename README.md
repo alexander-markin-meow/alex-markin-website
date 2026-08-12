@@ -4,6 +4,7 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 
 ## Files
 - `index.html` — page content and structure
+- `coffee.html` — alex's specialty coffee recipes; inherits the active homepage look and seed
 - `louppe/` — legacy redirect to the standalone site at `louppe.eu`
 - `trials/` — the site-native trials index and immersive webdesign experiments
 - `styles.css` — all styling; everything derives from the tokens at the top
@@ -28,6 +29,9 @@ All the specifics — color tokens, type scale, layout grid, and the signature l
 pattern (title, dotted leader, mono tag) — live in `DESIGN-SYSTEM.md`. Don't add new
 fonts, hues, or font sizes outside that spec, and extend `styles.css` via its tokens
 rather than hard-coding values or using inline styles.
+
+The homepage and coffee page share the seeded appearance composer. Their links carry the active
+look and seed in both directions, so moving between the profile and recipes preserves one edition.
 
 The trials index uses the main site system. Individual experiments use the scoped
 `trials/_shared/trial.css` and `trial-ui.js` layer so their full-screen rendering and

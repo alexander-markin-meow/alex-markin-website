@@ -1,4 +1,4 @@
-/* Generative homepage appearance composer.
+/* Seeded appearance composer for the homepage and coffee catalogue.
    Runs before CSS paints, so every edition arrives fully composed. */
 (function () {
   var root = document.documentElement;

@@ -1,7 +1,8 @@
 # alex-markin.com design system
 
 Quiet, typographic, and lowercase, with subtle web-1.0 details. The homepage is a seeded
-generative edition; all other standard pages use its original dark serif/mono appearance.
+generative edition; the coffee page inherits that exact edition during navigation, while all
+other standard pages use the original dark serif/mono appearance.
 Static HTML + CSS, no build step.
 This file is the source of truth. If you (human or LLM) are editing the site, read this first;
 every visual decision below is deliberate.
@@ -139,6 +140,17 @@ below, then optional detail lines. Used by both `experience` and `education`.
 - A `.row` does not need a link. Without one it simply loses the full-row hit area —
   used by the cv `skills` list, where the row is a statement, not a destination.
 
+### recipe (`coffee.html`)
+Recipe sections keep a single reading column and use the standard heading, tagline, and dotted
+rows. A `.measure` occupies the right-hand annotation slot for a free-form quantity or brewer
+value; unlike `.tag`, it may contain several words, and unlike `.dates`, it does not imply a
+date range.
+
+Methods use `.recipe-method`, a semantic ordered list in reading text with small mono numerals.
+Timed steps may begin with `.recipe-time`. A closing `.recipe-note` uses description text and a
+mono `.recipe-note-label`. These patterns follow the active appearance and are recognized by
+`copy as markdown`.
+
 ### section
 ```html
 <section>
@@ -219,11 +231,16 @@ radius, and grayscale treatment.
 Not allowed: bevels, marquees, animated gifs, table layouts, coloured link-visited states,
 under-construction banners. The nostalgia is a seasoning, not the dish.
 
-## generative homepage appearances
+## seeded appearances
 
-The homepage separates content from presentation. `index.html` remains the single semantic
-content source. `appearance.js` composes an edition before CSS paints, and `appearances.css`
-renders it. Do not duplicate, reorder, or rewrite content for an appearance.
+The homepage separates content from presentation. `appearance.js` composes an edition before CSS
+paints, and `appearances.css` renders it. `/coffee` loads the same composer and presentation layer
+around its own semantic content. Do not duplicate, reorder, or rewrite content for an appearance.
+
+Links between `/` and `/coffee` carry the active `look` and `seed` query parameters through
+`data-preserve-appearance`; `site.js` keeps those URLs in sync whenever the homepage generates a
+new edition. A direct visit to `/coffee` generates a fresh edition, and its return link carries
+that edition home. The manual appearance control remains on the homepage only.
 
 Seven appearances have equal default probability:
 
@@ -422,6 +439,9 @@ use per-file color edits or change image-frame geometry for a look.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
+- `/coffee` → `coffee.html` — a narrow catalogue of alex's working coffee recipes and barista
+  context. Reachable from the homepage projects list via the `brew` tag; it preserves the
+  homepage's active appearance and seed in both navigation directions.
 - `/louppe/` → `louppe/index.html` — legacy redirect to the standalone louppe site at
   `https://louppe.eu/`. The homepage project entry links directly to the new domain.
 - `/trials/` → `trials/index.html` — a standalone, one-column catalogue of interactive

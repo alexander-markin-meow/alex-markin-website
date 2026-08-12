@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Generative homepage appearances
-   The content and shared structure remain in index.html + styles.css.
+   Seeded appearances shared by the homepage and coffee catalogue
+   Content remains semantic in each page; structure comes from styles.css.
    appearance.js chooses only the bounded tokens defined by the design system.
    ========================================================================== */
 
@@ -234,12 +234,16 @@ html[data-look] .leader {
   min-width: 24px;
 }
 
-html[data-look] :is(.heading, .meta, .tag, .ago, .dates, .footer, .appearance-control),
+html[data-look] :is(.heading, .recipe-subheading, .meta, .tag, .ago, .dates, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control),
 html[data-look] :is(a[target="_blank"]:not(.flickr-photo-link), .internal-link)::after {
   font-family: var(--appearance-annotation-family);
 }
 
-/* Homepage text links answer through each edition's palette. Keep the response
+html[data-look] .recipe-method li::marker {
+  font-family: var(--appearance-annotation-family);
+}
+
+/* Generated-page text links answer through each edition's palette. Keep the response
    typographic: the page already contains enough leader lines and rules. */
 html[data-look] a:not(.flickr-photo-link) {
   transition: color 0.15s ease, box-shadow 0.15s ease, text-shadow 0.18s ease;
@@ -456,23 +460,23 @@ html[data-look="paper"] .name {
   letter-spacing: -0.035em;
 }
 
-html[data-look="paper"] :is(.heading, .meta, .tag, .ago, .dates, .footer, .appearance-control) {
+html[data-look="paper"] :is(.heading, .recipe-subheading, .meta, .tag, .ago, .dates, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control) {
   letter-spacing: 0.035em;
 }
 
-html[data-look="paper"] .heading {
+html[data-look="paper"] :is(.heading, .recipe-subheading) {
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
 }
 
-html[data-look="paper"][data-paper-heading="small-caps"] .heading {
+html[data-look="paper"][data-paper-heading="small-caps"] :is(.heading, .recipe-subheading) {
   font-variant-caps: all-small-caps;
   font-size: 15px;
   letter-spacing: 0.08em;
 }
 
-html[data-look="paper"][data-paper-heading="italic"] .heading {
+html[data-look="paper"][data-paper-heading="italic"] :is(.heading, .recipe-subheading) {
   font-style: italic;
   font-weight: 500;
   letter-spacing: 0.015em;
@@ -776,7 +780,7 @@ html[data-look="eno"] .name {
   text-transform: uppercase;
 }
 
-html[data-look="eno"] .heading {
+html[data-look="eno"] :is(.heading, .recipe-subheading) {
   font-family: var(--appearance-display-family);
   font-size: 11.5px;
   font-weight: 600;
@@ -786,7 +790,7 @@ html[data-look="eno"] .heading {
 
 html[data-look="eno"] .tagline { letter-spacing: 0.015em; }
 
-html[data-look="eno"] :is(.meta, .tag, .ago, .dates, .footer, .appearance-control) {
+html[data-look="eno"] :is(.meta, .tag, .ago, .dates, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control) {
   letter-spacing: 0.105em;
 }
 
@@ -841,6 +845,10 @@ html[data-look="70mm"] :is(.film-header-inner, .film-exposure-inner, .film-foote
   margin-inline: auto;
   padding-inline: max(48px, calc(env(safe-area-inset-left) + 48px));
   padding-right: max(48px, calc(env(safe-area-inset-right) + 48px));
+}
+
+html[data-look="70mm"] .page--narrow :is(.film-header-inner, .film-exposure-inner, .film-footer-inner) {
+  max-width: var(--page-narrow);
 }
 
 html[data-look="70mm"] :is(.film-header-inner, .film-footer-inner) {
@@ -1019,7 +1027,7 @@ html[data-look="70mm"] .name {
     0 0 var(--film-bloom-radius) color-mix(in srgb, var(--ink-bright) 28%, transparent);
 }
 
-html[data-look="70mm"] .heading {
+html[data-look="70mm"] :is(.heading, .recipe-subheading) {
   font-family: var(--appearance-display-family);
   font-size: 13px;
   font-weight: 600;
@@ -1027,7 +1035,7 @@ html[data-look="70mm"] .heading {
   text-shadow: 0 0 var(--film-bloom-radius) color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
-html[data-look="70mm"] :is(.meta, .tag, .ago, .dates, .footer, .appearance-control) {
+html[data-look="70mm"] :is(.meta, .tag, .ago, .dates, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control) {
   letter-spacing: 0.055em;
 }
 
@@ -1434,23 +1442,23 @@ html[data-look="crt"] .name {
   text-transform: uppercase;
 }
 
-html[data-look="crt"] .heading {
+html[data-look="crt"] :is(.heading, .recipe-subheading) {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
-html[data-look="crt"] .desc { font-size: 21px; }
+html[data-look="crt"] :is(.desc, .recipe-method, .recipe-note) { font-size: 21px; }
 
-html[data-look="crt"] :is(.desc, .tagline, .tag, .ago, .meta, .footer, .appearance-control) {
+html[data-look="crt"] :is(.desc, .tagline, .tag, .ago, .meta, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control) {
   font-weight: 500;
 }
 
-html[data-look="crt"] :is(.meta, .tag) { font-size: 16px; }
-html[data-look="crt"] .ago { font-size: 15px; }
+html[data-look="crt"] :is(.meta, .tag, .measure) { font-size: 16px; }
+html[data-look="crt"] :is(.ago, .recipe-time, .recipe-note-label) { font-size: 15px; }
 html[data-look="crt"] :is(.footer, .appearance-control) { font-size: 15px; }
-html[data-look="crt"] :is(.meta, .tag, .ago, .footer, .appearance-control) { letter-spacing: 1px; }
+html[data-look="crt"] :is(.meta, .tag, .ago, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control) { letter-spacing: 1px; }
 
 /* Photographs use a genuinely low-resolution source inside their unchanged
    frames; nearest-neighbour expansion makes the portrait share the same cells
@@ -1552,20 +1560,20 @@ html[data-look="terminal"] .name {
   letter-spacing: var(--terminal-name-spacing);
 }
 
-html[data-look="terminal"] .heading {
+html[data-look="terminal"] :is(.heading, .recipe-subheading) {
   font-weight: 500;
   letter-spacing: var(--terminal-heading-spacing);
 }
 
-html[data-look="terminal"] .heading::before {
+html[data-look="terminal"] :is(.heading, .recipe-subheading)::before {
   display: inline-block;
   margin-right: 0.55em;
   color: var(--faint);
 }
 
-html[data-look="terminal"][data-terminal-prompt="tilde"] .heading::before { content: "~/"; }
-html[data-look="terminal"][data-terminal-prompt="dot"] .heading::before { content: "./"; }
-html[data-look="terminal"][data-terminal-prompt="chevron"] .heading::before { content: ">"; }
+html[data-look="terminal"][data-terminal-prompt="tilde"] :is(.heading, .recipe-subheading)::before { content: "~/"; }
+html[data-look="terminal"][data-terminal-prompt="dot"] :is(.heading, .recipe-subheading)::before { content: "./"; }
+html[data-look="terminal"][data-terminal-prompt="chevron"] :is(.heading, .recipe-subheading)::before { content: ">"; }
 
 html[data-look="terminal"] .leader { border-bottom-style: solid; }
 

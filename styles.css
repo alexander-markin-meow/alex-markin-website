@@ -303,6 +303,67 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
 
 .notes li { margin: 2px 0; }
 
+/* --------------------------------------------------------------------------
+   recipes (coffee.html)
+   -------------------------------------------------------------------------- */
+
+/* Free-form quantities use the annotation voice without pretending to be
+   categorical one-word tags or date ranges. */
+.measure {
+  font-family: var(--mono);
+  font-size: var(--fs-tag);
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.recipe > .tagline { margin-bottom: 14px; }
+
+.recipe-specs { margin-bottom: 18px; }
+
+.recipe-subheading {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: var(--fs-heading);
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.recipe-method {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 2.25em;
+  font-size: var(--fs-desc);
+}
+
+.recipe-method li { padding-left: 0.35em; }
+
+.recipe-method li::marker {
+  font-family: var(--mono);
+  font-size: var(--fs-tag);
+  color: var(--faint);
+}
+
+.recipe-time,
+.recipe-note-label {
+  font-family: var(--mono);
+  font-size: var(--fs-tag);
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.recipe-time { margin-right: 0.45em; }
+
+.recipe-note {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: var(--fs-desc);
+}
+
+.recipe-note-label { margin-right: 0.55em; }
+
 /* latest photo from the curated flickr album; the whole section stays hidden
    until the feed has supplied a valid image and link */
 .flickr-photo { margin: 0; }
