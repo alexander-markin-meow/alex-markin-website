@@ -509,7 +509,7 @@
         { body: fontSerif, display: fontSans, annotation: fontSerif, displayWeight: 700, headingWeight: 700, nameSpacing: "-0.04em", nameLine: 0.97, lineHeight: 1.62 },
         { body: fontSans, display: fontMono, annotation: fontMono, displayWeight: 600, headingWeight: 600, nameSpacing: "-0.025em", nameLine: 1, lineHeight: 1.58 },
         { body: fontSerif, display: fontMono, annotation: fontMono, displayWeight: 600, headingWeight: 600, nameSpacing: "-0.02em", nameLine: 1, lineHeight: 1.64 },
-        { body: fontMono, display: fontSerif, annotation: fontMono, displayWeight: 600, headingWeight: 600, nameSpacing: "-0.025em", nameLine: 0.98, lineHeight: 1.68 }
+        { body: fontMono, display: fontSans, annotation: fontMono, displayWeight: 600, headingWeight: 600, nameSpacing: "-0.025em", nameLine: 0.98, lineHeight: 1.68 }
       ]);
       edition.vars["--appearance-body-family"] = blobType.body;
       edition.vars["--appearance-display-family"] = blobType.display;
@@ -627,7 +627,7 @@
       var filmMono = pick(random, filmMonos);
       var filmType = pick(random, [
         { body: filmSerif, display: filmMono, annotation: filmMono, displayWeight: 500, bodyWeight: 400, nameSpacing: "0.012em", lineHeight: 1.62 },
-        { body: filmMono, display: filmSerif, annotation: filmMono, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.025em", lineHeight: 1.66 },
+        { body: filmSerif, display: filmMono, annotation: filmSerif, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.025em", lineHeight: 1.66 },
         { body: filmSerif, display: filmSerif, annotation: filmMono, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.03em", lineHeight: 1.64 }
       ]);
       edition.vars = paletteVars(film);
@@ -637,7 +637,7 @@
       edition.vars["--appearance-display-weight"] = filmType.displayWeight;
       edition.vars["--appearance-body-weight"] = filmType.bodyWeight;
       edition.vars["--appearance-display-size"] = pick(random, ["46px", "50px", "54px"]);
-      edition.vars["--appearance-body-size"] = pick(random, filmType.body === filmMono ? ["16px", "16.5px", "17px"] : ["16.5px", "17px", "17.5px"]);
+      edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "17.5px"]);
       edition.vars["--appearance-line-height"] = filmType.lineHeight;
       edition.vars["--film-name-spacing"] = filmType.nameSpacing;
       edition.vars["--page-max"] = canvasWidth(random);
