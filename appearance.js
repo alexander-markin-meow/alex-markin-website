@@ -628,7 +628,7 @@
       var filmType = pick(random, [
         { body: filmSerif, display: filmMono, annotation: filmMono, displayWeight: 500, bodyWeight: 400, nameSpacing: "0.012em", lineHeight: 1.62 },
         { body: filmSerif, display: filmMono, annotation: filmSerif, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.025em", lineHeight: 1.66 },
-        { body: filmSerif, display: filmSerif, annotation: filmMono, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.03em", lineHeight: 1.64 }
+        { body: filmSerif, display: filmMono, annotation: filmMono, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.03em", lineHeight: 1.64 }
       ]);
       edition.vars = paletteVars(film);
       edition.vars["--appearance-body-family"] = filmType.body;

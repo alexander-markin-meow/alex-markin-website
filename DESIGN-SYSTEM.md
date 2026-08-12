@@ -266,11 +266,9 @@ keeps its perforation/gate boundaries instead of generic rules; CRT chooses eith
 rules or a coarser two-pixel block signal; terminal pairs its existing prompt with a solid, dotted,
 or dashed command-line grammar and matching square utilities.
 
-Across every appearance, a serif display or section heading is allowed only when the body is also
-serif. A serif body may still pair with a non-serif display or heading; this keeps the contrast
-intentional without placing an editorial header over a technical or sans reading voice.
-Only `paper` may use serif for body, display, and annotation together; every other appearance
-retains at least one non-serif voice.
+Only `paper` uses serif display or section headings, and it alone may use serif for body,
+display, and annotation together. Every other appearance keeps headers sans or mono; a serif
+body may still pair with that non-serif header voice.
 
 - `smpl` (`simple` internally) — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
@@ -287,8 +285,8 @@ retains at least one non-serif voice.
   vellum receives larger pulp variation and watercolour the strongest shallow relief.
 - `blob` (`blobs` internally) — bold type over 3–5 diffuse color fields. Each edition selects
   one readability-tested pairing from sans, Source Serif, and IBM Plex Mono; body, display,
-  and annotations may vary, but no edition contains more than two font families, and a serif
-  display is only paired with a serif body. Its accent is
+  and annotations may vary, but no edition contains more than two font families; its headers are
+  always sans or mono. Its accent is
   independently chosen from readable violet, blue, mint, coral, rose, gold, or sage families.
   Every blob
   independently varies in hue, saturation, lightness, opacity, size, blur, and autonomous
@@ -345,8 +343,8 @@ retains at least one non-serif voice.
   semantic content; no image layer, grain, or light leak may enter the stock regions or overscroll.
   Every seed independently chooses one restrained tungsten, warm-print, or silver palette; one
   serif from Source Serif 4, Cormorant Garamond, or Georgia; one mono from IBM Plex Mono, Courier
-  Prime, or Roboto Mono; and one of three readable serif/mono role assignments that always uses
-  both voices. The upper-stock rebate between the appearance controls and the perforation strip
+  Prime, or Roboto Mono; and one of three readable presets that keep the body serif and the
+  display and section headings mono. The upper-stock rebate between the appearance controls and the perforation strip
   varies from `8–18px`, keeping the film compact while avoiding a mechanically fixed join. Page
   width, spacing, display scale, grain, vignette, bloom, red halation radius,
   gate falloff distance, perforation pitch, hole geometry, edge halo, leak/streak/stain placement
