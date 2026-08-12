@@ -483,9 +483,14 @@ html[data-look] .leader {
   border-bottom-color: color-mix(in srgb, var(--hairline) var(--edition-leader-opacity), transparent);
 }
 
-html[data-look] :is(.appearance-control, .footer) {
-  border-style: var(--edition-divider-style);
-  border-color: color-mix(in srgb, var(--rule) var(--edition-divider-opacity), transparent);
+html[data-look] .appearance-control {
+  border-bottom-style: var(--edition-divider-style);
+  border-bottom-color: color-mix(in srgb, var(--rule) var(--edition-divider-opacity), transparent);
+}
+
+html[data-look] .footer {
+  border-top-style: var(--edition-divider-style);
+  border-top-color: color-mix(in srgb, var(--rule) var(--edition-divider-opacity), transparent);
 }
 
 html[data-look][data-utility-treatment="outline"] {
