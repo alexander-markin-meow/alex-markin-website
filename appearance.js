@@ -462,7 +462,7 @@
       edition.vars["--appearance-display-size"] = pick(random, ["44px", "48px", "52px"]);
       edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "18px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.7]);
-      edition.vars["--page-max"] = pick(random, ["760px", "840px", "920px"]);
+      edition.vars["--page-max"] = pick(random, ["1180px", "1240px", "1300px"]);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
       Object.assign(edition.vars, grainVars(random, grainBounds({

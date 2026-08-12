@@ -204,15 +204,22 @@ html[data-look] .page {
   padding-left: max(48px, calc(env(safe-area-inset-left) + 48px));
 }
 
-/* Homepage structure is responsive, never seeded: one column on compact
-   screens and exactly two once the viewport can hold the base grid measure.
-   Seeded page widths and gaps may vary, but cannot change the column count. */
+/* Homepage structure is responsive, never seeded: one column until the
+   viewport can hold two readable measures, then exactly two. Paper switches
+   later because its larger editorial type needs wider columns. Seeded page
+   widths and gaps may vary, but cannot change the column count. */
 html[data-look] .page--home .columns {
   grid-template-columns: minmax(0, 1fr);
 }
 
 @media (min-width: 840px) {
-  html[data-look] .page--home .columns {
+  html[data-look]:not([data-look="paper"]) .page--home .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1120px) {
+  html[data-look="paper"] .page--home .columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

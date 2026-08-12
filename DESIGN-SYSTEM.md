@@ -65,9 +65,10 @@ Scale (don't invent sizes; pick the closest):
   centers the portrait, name, tagline, and meta line as one stacked block at 640px and below.
 - `.columns`: CSS grid, `repeat(auto-fit, minmax(340px, 1fr))`, gap 44px 64px, for
   standard pages. New sections go inside `.columns` as another `<section>`.
-- The generative homepage adds `.page--home`: its column count is never seeded. It is exactly
-  one column below a fixed `840px` viewport breakpoint and exactly two columns at `840px` and
-  above. Appearances may still vary page width, column gap, and row gap, but never the count.
+- The generative homepage adds `.page--home`: its column count is never seeded. The six compact
+  appearances use one column below `840px` and exactly two above it. Paper keeps one column below
+  `1120px`, then exactly two, so its larger editorial type retains a readable measure. Appearances
+  may still vary page width, column gap, and row gap, but never the count at a given screen width.
 - Spacing rhythm: 48px between major blocks, 14px after headings, 8px between list rows,
   18px between publication entries.
 
@@ -253,7 +254,8 @@ Seven appearances have equal default probability:
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
   and spacing.
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
-  bounded ink temperature, scale, width, heading treatment, and rule style. Its generated
+  bounded ink temperature, scale, heading treatment, and rule style. Its wide-screen homepage
+  canvas stays within `1180–1300px`, keeping both columns comfortably readable. Its generated
   `feTurbulence` grain is always a top layer over the complete edition. A second, much lighter
   seeded SVG stock texture is chosen independently from three families: directional `laid`
   fibres, smooth `vellum` pulp, or softly lit `watercolour` tooth. An explicit layer follows the
