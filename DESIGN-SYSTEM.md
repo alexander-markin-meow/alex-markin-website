@@ -165,6 +165,10 @@ mono `.recipe-note-label`. These patterns follow the active appearance and are r
 </section>
 ```
 
+On the homepage, creative work is divided semantically into two separate sections: `projects`
+contains louppe, webdesign trials, and coffee recipes; `publications` contains the authored,
+edited, or filmed pieces. Do not merge these headings into one list.
+
 ### stacked sections in one column
 Two short sections sharing a single grid cell (e.g. contact above social).
 Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between them.
