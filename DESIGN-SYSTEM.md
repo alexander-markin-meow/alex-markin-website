@@ -68,7 +68,10 @@ Scale (don't invent sizes; pick the closest):
 - The generative homepage adds `.page--home`: its column count is never seeded. The six compact
   appearances use one column below `840px` and exactly two above it. Paper keeps one column below
   `1120px`, then exactly two, so its larger editorial type retains a readable measure. Appearances
-  may still vary page width, column gap, and row gap, but never the count at a given screen width.
+  may still vary column gap and row gap, but never the count at a given screen width.
+- Every homepage appearance draws its seeded canvas width from the same inclusive `950–1180px`
+  bracket. The generator may select any whole-pixel width inside it; no appearance owns a private
+  width range. Narrow viewports still cap the canvas naturally at the available screen width.
 - Spacing rhythm: 48px between major blocks, 14px after headings, 8px between list rows,
   18px between publication entries.
 
@@ -254,8 +257,7 @@ Seven appearances have equal default probability:
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
   and spacing.
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
-  bounded ink temperature, scale, heading treatment, and rule style. Its wide-screen homepage
-  canvas stays within `1180–1300px`, keeping both columns comfortably readable. Its generated
+  bounded ink temperature, scale, heading treatment, and rule style. Its generated
   `feTurbulence` grain is always a top layer over the complete edition. A second, much lighter
   seeded SVG stock texture is chosen independently from three families: directional `laid`
   fibres, smooth `vellum` pulp, or softly lit `watercolour` tooth. An explicit layer follows the
@@ -366,7 +368,7 @@ Seven appearances have equal default probability:
   DEC-inspired VT323, workstation-like Fira Mono, or modern-console Roboto Mono. The family,
   tuned size, weight, tracking, and line spacing vary together as a bounded preset rather than
   mixing faces inside one view. Quiet prompt prefixes, solid leaders, restrained green/blue/amber
-  palettes, slight grain, and a narrower reading measure vary independently. Fira Mono and
+  palettes, slight grain, and compact column spacing vary independently. Fira Mono and
   Roboto Mono use an `18–19px` body / `44–48px` display scale; VT323 uses a larger
   `20–22px` body / `54–62px` display scale to compensate for its raster-style x-height. Text
   links invert against the selected terminal accent on hover/focus, using a content-width

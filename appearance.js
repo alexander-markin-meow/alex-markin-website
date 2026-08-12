@@ -98,6 +98,10 @@
     return Number(value.toFixed(decimals || 0));
   }
 
+  function canvasWidth(random) {
+    return range(random, 950, 1180, 0) + "px";
+  }
+
   function hslToRgb(h, s, l) {
     var hue = ((h % 360) + 360) % 360;
     var sat = Math.min(Math.max(s, 0), 100) / 100;
@@ -446,7 +450,7 @@
       edition.vars = paletteVars(simple);
       edition.vars["--appearance-display-size"] = pick(random, ["42px", "44px", "46px"]);
       edition.vars["--appearance-body-size"] = pick(random, ["16px", "16.5px", "17px"]);
-      edition.vars["--page-max"] = pick(random, ["1120px", "1180px"]);
+      edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
       edition.vars["--gap-row"] = pick(random, ["40px", "44px", "48px"]);
@@ -462,7 +466,7 @@
       edition.vars["--appearance-display-size"] = pick(random, ["44px", "48px", "52px"]);
       edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "18px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.7]);
-      edition.vars["--page-max"] = pick(random, ["1180px", "1240px", "1300px"]);
+      edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
       Object.assign(edition.vars, grainVars(random, grainBounds({
@@ -526,7 +530,7 @@
       }
       edition.vars["--appearance-display-size"] = pick(random, ["44px", "49px", "54px"]);
       edition.vars["--appearance-body-size"] = pick(random, blobType.body === fontMono ? ["16px", "16.5px"] : ["15.5px", "16px", "17px"]);
-      edition.vars["--page-max"] = pick(random, ["1060px", "1120px", "1180px"]);
+      edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "390px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
       Object.assign(edition.vars, grainVars(random, grainBounds({
@@ -577,7 +581,7 @@
       edition.vars["--appearance-display-weight"] = pick(random, [500, 600]);
       edition.vars["--appearance-body-size"] = pick(random, ["15.5px", "16px", "16.5px"]);
       edition.vars["--appearance-line-height"] = pick(random, [1.58, 1.64, 1.7]);
-      edition.vars["--page-max"] = pick(random, ["1100px", "1160px", "1200px"]);
+      edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px", "64px"]);
       edition.vars["--eno-gradient-a"] = enoGradient(enoA, enoGeometry);
@@ -626,7 +630,7 @@
       edition.vars["--appearance-body-size"] = pick(random, filmType.body === filmMono ? ["16px", "16.5px", "17px"] : ["16.5px", "17px", "17.5px"]);
       edition.vars["--appearance-line-height"] = filmType.lineHeight;
       edition.vars["--film-name-spacing"] = filmType.nameSpacing;
-      edition.vars["--page-max"] = pick(random, ["1040px", "1120px", "1200px"]);
+      edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["370px", "390px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px", "64px"]);
       edition.vars["--gap-row"] = pick(random, ["42px", "46px", "50px"]);
@@ -768,7 +772,7 @@
       edition.vars["--appearance-display-size"] = "60px";
       edition.vars["--appearance-body-size"] = "22px";
       edition.vars["--appearance-line-height"] = 1.25;
-      edition.vars["--page-max"] = pick(random, ["1000px", "1100px", "1180px"]);
+      edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
       edition.vars["--crt-depth"] = range(random, 38, 54, 0);
@@ -841,7 +845,7 @@
       edition.vars["--terminal-display-weight"] = terminalType.displayWeight;
       edition.vars["--terminal-name-spacing"] = terminalType.nameSpacing;
       edition.vars["--terminal-heading-spacing"] = terminalType.headingSpacing;
-      edition.vars["--page-max"] = pick(random, ["900px", "1000px", "1100px"]);
+      edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
       Object.assign(edition.vars, grainVars(random, grainBounds({
