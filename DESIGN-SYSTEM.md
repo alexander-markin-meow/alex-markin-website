@@ -1,8 +1,8 @@
 # alex-markin.com design system
 
-Quiet, typographic, and lowercase, with subtle web-1.0 details. The homepage is a seeded
-generative edition; the coffee page inherits that exact edition during navigation, while all
-other standard pages use the original dark serif/mono appearance.
+Quiet, typographic, and lowercase, with subtle web-1.0 details. The homepage and coffee page
+share one seeded generative edition for the current browsing session; all other standard pages
+use the original dark serif/mono appearance.
 Static HTML + CSS, no build step.
 This file is the source of truth. If you (human or LLM) are editing the site, read this first;
 every visual decision below is deliberate.
@@ -237,10 +237,13 @@ The homepage separates content from presentation. `appearance.js` composes an ed
 paints, and `appearances.css` renders it. `/coffee` loads the same composer and presentation layer
 around its own semantic content. Do not duplicate, reorder, or rewrite content for an appearance.
 
-Links between `/` and `/coffee` carry the active `look` and `seed` query parameters through
-`data-preserve-appearance`; `site.js` keeps those URLs in sync whenever the homepage generates a
-new edition. A direct visit to `/coffee` generates a fresh edition, and its return link carries
-that edition home. The manual appearance control remains on the homepage only.
+Both `/` and `/coffee` include the complete appearance control and every required visual layer.
+`appearance.js` stores the active look and seed in `sessionStorage`, so direct navigation,
+reloads, and unpinned back/forward history entries in the same tab restore one shared edition.
+Links between the pages also carry `look` and `seed` through `data-preserve-appearance`, which
+keeps new-tab navigation and explicitly shared URLs deterministic. Query parameters override the
+stored session edition. `site.js` refreshes the cross-page links whenever either page composes a
+new edition.
 
 Seven appearances have equal default probability:
 
@@ -393,9 +396,9 @@ terminal `0.030–0.055`.
 All random values are derived from one edition seed. `?seed=<value>` reproduces an edition;
 `?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases
 (`smpl`, `blob`, `70mm`, `>...`) and the existing internal names remain accepted so old links keep working.
-An ordinary load without these
-parameters generates a new seed. The first utility row on the homepage switches immediately,
-does not persist, and removes pinned parameters so the next reload is random again. Its reload
+The first unparameterized generative page loaded in a tab creates a new edition; subsequent
+homepage and coffee loads in that tab restore it. The first utility row on both pages switches
+immediately, saves the new edition for the current tab, and removes pinned parameters. Its reload
 glyph composes a new random appearance and edition without requiring a page refresh. The word
 `appearance` and the reload glyph are one compact outlined button, not separate controls. The
 control's top inset matches the footer's bottom inset. It and `copy as markdown` share the same
@@ -434,14 +437,14 @@ use per-file color edits or change image-frame geometry for a look.
 
 ## pages
 
-- `/` → `index.html` — the generative identity page. It alone loads `appearance.js` and
-  `appearances.css` and includes the manual appearance control.
+- `/` → `index.html` — the generative identity page. It loads the shared appearance composer,
+  visual layers, and manual control.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
 - `/coffee` → `coffee.html` — a narrow catalogue of alex's working coffee recipes and barista
-  context. Reachable from the homepage projects list via the `brew` tag; it preserves the
-  homepage's active appearance and seed in both navigation directions.
+  context. It includes the same composer, visual layers, and manual control as the homepage and
+  shares the active look and seed for the current browsing session.
 - `/louppe/` → `louppe/index.html` — legacy redirect to the standalone louppe site at
   `https://louppe.eu/`. The homepage project entry links directly to the new domain.
 - `/trials/` → `trials/index.html` — a standalone, one-column catalogue of interactive
@@ -488,9 +491,9 @@ recognizes either.
 Immersive experiments are the exception: their shared panel construction lives in
 `trials/_shared/trial-ui.js`, which is never loaded by standard site pages.
 
-Homepage appearance behaviour is a second deliberate exception: it lives in `appearance.js`
-because it must run synchronously in the document head before CSS paints. Do not merge it into
-the deferred shared behaviour in `site.js`.
+Generative-page appearance behaviour is a second deliberate exception: it lives in
+`appearance.js` because it must run synchronously in the document head before CSS paints. Do not
+merge it into the deferred shared behaviour in `site.js`.
 
 ## adding a new page
 
@@ -513,8 +516,9 @@ edit `styles.css`** (keep it in sync with the footer's `upd` date).
 Apply the same dated `?v=` convention to `trials/_shared/trial.css` and `trial-ui.js` on
 every immersive experiment page whenever either shared trial asset changes.
 
-The homepage additionally versions `appearance.js` and `appearances.css`. Bump each asset's
-own dated query whenever it changes; neither generative file belongs on the other pages.
+The homepage and coffee page additionally version `appearance.js` and `appearances.css`. Bump
+each asset's own dated query on both pages whenever it changes; neither generative file belongs
+on the other pages.
 The profile photograph uses the same dated query in the visible HTML and structured data; bump
 both occurrences together whenever `photo.jpg` is replaced. Social cards use the independent
 `social-preview.png` asset so its crop and typography can remain stable when the live portrait
@@ -531,4 +535,4 @@ top of the photograph. Version its Open Graph and X metadata URL independently w
   uppercase with CSS only.
 - Don't restyle with inline `style=""` attributes — extend `styles.css` via tokens.
 - Experimental gradients, colors, and motion are allowed inside immersive trial effects and the
-  documented generative homepage appearances only.
+  documented generative homepage and coffee appearances only.

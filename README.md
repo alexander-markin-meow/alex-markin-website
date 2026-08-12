@@ -30,8 +30,9 @@ pattern (title, dotted leader, mono tag) — live in `DESIGN-SYSTEM.md`. Don't a
 fonts, hues, or font sizes outside that spec, and extend `styles.css` via its tokens
 rather than hard-coding values or using inline styles.
 
-The homepage and coffee page share the seeded appearance composer. Their links carry the active
-look and seed in both directions, so moving between the profile and recipes preserves one edition.
+The homepage and coffee page share the complete seeded appearance system: composer, visual
+layers, controls, and status. The active look and seed are held for the current browsing session,
+while their cross-page links also carry the edition for deterministic navigation and sharing.
 
 The trials index uses the main site system. Individual experiments use the scoped
 `trials/_shared/trial.css` and `trial-ui.js` layer so their full-screen rendering and

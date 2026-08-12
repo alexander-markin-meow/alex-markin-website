@@ -57,6 +57,7 @@
   ];
   var appliedProperties = [];
   var currentEdition;
+  var editionStorageKey = "alex-markin:appearance";
 
   function hashSeed(value) {
     var h = 2166136261;
@@ -236,6 +237,31 @@
 
   function normalizeLook(value) {
     return lookAliases[value] || null;
+  }
+
+  /* The current tab owns one visual edition across the homepage and coffee.
+     Query parameters remain explicit overrides; session storage covers direct
+     navigation, reloads, and history traversal without persisting forever. */
+  function readStoredEdition() {
+    try {
+      var stored = JSON.parse(window.sessionStorage.getItem(editionStorageKey));
+      var look = stored && normalizeLook(stored.look);
+      var seed = stored && typeof stored.seed === "string" ? stored.seed : "";
+      return look && seed && seed.length <= 256 ? { look: look, seed: seed } : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function storeEdition(edition) {
+    try {
+      window.sessionStorage.setItem(editionStorageKey, JSON.stringify({
+        look: edition.look,
+        seed: edition.seed
+      }));
+    } catch (error) {
+      /* Storage may be unavailable; query-linked navigation still works. */
+    }
   }
 
   function blobColor(random, hue) {
@@ -887,6 +913,7 @@
       appliedProperties.push(name);
     });
     currentEdition = edition;
+    storeEdition(edition);
     updateControls();
     updateBlobMotion();
     updateParallax();
@@ -969,8 +996,11 @@
 
   var params = new URLSearchParams(window.location.search);
   var requestedLook = params.get("look");
-  var initialSeed = params.get("seed") || makeSeed();
-  apply(compose(initialSeed, requestedLook));
+  var requestedSeed = params.get("seed");
+  var storedEdition = !requestedLook && !requestedSeed ? readStoredEdition() : null;
+  var initialLook = requestedLook || (storedEdition && storedEdition.look);
+  var initialSeed = requestedSeed || (storedEdition && storedEdition.seed) || makeSeed();
+  apply(compose(initialSeed, initialLook));
 
   document.addEventListener("DOMContentLoaded", function () {
     var control = document.querySelector("[data-appearance-control]");
@@ -1000,6 +1030,24 @@
     }
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(updateDocumentLayerSize);
+    }
+  });
+
+  /* A page restored from the back-forward cache may hold the edition it had
+     before the visitor changed the other page. Unpinned history entries catch
+     up to the tab's current edition; explicit look/seed URLs stay authoritative. */
+  window.addEventListener("pageshow", function (event) {
+    if (!event.persisted) return;
+    var restoredParams = new URLSearchParams(window.location.search);
+    var restoredLook = restoredParams.get("look");
+    var restoredSeed = restoredParams.get("seed");
+    var restoredEdition = !restoredLook && !restoredSeed ? readStoredEdition() : null;
+    var nextLook = restoredLook || (restoredEdition && restoredEdition.look);
+    var nextSeed = restoredSeed || (restoredEdition && restoredEdition.seed);
+    if (!nextLook || !nextSeed) return;
+    if (!currentEdition || currentEdition.look !== normalizeLook(nextLook) || currentEdition.seed !== nextSeed) {
+      apply(compose(nextSeed, nextLook));
+      updateDocumentLayerSize();
     }
   });
 })();

@@ -340,7 +340,7 @@ html[data-look="70mm"] {
 }
 
 /* --------------------------------------------------------------------------
-   appearance control — temporary manual choice, random again on reload
+   appearance control — shared manual choice for the current browsing session
    -------------------------------------------------------------------------- */
 
 .appearance-control {
