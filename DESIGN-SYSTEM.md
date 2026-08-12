@@ -63,9 +63,11 @@ Scale (don't invent sizes; pick the closest):
   a single reading or catalogue column that should not stretch across a wide display.
 - On the homepage and cv, the identity header keeps its side-by-side desktop layout, then
   centers the portrait, name, tagline, and meta line as one stacked block at 640px and below.
-- `.columns`: CSS grid, `repeat(auto-fit, minmax(340px, 1fr))`, gap 44px 64px.
-  Columns collapse to a single stack below ~750px automatically — no media query needed.
-  New sections go inside `.columns` as another `<section>`; the grid handles placement.
+- `.columns`: CSS grid, `repeat(auto-fit, minmax(340px, 1fr))`, gap 44px 64px, for
+  standard pages. New sections go inside `.columns` as another `<section>`.
+- The generative homepage adds `.page--home`: its column count is never seeded. It is exactly
+  one column below a fixed `840px` viewport breakpoint and exactly two columns at `840px` and
+  above. Appearances may still vary page width, column gap, and row gap, but never the count.
 - Spacing rhythm: 48px between major blocks, 14px after headings, 8px between list rows,
   18px between publication entries.
 
@@ -413,9 +415,10 @@ Every text link on the generative homepage changes tone or color on hover/focus;
 underlines or baseline effects because the layout already uses leader lines and rules. Image links
 answer with an accent border. CRT uses a phosphor selection block, Terminal uses a clean selection
 inversion, Blob adds its documented seed-colored bloom, and 70mm uses red halation.
-The blob layer never contains content. Generated columns use an appearance-aware minimum width;
-long rows may wrap instead of clipping, and the display name scales against its actual identity
-text container so it remains on one line. The homepage uses `viewport-fit=cover`: visual layers
+The blob layer never contains content. The homepage column count follows the fixed responsive
+rule above; seeded widths and gaps may change the available measure, so long rows may wrap instead
+of clipping. The display name scales against its actual identity text container so it remains on
+one line. The homepage uses `viewport-fit=cover`: visual layers
 paint through mobile safe areas, while page padding incorporates every safe-area inset so content
 remains clear of device controls. The root and `theme-color` remain pure black as a browser-owned
 outer frame; Safari may tint its translucent URL controls from this color, but the page cannot

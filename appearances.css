@@ -204,6 +204,19 @@ html[data-look] .page {
   padding-left: max(48px, calc(env(safe-area-inset-left) + 48px));
 }
 
+/* Homepage structure is responsive, never seeded: one column on compact
+   screens and exactly two once the viewport can hold the base grid measure.
+   Seeded page widths and gaps may vary, but cannot change the column count. */
+html[data-look] .page--home .columns {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 840px) {
+  html[data-look] .page--home .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 html[data-look] .name {
   font-family: var(--appearance-display-family);
   font-size: clamp(var(--appearance-display-mobile), 12cqi, var(--appearance-display-size));
