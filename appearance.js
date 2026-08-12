@@ -51,9 +51,9 @@
     eno: "eno", "70mm": "70mm", film: "70mm", crt: "crt", terminal: "terminal", ">...": "terminal"
   };
   var appearanceAttributes = [
-    "data-look", "data-edition-seed", "data-paper-rule", "data-paper-heading", "data-paper-texture", "data-blob-layout",
+    "data-look", "data-edition-seed", "data-rule-style", "data-utility-treatment", "data-paper-heading", "data-paper-texture", "data-blob-layout",
     "data-blob-count", "data-blob-mobile-extra", "data-eno-composition", "data-eno-contrast",
-    "data-film-tone", "data-film-streaks", "data-film-stains", "data-film-scratches", "data-terminal-prompt"
+    "data-film-tone", "data-film-streaks", "data-film-stains", "data-film-scratches", "data-crt-signal", "data-terminal-prompt"
   ];
   var appliedProperties = [];
   var currentEdition;
@@ -411,6 +411,17 @@
     };
   }
 
+  /* Rules are one piece of an edition's voice, never an arbitrary decoration
+     on individual rows. The selected grammar is shared by leaders, the top
+     control divider, and the footer; its two compact utilities echo it. */
+  function applyRuleGrammar(edition, random, variants) {
+    var grammar = pick(random, variants);
+    edition.attrs["data-rule-style"] = grammar.rule;
+    edition.attrs["data-utility-treatment"] = grammar.utility;
+    edition.vars["--edition-divider-opacity"] = range(random, 82, 100, 0) + "%";
+    edition.vars["--edition-leader-opacity"] = range(random, 76, 100, 0) + "%";
+  }
+
   function enoColor(random, hue, contrast, satRange) {
     var adjustedHue = Math.round((hue + range(random, -8, 8, 0) + 360) % 360);
     var saturation = range(random, satRange.min, satRange.max, 0);
@@ -475,7 +486,6 @@
       var paperTexture = paperTextureVars(random);
       Object.assign(edition.vars, paperTexture.vars);
       edition.attrs["data-paper-texture"] = paperTexture.type;
-      edition.attrs["data-paper-rule"] = pick(random, ["solid", "dotted"]);
       edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
       Object.assign(edition.vars, imageVars(random, {
         contrast: [1.1, 1.28], brightness: [0.98, 1.08], opacity: [0.86, 0.95]
@@ -855,6 +865,61 @@
       Object.assign(edition.vars, imageVars(random, {
         contrast: [1.08, 1.24], brightness: [0.92, 1.04], opacity: [0.9, 0.97]
       }));
+    }
+
+    /* Compose the rule system after each medium has made its other choices.
+       This preserves the established seed sequence for its palette, type,
+       image, and atmosphere while adding one coherent editorial layer. */
+    if (look === "simple") {
+      applyRuleGrammar(edition, random, [
+        { rule: "dotted", utility: "outline" },
+        { rule: "solid", utility: "outline" },
+        { rule: "dashed", utility: "dashed" }
+      ]);
+    }
+
+    if (look === "paper") {
+      applyRuleGrammar(edition, random, [
+        { rule: "solid", utility: "hairline" },
+        { rule: "dotted", utility: "hairline" },
+        { rule: "dashed", utility: "dashed" }
+      ]);
+    }
+
+    if (look === "blobs") {
+      applyRuleGrammar(edition, random, [
+        { rule: "solid", utility: "outline" },
+        { rule: "dotted", utility: "outline" }
+      ]);
+    }
+
+    if (look === "eno") {
+      applyRuleGrammar(edition, random, [
+        { rule: "solid", utility: "quiet" },
+        { rule: "dotted", utility: "quiet" }
+      ]);
+    }
+
+    if (look === "70mm") {
+      /* Film has its own stock, gate, and perforation grammar. Its ordinary
+         page rules stay suppressed rather than being made generically dashed. */
+      edition.attrs["data-rule-style"] = "film";
+      edition.attrs["data-utility-treatment"] = "film";
+      edition.vars["--edition-divider-opacity"] = "100%";
+      edition.vars["--edition-leader-opacity"] = "100%";
+    }
+
+    if (look === "crt") {
+      applyRuleGrammar(edition, random, [{ rule: "solid", utility: "signal" }]);
+      edition.attrs["data-crt-signal"] = pick(random, ["scan", "scan", "block"]);
+    }
+
+    if (look === "terminal") {
+      applyRuleGrammar(edition, random, [
+        { rule: "solid", utility: "terminal-solid" },
+        { rule: "dotted", utility: "terminal-dotted" },
+        { rule: "dashed", utility: "terminal-dashed" }
+      ]);
     }
 
     return edition;

@@ -35,6 +35,13 @@ html[data-look] {
   --terminal-display-weight: 500;
   --terminal-name-spacing: -0.018em;
   --terminal-heading-spacing: 0.035em;
+  --edition-divider-style: solid;
+  --edition-leader-style: dotted;
+  --edition-divider-opacity: 100%;
+  --edition-leader-opacity: 100%;
+  --edition-utility-border-style: solid;
+  --edition-utility-radius: var(--radius);
+  --edition-utility-color: var(--border);
   --blob-link-bloom-near: 68%;
   --blob-link-bloom-far: 32%;
   --blob-link-bloom-radius: 9px;
@@ -446,6 +453,102 @@ html[data-look="70mm"] {
 }
 
 /* --------------------------------------------------------------------------
+   seeded rule grammar — one restrained editorial treatment per edition
+   -------------------------------------------------------------------------- */
+
+html[data-look][data-rule-style="solid"] {
+  --edition-divider-style: solid;
+  --edition-leader-style: solid;
+}
+
+html[data-look][data-rule-style="dotted"] {
+  --edition-divider-style: dotted;
+  --edition-leader-style: dotted;
+}
+
+html[data-look][data-rule-style="dashed"] {
+  --edition-divider-style: dashed;
+  --edition-leader-style: dashed;
+}
+
+/* 70mm keeps its own physical film boundaries; the generic dividers are
+   suppressed later in the film rules. */
+html[data-look][data-rule-style="film"] {
+  --edition-divider-style: solid;
+  --edition-leader-style: solid;
+}
+
+html[data-look] .leader {
+  border-bottom-style: var(--edition-leader-style);
+  border-bottom-color: color-mix(in srgb, var(--hairline) var(--edition-leader-opacity), transparent);
+}
+
+html[data-look] :is(.appearance-control, .footer) {
+  border-style: var(--edition-divider-style);
+  border-color: color-mix(in srgb, var(--rule) var(--edition-divider-opacity), transparent);
+}
+
+html[data-look][data-utility-treatment="outline"] {
+  --edition-utility-border-style: solid;
+  --edition-utility-radius: var(--radius);
+  --edition-utility-color: var(--border);
+}
+
+html[data-look][data-utility-treatment="hairline"] {
+  --edition-utility-border-style: solid;
+  --edition-utility-radius: 0;
+  --edition-utility-color: color-mix(in srgb, var(--rule) 82%, var(--border));
+}
+
+html[data-look][data-utility-treatment="dashed"] {
+  --edition-utility-border-style: dashed;
+  --edition-utility-radius: 0;
+  --edition-utility-color: var(--border);
+}
+
+html[data-look][data-utility-treatment="quiet"] {
+  --edition-utility-border-style: solid;
+  --edition-utility-radius: var(--radius);
+  --edition-utility-color: color-mix(in srgb, var(--border) 72%, transparent);
+}
+
+html[data-look][data-utility-treatment="film"] {
+  --edition-utility-border-style: solid;
+  --edition-utility-radius: 0;
+  --edition-utility-color: var(--border);
+}
+
+html[data-look][data-utility-treatment="signal"] {
+  --edition-utility-border-style: solid;
+  --edition-utility-radius: 0;
+  --edition-utility-color: var(--border);
+}
+
+html[data-look][data-utility-treatment="terminal-solid"] {
+  --edition-utility-border-style: solid;
+  --edition-utility-radius: 0;
+  --edition-utility-color: var(--border);
+}
+
+html[data-look][data-utility-treatment="terminal-dotted"] {
+  --edition-utility-border-style: dotted;
+  --edition-utility-radius: 0;
+  --edition-utility-color: var(--border);
+}
+
+html[data-look][data-utility-treatment="terminal-dashed"] {
+  --edition-utility-border-style: dashed;
+  --edition-utility-radius: 0;
+  --edition-utility-color: var(--border);
+}
+
+html[data-look] :is(.appearance-reload, .copy-markdown) {
+  border-style: var(--edition-utility-border-style);
+  border-radius: var(--edition-utility-radius);
+  border-color: var(--edition-utility-color);
+}
+
+/* --------------------------------------------------------------------------
    simple — the original dual serif/mono voice with five tonal palettes
    -------------------------------------------------------------------------- */
 
@@ -500,10 +603,6 @@ html[data-look="paper"][data-paper-heading="italic"] :is(.heading, .recipe-subhe
   font-style: italic;
   font-weight: 500;
   letter-spacing: 0.015em;
-}
-
-html[data-look="paper"][data-paper-rule="solid"] .leader {
-  border-bottom-style: solid;
 }
 
 html[data-look="paper"] .copy-markdown,
@@ -1514,6 +1613,29 @@ html[data-look="crt"] .appearance-image--portrait .photo {
 
 html[data-look="crt"] :is(.copy-markdown, .appearance-option) { border-radius: 0; }
 
+/* A CRT edition either carries one-pixel scan rules or a deliberately coarser
+   two-pixel block signal. The utility frame echoes the latter without changing
+   its control size or focus target. */
+html[data-look="crt"] {
+  --crt-rule-width: 1px;
+}
+
+html[data-look="crt"][data-crt-signal="block"] {
+  --crt-rule-width: 2px;
+}
+
+html[data-look="crt"] .leader {
+  border-bottom-width: var(--crt-rule-width);
+}
+
+html[data-look="crt"] .appearance-control {
+  border-bottom-width: var(--crt-rule-width);
+}
+
+html[data-look="crt"] .footer {
+  border-top-width: var(--crt-rule-width);
+}
+
 /* Grid items stretch by default. CRT footer links instead keep the same
    text-width phosphor selection used by links in the main content. */
 html[data-look="crt"] .footer > a { inline-size: fit-content; }
@@ -1524,6 +1646,12 @@ html[data-look="crt"] :is(.appearance-reload, .copy-markdown) {
   border-color: color-mix(in srgb, var(--accent) 58%, var(--border));
   text-shadow: 0 0 2px currentColor;
   box-shadow: 0 0 5px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+html[data-look="crt"][data-crt-signal="block"] :is(.appearance-reload, .copy-markdown) {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 42%, transparent),
+    0 0 5px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
 html[data-look="crt"] :is(.appearance-reload, .copy-markdown):is(:hover, :focus-visible) {
@@ -1595,11 +1723,21 @@ html[data-look="terminal"][data-terminal-prompt="tilde"] :is(.heading, .recipe-s
 html[data-look="terminal"][data-terminal-prompt="dot"] :is(.heading, .recipe-subheading)::before { content: "./"; }
 html[data-look="terminal"][data-terminal-prompt="chevron"] :is(.heading, .recipe-subheading)::before { content: ">"; }
 
-html[data-look="terminal"] .leader { border-bottom-style: solid; }
-
 html[data-look="terminal"] :is(.copy-markdown, .appearance-option) {
   border-radius: 0;
 }
+
+/* The selected terminal prompt also annotates the edition status. It remains
+   decorative and is hidden with that status on compact mobile controls. */
+html[data-look="terminal"] .appearance-status::before {
+  display: inline-block;
+  margin-right: 0.35em;
+  color: var(--faint);
+}
+
+html[data-look="terminal"][data-terminal-prompt="tilde"] .appearance-status::before { content: "~/"; }
+html[data-look="terminal"][data-terminal-prompt="dot"] .appearance-status::before { content: "./"; }
+html[data-look="terminal"][data-terminal-prompt="chevron"] .appearance-status::before { content: ">"; }
 
 /* Terminal links use the same compact selection inversion as CRT, without the
    phosphor halo. The block follows wrapped text instead of stretching a row. */

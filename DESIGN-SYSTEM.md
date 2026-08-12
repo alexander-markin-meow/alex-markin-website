@@ -257,11 +257,20 @@ new edition.
 
 Seven appearances have equal default probability:
 
+Every generated edition also chooses one coherent **rule grammar**. It applies to every link
+leader, the appearance-control divider, and the footer divider together: a fine solid, dotted,
+or short dashed line where that medium permits it. The randomize-appearance and copy controls
+use a matching outline treatment. This is edition-level typography, never independent per-row
+decoration: content order, line lengths, click targets, and divider placement remain fixed. Film
+keeps its perforation/gate boundaries instead of generic rules; CRT chooses either one-pixel scan
+rules or a coarser two-pixel block signal; terminal pairs its existing prompt with a solid, dotted,
+or dashed command-line grammar and matching square utilities.
+
 - `smpl` (`simple` internally) — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
   and spacing.
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
-  bounded ink temperature, scale, heading treatment, and rule style. Its generated
+  bounded ink temperature, scale, heading treatment, and solid, dotted, or dashed print rules. Its generated
   `feTurbulence` grain is always a top layer over the complete edition. A second, much lighter
   seeded SVG stock texture is chosen independently from three families: directional `laid`
   fibres, smooth `vellum` pulp, or softly lit `watercolour` tooth. An explicit layer follows the
@@ -359,7 +368,9 @@ Seven appearances have equal default probability:
   reads unambiguously as an RGB phosphor mask. Each edition rotates the RGB-cell phase and moves
   only the red/blue phosphor fringes by one physical cell, with a minority of editions extending
   to two; layout and source glyphs never move.
-  Native text selection uses the RGB inverse of the selected accent. The page is never passed through a whole-page filter:
+  Native text selection uses the RGB inverse of the selected accent. Each edition chooses either one-pixel
+  scan rules or a coarser two-pixel block signal for its leaders and dividers; the latter adds a
+  restrained inset phosphor frame to the two utility controls. The page is never passed through a whole-page filter:
   glyphs are pixel-shaped at the source, the portrait is rendered at half resolution with
   nearest-neighbour expansion, and the screen grid sits directly on device-pixel boundaries.
   Text links invert into a clear phosphor selection block on hover/focus, and their unchanged
@@ -371,12 +382,13 @@ Seven appearances have equal default probability:
 - `>...` (`terminal` internally) — one seeded technical face is used throughout each edition:
   DEC-inspired VT323, workstation-like Fira Mono, or modern-console Roboto Mono. The family,
   tuned size, weight, tracking, and line spacing vary together as a bounded preset rather than
-  mixing faces inside one view. Quiet prompt prefixes, solid leaders, restrained green/blue/amber
+  mixing faces inside one view. Quiet prompt prefixes, solid/dotted/dashed leaders, restrained green/blue/amber
   palettes, slight grain, and compact column spacing vary independently. Fira Mono and
   Roboto Mono use an `18–19px` body / `44–48px` display scale; VT323 uses a larger
   `20–22px` body / `54–62px` display scale to compensate for its raster-style x-height. Text
   links invert against the selected terminal accent on hover/focus, using a content-width
-  selection block without CRT glow.
+  selection block without CRT glow. Its prompt also annotates the desktop edition status, while
+  matching square utility controls echo the selected divider treatment.
 
 Grain must use the procedural system shared with `/trials/background/` and `louppe.eu`: a
 seeded SVG `feTurbulence` tile, never a repeating dot or halftone gradient. The shared reference
