@@ -321,9 +321,14 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
 
 .calculator-description { margin-bottom: 18px; }
 
+.recipe-calculator {
+  --calculator-control-width: 270px;
+  --calculator-unit-width: 20px;
+}
+
 .calculator-picker {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(210px, 270px);
+  grid-template-columns: minmax(0, 1fr) var(--calculator-control-width);
   gap: 10px 18px;
   align-items: center;
   padding-bottom: 16px;
@@ -389,7 +394,7 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
 .calculator-row,
 .calculator-spec-row {
   display: grid;
-  grid-template-columns: max-content minmax(16px, 1fr) auto;
+  grid-template-columns: max-content minmax(16px, 1fr) var(--calculator-control-width);
   gap: 8px;
   align-items: center;
 }
@@ -401,7 +406,8 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
   align-items: center;
   justify-content: flex-end;
   gap: 7px;
-  min-width: 145px;
+  width: var(--calculator-control-width);
+  min-width: 0;
 }
 
 .calculator-unit,
@@ -412,7 +418,14 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
   white-space: nowrap;
 }
 
-.calculator-ratio-control { min-width: 220px; }
+.calculator-unit {
+  flex: 0 0 var(--calculator-unit-width);
+  text-align: left;
+}
+
+.calculator-ratio-control {
+  padding-right: calc(var(--calculator-unit-width) + 7px);
+}
 
 .calculator-ratio-input { width: 70px; }
 
@@ -420,7 +433,7 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
   display: contents;
 }
 
-.calculator-temperature-input { width: 100px; }
+.calculator-temperature-input { width: 88px; }
 
 .calculator-secondary-specs {
   margin-top: 12px;
@@ -429,6 +442,12 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
 }
 
 .calculator-spec-row { min-height: 32px; }
+
+.calculator-measure {
+  width: var(--calculator-control-width);
+  text-align: right;
+  white-space: normal;
+}
 
 .calculator-actions {
   display: flex;
@@ -640,14 +659,18 @@ a[target="_blank"]:not(.flickr-photo-link)::after {
 
   .calculator-picker { grid-template-columns: minmax(0, 1fr); }
   .calculator-selection-note { grid-column: 1; }
-  .calculator-control { min-width: 125px; }
+  .recipe-calculator { --calculator-control-width: 180px; }
+  .calculator-row > .calculator-label {
+    max-width: 100px;
+    line-height: 1.25;
+  }
   .calculator-ratio-control {
-    min-width: 206px;
-    gap: 5px;
+    gap: 4px;
+    padding-right: calc(var(--calculator-unit-width) + 7px);
   }
   .calculator-input { width: 72px; }
-  .calculator-ratio-input { width: 72px; }
-  .calculator-temperature-input { width: 84px; }
+  .calculator-ratio-input { width: 56px; }
+  .calculator-temperature-input { width: 72px; }
 
   /* Use each footer item's natural width on mobile. This keeps all three
      utilities on one line while there is room, rather than reserving equal

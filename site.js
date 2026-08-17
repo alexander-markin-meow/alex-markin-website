@@ -358,13 +358,14 @@
       return value ? value.dataset.recipeValue : "";
     }
 
+    function recipeIceRatio(section) {
+      var value = section.querySelector("[data-recipe-spec=\"ratio\"] [data-recipe-ice-value]");
+      return value ? value.dataset.recipeIceValue : "";
+    }
+
     function amount(value) {
       var rounded = Math.round(value * 10) / 10;
       return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
-    }
-
-    function initialRatio(value) {
-      return (Math.round(value * 10) / 10).toFixed(1);
     }
 
     function readPositive(input) {
@@ -376,12 +377,11 @@
       if (input !== skipped) input.value = value;
     }
 
-    // Keep the native arrows moving by 0.5 from whatever value was typed.
-    // Aligning the step base to that value preserves arbitrary direct entry
-    // instead of forcing ratios onto a fixed half-number grid.
-    function alignRatioStep(input, value) {
-      var offset = ((value % 0.5) + 0.5) % 0.5;
-      if (offset < 0.000001 || 0.5 - offset < 0.000001) offset = 0.5;
+    // Keep native arrows moving from whatever value was typed. Aligning the
+    // step base preserves arbitrary direct entry between arrow increments.
+    function alignInputStep(input, value, step) {
+      var offset = ((value % step) + step) % step;
+      if (offset < 0.000001 || step - offset < 0.000001) offset = step;
       input.min = String(Math.round(offset * 1000000) / 1000000);
     }
 
@@ -404,7 +404,9 @@
       setInput(waterInput, amount(calculatorState.water), skipped);
       setInput(waterRatioInput, calculatorState.waterRatioDisplay, skipped);
       setInput(temperatureInput, calculatorState.temperature, skipped);
-      alignRatioStep(waterRatioInput, Number(calculatorState.waterRatioDisplay));
+      alignInputStep(coffeeInput, calculatorState.coffee, 1);
+      alignInputStep(waterInput, calculatorState.water, 25);
+      alignInputStep(waterRatioInput, Number(calculatorState.waterRatioDisplay), 0.5);
 
       var hasIce = calculatorState.ice !== null;
       iceRow.hidden = !hasIce;
@@ -414,7 +416,7 @@
       if (hasIce) {
         setInput(iceInput, amount(calculatorState.ice), skipped);
         setInput(iceRatioInput, calculatorState.iceRatioDisplay, skipped);
-        alignRatioStep(iceRatioInput, Number(calculatorState.iceRatioDisplay));
+        alignInputStep(iceRatioInput, Number(calculatorState.iceRatioDisplay), 0.5);
       }
 
       selectedNote.textContent = calculatorState.tagline;
@@ -429,10 +431,14 @@
       var section = recipeSections[key];
       if (!section) return;
 
-      var coffee = Number(recipeValue(section, "coffee"));
-      var water = Number(recipeValue(section, "water"));
-      var iceValue = recipeValue(section, "ice");
-      var ice = iceValue ? Number(iceValue) : null;
+      var originalCoffee = Number(recipeValue(section, "coffee"));
+      var originalWater = Number(recipeValue(section, "water"));
+      var originalTemperature = recipeValue(section, "temperature");
+      var waterRatioDisplay = recipeValue(section, "ratio");
+      var waterRatio = Number(waterRatioDisplay);
+      var iceRatioDisplay = recipeIceRatio(section);
+      var iceRatio = iceRatioDisplay ? Number(iceRatioDisplay) : null;
+      var coffee = 15;
       var tagline = section.querySelector(":scope > .tagline");
 
       calculatorState = {
@@ -440,19 +446,19 @@
         title: section.querySelector(":scope > .heading").textContent.trim(),
         tagline: tagline ? tagline.textContent.trim() : "",
         coffee: coffee,
-        water: water,
-        ice: ice,
-        waterRatio: water / coffee,
-        waterRatioDisplay: initialRatio(water / coffee),
-        iceRatio: ice === null ? null : ice / coffee,
-        iceRatioDisplay: ice === null ? "" : initialRatio(ice / coffee),
-        temperature: recipeValue(section, "temperature"),
+        water: coffee * waterRatio,
+        ice: iceRatio === null ? null : coffee * iceRatio,
+        waterRatio: waterRatio,
+        waterRatioDisplay: waterRatioDisplay,
+        iceRatio: iceRatio,
+        iceRatioDisplay: iceRatioDisplay,
+        temperature: originalTemperature,
         brewer: recipeValue(section, "brewer"),
         grind: recipeValue(section, "grind"),
         original: {
-          coffee: coffee,
-          water: water,
-          temperature: recipeValue(section, "temperature")
+          coffee: originalCoffee,
+          water: originalWater,
+          temperature: originalTemperature
         }
       };
       renderCalculator(null);

@@ -161,10 +161,14 @@ The `brew calculator` sits after `about` and before the authored recipe sections
 select and input controls in the annotation voice, with the same restrained outline treatment as
 the edition's utility controls. The selected recipe section remains the source of truth: calculator
 defaults are read from its `data-recipe-spec` / `data-recipe-value` annotations rather than copied
-into JavaScript. Editing coffee, water, or ice scales every mass proportionally; editing a ratio
-recalculates its corresponding liquid against coffee; temperature remains independent. Ratio
-steppers move by `0.5`, while direct numeric entry may use any positive decimal. `copy recipe`
-copies the current calculated specs, the selected recipe's adjusted method and note, then appends
+into JavaScript. Every selection starts with a `15g` coffee dose and the exact ratio authored in
+the recipe (`1:10`, `1:8:8`, or `1:16.5`), then calculates water and optional ice. The ratio row
+precedes the amount rows. Editing coffee, water, or ice scales every mass proportionally; editing a
+ratio recalculates its corresponding liquid against coffee; temperature remains independent.
+Coffee steppers move by `1g`, water by `25g`, and ratios by `0.5`, while direct numeric entry may
+use any positive decimal. The right-side controls share a fixed alignment column, including a fixed
+unit slot; recipe metadata is right-aligned to that same edge. `copy recipe` copies the current
+calculated specs, the selected recipe's adjusted method and note, then appends
 `from: alex-markin.com/coffee`. The authored recipes below never change when the calculator does.
 
 ### section
