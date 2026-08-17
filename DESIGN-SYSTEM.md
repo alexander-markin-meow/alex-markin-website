@@ -157,6 +157,16 @@ Timed steps may begin with `.recipe-time`. A closing `.recipe-note` uses descrip
 mono `.recipe-note-label`. These patterns follow the active appearance and are recognized by
 `copy as markdown`.
 
+The `brew calculator` sits after `about` and before the authored recipe sections. It uses native
+select and input controls in the annotation voice, with the same restrained outline treatment as
+the edition's utility controls. The selected recipe section remains the source of truth: calculator
+defaults are read from its `data-recipe-spec` / `data-recipe-value` annotations rather than copied
+into JavaScript. Editing coffee, water, or ice scales every mass proportionally; editing a ratio
+recalculates its corresponding liquid against coffee; temperature remains independent. Ratio
+steppers move by `0.5`, while direct numeric entry may use any positive decimal. `copy recipe`
+copies the current calculated specs, the selected recipe's adjusted method and note, then appends
+`from: alex-markin.com/coffee`. The authored recipes below never change when the calculator does.
+
 ### section
 ```html
 <section>

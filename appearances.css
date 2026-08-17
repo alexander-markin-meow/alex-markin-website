@@ -547,7 +547,7 @@ html[data-look][data-utility-treatment="terminal-dashed"] {
   --edition-utility-color: var(--border);
 }
 
-html[data-look] :is(.appearance-reload, .copy-markdown) {
+html[data-look] :is(.appearance-reload, .copy-markdown, .copy-recipe) {
   border-style: var(--edition-utility-border-style);
   border-radius: var(--edition-utility-radius);
   border-color: var(--edition-utility-color);
@@ -588,7 +588,7 @@ html[data-look="paper"] .name {
   letter-spacing: -0.035em;
 }
 
-html[data-look="paper"] :is(.heading, .recipe-subheading, .meta, .tag, .ago, .dates, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control) {
+html[data-look="paper"] :is(.heading, .recipe-subheading, .meta, .tag, .ago, .dates, .measure, .recipe-time, .recipe-note-label, .calculator-label, .calculator-unit, .calculator-ratio-one, .calculator-ratio-separator, .calculator-measure, .copy-recipe, .footer, .appearance-control) {
   letter-spacing: 0.035em;
 }
 
@@ -610,7 +610,7 @@ html[data-look="paper"][data-paper-heading="italic"] :is(.heading, .recipe-subhe
   letter-spacing: 0.015em;
 }
 
-html[data-look="paper"] .copy-markdown,
+html[data-look="paper"] :is(.copy-markdown, .copy-recipe, .calculator-input, .calculator-select),
 html[data-look="paper"] .appearance-option {
   border-radius: 0;
 }
@@ -637,7 +637,7 @@ html[data-look="blobs"] .heading {
   letter-spacing: 0.035em;
 }
 
-html[data-look="blobs"] :is(.copy-markdown, .appearance-option) { border-radius: 7px; }
+html[data-look="blobs"] :is(.copy-markdown, .copy-recipe, .calculator-input, .calculator-select, .appearance-option) { border-radius: 7px; }
 
 /* Blob links bloom from the edition's selected accent. The near and far halo
    strengths and radius are seeded, while the text itself stays crisp. */
@@ -918,7 +918,7 @@ html[data-look="eno"] :is(.meta, .tag, .ago, .dates, .measure, .recipe-time, .re
   letter-spacing: 0.105em;
 }
 
-html[data-look="eno"] :is(.copy-markdown, .appearance-option) {
+html[data-look="eno"] :is(.copy-markdown, .copy-recipe, .calculator-input, .calculator-select, .appearance-option) {
   background-color: transparent;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
@@ -1455,7 +1455,7 @@ html[data-look="70mm"] a.appearance-image:is(:hover, :focus-visible) {
    only where light is actually landing: on hover/focus, never at rest. A
    resting or selected control stays the plain amber-accent voice every other
    look already uses (see .appearance-option[aria-pressed="true"] above). */
-html[data-look="70mm"] :is(.appearance-option, .copy-markdown):is(:hover, :focus-visible) {
+html[data-look="70mm"] :is(.appearance-option, .copy-markdown, .copy-recipe):is(:hover, :focus-visible) {
   color: var(--ink-bright);
   border-color: var(--film-halation);
   background: color-mix(in srgb, var(--film-halation) 8%, transparent);
@@ -1616,7 +1616,19 @@ html[data-look="crt"] .appearance-image--portrait .photo {
   transform-origin: top left;
 }
 
-html[data-look="crt"] :is(.copy-markdown, .appearance-option) { border-radius: 0; }
+html[data-look="crt"] :is(.copy-markdown, .copy-recipe, .calculator-input, .calculator-select, .appearance-option) { border-radius: 0; }
+
+html[data-look="crt"] :is(.calculator-label, .calculator-unit, .calculator-ratio-one, .calculator-ratio-separator, .calculator-measure, .copy-recipe) {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+html[data-look="crt"] :is(.calculator-input, .calculator-select) {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
 
 /* A CRT edition either carries one-pixel scan rules or a deliberately coarser
    two-pixel block signal. The utility frame echoes the latter without changing
@@ -1647,19 +1659,19 @@ html[data-look="crt"] .footer > a { inline-size: fit-content; }
 html[data-look="crt"] .footer-date { justify-self: start; }
 html[data-look="crt"] .footer-domain { justify-self: end; }
 
-html[data-look="crt"] :is(.appearance-reload, .copy-markdown) {
+html[data-look="crt"] :is(.appearance-reload, .copy-markdown, .copy-recipe) {
   border-color: color-mix(in srgb, var(--accent) 58%, var(--border));
   text-shadow: 0 0 2px currentColor;
   box-shadow: 0 0 5px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
-html[data-look="crt"][data-crt-signal="block"] :is(.appearance-reload, .copy-markdown) {
+html[data-look="crt"][data-crt-signal="block"] :is(.appearance-reload, .copy-markdown, .copy-recipe) {
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--accent) 42%, transparent),
     0 0 5px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
-html[data-look="crt"] :is(.appearance-reload, .copy-markdown):is(:hover, :focus-visible) {
+html[data-look="crt"] :is(.appearance-reload, .copy-markdown, .copy-recipe):is(:hover, :focus-visible) {
   color: var(--accent);
   border-color: var(--accent);
   background-color: color-mix(in srgb, var(--accent) 10%, transparent);
@@ -1728,7 +1740,7 @@ html[data-look="terminal"][data-terminal-prompt="tilde"] :is(.heading, .recipe-s
 html[data-look="terminal"][data-terminal-prompt="dot"] :is(.heading, .recipe-subheading)::before { content: "./"; }
 html[data-look="terminal"][data-terminal-prompt="chevron"] :is(.heading, .recipe-subheading)::before { content: ">"; }
 
-html[data-look="terminal"] :is(.copy-markdown, .appearance-option) {
+html[data-look="terminal"] :is(.copy-markdown, .copy-recipe, .calculator-input, .calculator-select, .appearance-option) {
   border-radius: 0;
 }
 

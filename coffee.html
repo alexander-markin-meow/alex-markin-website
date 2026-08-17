@@ -40,7 +40,7 @@
       "url": "https://alex-markin.com/coffee",
       "name": "coffee recipes — alex markin",
       "description": "coffee recipes kept by alex markin, a specialty coffee barista at darcy's kaffe in copenhagen.",
-      "dateModified": "2026-08-12",
+      "dateModified": "2026-08-17",
       "author": {
         "@type": "Person",
         "@id": "https://alex-markin.com/#alex-markin",
@@ -71,8 +71,8 @@
   <!-- Compose the shared edition before CSS paints. Session state and pinned
        query parameters keep the homepage and coffee in one visual world. -->
   <script src="appearance.js?v=20260812-7"></script>
-  <link rel="stylesheet" href="styles.css?v=20260812" />
-  <link rel="stylesheet" href="appearances.css?v=20260812-6" />
+  <link rel="stylesheet" href="styles.css?v=20260817" />
+  <link rel="stylesheet" href="appearances.css?v=20260817" />
 </head>
 <body>
   <div class="appearance-base-layer" aria-hidden="true"></div>
@@ -143,16 +143,105 @@
           <p class="desc">i work at darcy's kaffe in copenhagen. this page is my working notebook for brewers, ratios, temperatures, and methods</p>
         </section>
 
-        <section class="recipe">
+        <section class="recipe-calculator" data-recipe-calculator data-copy-page-ignore>
+          <h2 class="heading">brew calculator</h2>
+          <p class="desc calculator-description">choose a recipe, then adjust any amount or ratio</p>
+
+          <div class="calculator-picker">
+            <label class="calculator-label" for="calculator-recipe">recipe</label>
+            <select class="calculator-select" id="calculator-recipe" data-calculator-recipe>
+              <option value="long-soup">oxo long soup</option>
+              <option value="iced-filter">oxo iced filter</option>
+              <option value="aeropress">aeropress</option>
+            </select>
+            <p class="calculator-selection-note" data-calculator-note>full-bodied and balanced</p>
+          </div>
+
+          <div class="calculator-values">
+            <div class="calculator-row">
+              <label class="calculator-label" for="calculator-coffee">coffee</label>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="calculator-control">
+                <input class="calculator-input" id="calculator-coffee" data-calculator-coffee type="number" min="0.1" step="0.1" inputmode="decimal" value="13.5" />
+                <span class="calculator-unit">g</span>
+              </span>
+            </div>
+
+            <div class="calculator-row">
+              <label class="calculator-label" for="calculator-water">water</label>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="calculator-control">
+                <input class="calculator-input" id="calculator-water" data-calculator-water type="number" min="0.1" step="0.1" inputmode="decimal" value="140" />
+                <span class="calculator-unit">g</span>
+              </span>
+            </div>
+
+            <div class="calculator-row" data-calculator-ice-row hidden>
+              <label class="calculator-label" for="calculator-ice">ice</label>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="calculator-control">
+                <input class="calculator-input" id="calculator-ice" data-calculator-ice type="number" min="0.1" step="0.1" inputmode="decimal" value="130" />
+                <span class="calculator-unit">g</span>
+              </span>
+            </div>
+
+            <div class="calculator-row">
+              <span class="calculator-label" id="calculator-ratio-label">ratio</span>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="calculator-control calculator-ratio-control" role="group" aria-labelledby="calculator-ratio-label">
+                <span class="calculator-ratio-one">1 :</span>
+                <label class="sr-only" for="calculator-water-ratio">water ratio</label>
+                <input class="calculator-input calculator-ratio-input" id="calculator-water-ratio" data-calculator-water-ratio type="number" min="0.5" step="0.5" inputmode="decimal" value="10.4" />
+                <span class="calculator-ice-ratio" data-calculator-ice-ratio-part hidden>
+                  <span class="calculator-ratio-separator">:</span>
+                  <label class="sr-only" for="calculator-ice-ratio">ice ratio</label>
+                  <input class="calculator-input calculator-ratio-input" id="calculator-ice-ratio" data-calculator-ice-ratio type="number" min="0.5" step="0.5" inputmode="decimal" value="8.1" />
+                </span>
+              </span>
+            </div>
+
+            <div class="calculator-row">
+              <label class="calculator-label" for="calculator-temperature">water temperature</label>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="calculator-control">
+                <input class="calculator-input calculator-temperature-input" id="calculator-temperature" data-calculator-temperature type="text" inputmode="decimal" value="93" />
+                <span class="calculator-unit">℃</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="calculator-secondary-specs">
+            <div class="calculator-spec-row">
+              <span class="calculator-label">brewer</span>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="calculator-measure" data-calculator-brewer>oxo rapid brewer</span>
+            </div>
+            <div class="calculator-spec-row" data-calculator-grind-row>
+              <span class="calculator-label">grind</span>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="calculator-measure" data-calculator-grind>pour-over or finer</span>
+            </div>
+          </div>
+
+          <div class="calculator-actions">
+            <button class="copy-recipe" type="button" data-copy-recipe aria-label="copy recipe" aria-live="polite">
+              <span class="copy-recipe-label">copy recipe</span>
+              <span class="copy-recipe-feedback" aria-hidden="true"></span>
+            </button>
+          </div>
+          <p class="sr-only" data-calculator-live aria-live="polite"></p>
+        </section>
+
+        <section class="recipe" data-recipe-key="long-soup">
           <h2 class="heading">oxo long soup (zuppa lunga)</h2>
           <p class="tagline">full-bodied and balanced</p>
           <ul class="links recipe-specs">
-            <li class="row"><span>brewer</span><span class="leader"></span><span class="measure">oxo rapid brewer</span></li>
-            <li class="row"><span>coffee</span><span class="leader"></span><span class="measure">13.5g</span></li>
-            <li class="row"><span>water</span><span class="leader"></span><span class="measure">140g</span></li>
+            <li class="row" data-recipe-spec="brewer"><span>brewer</span><span class="leader"></span><span class="measure" data-recipe-value="oxo rapid brewer">oxo rapid brewer</span></li>
+            <li class="row" data-recipe-spec="coffee"><span>coffee</span><span class="leader"></span><span class="measure" data-recipe-value="13.5">13.5g</span></li>
+            <li class="row" data-recipe-spec="water"><span>water</span><span class="leader"></span><span class="measure" data-recipe-value="140">140g</span></li>
             <li class="row"><span>ratio</span><span class="leader"></span><span class="measure">∼1:10</span></li>
-            <li class="row"><span>water temperature</span><span class="leader"></span><span class="measure">∼93℃</span></li>
-            <li class="row"><span>grind</span><span class="leader"></span><span class="measure">pour-over or finer</span></li>
+            <li class="row" data-recipe-spec="temperature"><span>water temperature</span><span class="leader"></span><span class="measure" data-recipe-value="93">∼93℃</span></li>
+            <li class="row" data-recipe-spec="grind"><span>grind</span><span class="leader"></span><span class="measure" data-recipe-value="pour-over or finer">pour-over or finer</span></li>
           </ul>
           <h3 class="recipe-subheading">method</h3>
           <ol class="recipe-method">
@@ -168,16 +257,16 @@
           <p class="recipe-note"><span class="recipe-note-label">note</span>i keep the paper filter in the transparent chamber and change it once in a while.</p>
         </section>
 
-        <section class="recipe">
+        <section class="recipe" data-recipe-key="iced-filter">
           <h2 class="heading">oxo iced filter</h2>
           <p class="tagline">nice and easy cold coffee</p>
           <ul class="links recipe-specs">
-            <li class="row"><span>brewer</span><span class="leader"></span><span class="measure">oxo rapid brewer</span></li>
-            <li class="row"><span>coffee</span><span class="leader"></span><span class="measure">16g</span></li>
-            <li class="row"><span>water</span><span class="leader"></span><span class="measure">130g</span></li>
-            <li class="row"><span>ice</span><span class="leader"></span><span class="measure">∼130g</span></li>
+            <li class="row" data-recipe-spec="brewer"><span>brewer</span><span class="leader"></span><span class="measure" data-recipe-value="oxo rapid brewer">oxo rapid brewer</span></li>
+            <li class="row" data-recipe-spec="coffee"><span>coffee</span><span class="leader"></span><span class="measure" data-recipe-value="16">16g</span></li>
+            <li class="row" data-recipe-spec="water"><span>water</span><span class="leader"></span><span class="measure" data-recipe-value="130">130g</span></li>
+            <li class="row" data-recipe-spec="ice"><span>ice</span><span class="leader"></span><span class="measure" data-recipe-value="130">∼130g</span></li>
             <li class="row"><span>coffee : water : ice</span><span class="leader"></span><span class="measure">∼1:8:8</span></li>
-            <li class="row"><span>water temperature</span><span class="leader"></span><span class="measure">∼94℃</span></li>
+            <li class="row" data-recipe-spec="temperature"><span>water temperature</span><span class="leader"></span><span class="measure" data-recipe-value="94">∼94℃</span></li>
           </ul>
           <h3 class="recipe-subheading">method</h3>
           <ol class="recipe-method">
@@ -193,15 +282,15 @@
           <p class="recipe-note"><span class="recipe-note-label">note</span>i keep the paper filter in the transparent chamber and change it once in a while.</p>
         </section>
 
-        <section class="recipe">
+        <section class="recipe" data-recipe-key="aeropress">
           <h2 class="heading">aeropress</h2>
           <ul class="links recipe-specs">
-            <li class="row"><span>brewer</span><span class="leader"></span><span class="measure">aeropress, inverted</span></li>
-            <li class="row"><span>coffee</span><span class="leader"></span><span class="measure">12g</span></li>
-            <li class="row"><span>water</span><span class="leader"></span><span class="measure">200g</span></li>
+            <li class="row" data-recipe-spec="brewer"><span>brewer</span><span class="leader"></span><span class="measure" data-recipe-value="aeropress, inverted">aeropress, inverted</span></li>
+            <li class="row" data-recipe-spec="coffee"><span>coffee</span><span class="leader"></span><span class="measure" data-recipe-value="12">12g</span></li>
+            <li class="row" data-recipe-spec="water"><span>water</span><span class="leader"></span><span class="measure" data-recipe-value="200">200g</span></li>
             <li class="row"><span>ratio</span><span class="leader"></span><span class="measure">1:16.5</span></li>
-            <li class="row"><span>water temperature</span><span class="leader"></span><span class="measure">80–83℃</span></li>
-            <li class="row"><span>grind</span><span class="leader"></span><span class="measure">slightly finer than pour-over</span></li>
+            <li class="row" data-recipe-spec="temperature"><span>water temperature</span><span class="leader"></span><span class="measure" data-recipe-value="80–83">80–83℃</span></li>
+            <li class="row" data-recipe-spec="grind"><span>grind</span><span class="leader"></span><span class="measure" data-recipe-value="slightly finer than pour-over">slightly finer than pour-over</span></li>
           </ul>
           <h3 class="recipe-subheading">method</h3>
           <ol class="recipe-method">
@@ -228,7 +317,7 @@
       <div class="film-footer-inner">
         <span class="film-edge-print film-edge-print--footer" aria-hidden="true"></span>
         <footer class="footer">
-          <a class="footer-date" href="https://github.com/alexander-markin-meow/alex-markin-website" target="_blank" rel="noopener">upd 2026-08-12</a>
+          <a class="footer-date" href="https://github.com/alexander-markin-meow/alex-markin-website" target="_blank" rel="noopener">upd 2026-08-17</a>
           <button class="copy-markdown" type="button" data-copy-markdown aria-label="copy page as markdown" aria-live="polite"><span class="copy-markdown-label copy-markdown-label--full" aria-hidden="true">copy as markdown</span><span class="copy-markdown-label copy-markdown-label--compact" aria-hidden="true">copy</span><span class="copy-markdown-label copy-markdown-label--icon" aria-hidden="true">⧉</span><span class="copy-markdown-feedback" aria-hidden="true"></span></button>
           <a class="footer-domain internal-link" href="/" data-preserve-appearance>alex-markin.com</a>
         </footer>
@@ -236,6 +325,6 @@
     </div>
   </main>
 
-  <script src="site.js?v=20260812"></script>
+  <script src="site.js?v=20260817"></script>
 </body>
 </html>

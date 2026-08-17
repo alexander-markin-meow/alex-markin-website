@@ -145,6 +145,41 @@
     });
   }
 
+  // execCommand copies whatever is currently selected, so text the visitor has
+  // highlighted on the page wins over the textarea unless we drop that selection
+  // first and take focus. Without this a copy control can report success while
+  // the clipboard still holds the visitor's own selection.
+  function fallbackCopy(text) {
+    var area = document.createElement("textarea");
+    var previous = document.activeElement;
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.className = "copy-source";
+    document.body.appendChild(area);
+    var selection = document.getSelection();
+    if (selection) selection.removeAllRanges();
+    // the textarea sits off-screen, so focus must not scroll to it
+    area.focus({ preventScroll: true });
+    area.select();
+    // .select() alone is unreliable on ios safari
+    area.setSelectionRange(0, area.value.length);
+    var copied = false;
+    try {
+      copied = document.execCommand("copy");
+    } finally {
+      area.remove();
+      if (previous && previous.focus) previous.focus({ preventScroll: true });
+    }
+    return copied ? Promise.resolve() : Promise.reject();
+  }
+
+  function writeClipboard(text) {
+    if (!navigator.clipboard || !window.isSecureContext) return fallbackCopy(text);
+    return navigator.clipboard.writeText(text).catch(function () {
+      return fallbackCopy(text);
+    });
+  }
+
   // Build the Markdown from the page's semantic HTML at click time, so edits
   // to the page content are automatically reflected in the copied version.
   var copyButton = document.querySelector("[data-copy-markdown]");
@@ -153,6 +188,10 @@
       return Array.from(el.childNodes).map(function (node) {
         if (node.nodeType === Node.TEXT_NODE) return node.textContent;
         if (node.nodeType !== Node.ELEMENT_NODE) return "";
+        // timed steps and note labels stay in the sentence with a real gap
+        if (node.matches(".recipe-time, .recipe-note-label")) {
+          return node.textContent.trim() + " ";
+        }
         // machine-voice annotations are re-attached by the caller, never inlined
         if (node.matches(".leader, .ago, .clock, .tag, .dates, .measure")) return "";
         if (node.tagName === "A") {
@@ -187,7 +226,7 @@
         push(lines, "", metaCopy.textContent.trim());
       }
 
-      document.querySelectorAll(".columns section:not([hidden])").forEach(function (section) {
+      document.querySelectorAll(".columns section:not([hidden]):not([data-copy-page-ignore])").forEach(function (section) {
         // Product landing sections may use the display-sized .name treatment
         // for their subject instead of the smaller machine-voice heading.
         var heading = section.querySelector(".heading, .name");
@@ -248,41 +287,6 @@
       return lines.join("\n").replace(/\n{3,}/g, "\n\n") + "\n";
     }
 
-    // execCommand copies whatever is currently selected, so text the visitor has
-    // highlighted on the page wins over the textarea unless we drop that selection
-    // first and take focus. Without this the button reports success while the
-    // clipboard holds the visitor's own selection.
-    function fallbackCopy(text) {
-      var area = document.createElement("textarea");
-      var previous = document.activeElement;
-      area.value = text;
-      area.setAttribute("readonly", "");
-      area.className = "copy-source";
-      document.body.appendChild(area);
-      var selection = document.getSelection();
-      if (selection) selection.removeAllRanges();
-      // the textarea sits off-screen, so focus must not scroll to it
-      area.focus({ preventScroll: true });
-      area.select();
-      // .select() alone is unreliable on ios safari
-      area.setSelectionRange(0, area.value.length);
-      var copied = false;
-      try {
-        copied = document.execCommand("copy");
-      } finally {
-        area.remove();
-        if (previous && previous.focus) previous.focus({ preventScroll: true });
-      }
-      return copied ? Promise.resolve() : Promise.reject();
-    }
-
-    function writeClipboard(text) {
-      if (!navigator.clipboard || !window.isSecureContext) return fallbackCopy(text);
-      return navigator.clipboard.writeText(text).catch(function () {
-        return fallbackCopy(text);
-      });
-    }
-
     // the label is the only confirmation, so each click owns the full 1800ms:
     // an earlier click's pending timer would otherwise clear a later click's
     // "copied" while the visitor is still reading it
@@ -318,5 +322,286 @@
         flash("failed", "copy failed");
       });
     });
+  }
+
+  // The coffee calculator reads its defaults and copy from the authored recipe
+  // sections below it. Selecting a recipe therefore cannot drift away from the
+  // visible source content.
+  var calculator = document.querySelector("[data-recipe-calculator]");
+  if (calculator) {
+    var recipeSections = {};
+    document.querySelectorAll("[data-recipe-key]").forEach(function (section) {
+      recipeSections[section.dataset.recipeKey] = section;
+    });
+
+    var recipeSelect = calculator.querySelector("[data-calculator-recipe]");
+    var coffeeInput = calculator.querySelector("[data-calculator-coffee]");
+    var waterInput = calculator.querySelector("[data-calculator-water]");
+    var iceInput = calculator.querySelector("[data-calculator-ice]");
+    var waterRatioInput = calculator.querySelector("[data-calculator-water-ratio]");
+    var iceRatioInput = calculator.querySelector("[data-calculator-ice-ratio]");
+    var temperatureInput = calculator.querySelector("[data-calculator-temperature]");
+    var iceRow = calculator.querySelector("[data-calculator-ice-row]");
+    var iceRatioPart = calculator.querySelector("[data-calculator-ice-ratio-part]");
+    var selectedNote = calculator.querySelector("[data-calculator-note]");
+    var brewerOutput = calculator.querySelector("[data-calculator-brewer]");
+    var grindOutput = calculator.querySelector("[data-calculator-grind]");
+    var grindRow = calculator.querySelector("[data-calculator-grind-row]");
+    var liveSummary = calculator.querySelector("[data-calculator-live]");
+    var copyRecipeButton = calculator.querySelector("[data-copy-recipe]");
+    var copyRecipeFeedback = copyRecipeButton.querySelector(".copy-recipe-feedback");
+    var copyRecipeTimer;
+    var calculatorState;
+
+    function recipeValue(section, name) {
+      var value = section.querySelector("[data-recipe-spec=\"" + name + "\"] [data-recipe-value]");
+      return value ? value.dataset.recipeValue : "";
+    }
+
+    function amount(value) {
+      var rounded = Math.round(value * 10) / 10;
+      return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+    }
+
+    function initialRatio(value) {
+      return (Math.round(value * 10) / 10).toFixed(1);
+    }
+
+    function readPositive(input) {
+      var value = Number(input.value);
+      return Number.isFinite(value) && value > 0 ? value : null;
+    }
+
+    function setInput(input, value, skipped) {
+      if (input !== skipped) input.value = value;
+    }
+
+    // Keep the native arrows moving by 0.5 from whatever value was typed.
+    // Aligning the step base to that value preserves arbitrary direct entry
+    // instead of forcing ratios onto a fixed half-number grid.
+    function alignRatioStep(input, value) {
+      var offset = ((value % 0.5) + 0.5) % 0.5;
+      if (offset < 0.000001 || 0.5 - offset < 0.000001) offset = 0.5;
+      input.min = String(Math.round(offset * 1000000) / 1000000);
+    }
+
+    function temperatureWithUnit(value) {
+      var text = String(value).trim();
+      return /(?:℃|°c)$/i.test(text) ? text : text + "℃";
+    }
+
+    function announceCalculator() {
+      var text = amount(calculatorState.coffee) + " grams coffee, " +
+        amount(calculatorState.water) + " grams water";
+      if (calculatorState.ice !== null) {
+        text += ", " + amount(calculatorState.ice) + " grams ice";
+      }
+      liveSummary.textContent = text + ".";
+    }
+
+    function renderCalculator(skipped) {
+      setInput(coffeeInput, amount(calculatorState.coffee), skipped);
+      setInput(waterInput, amount(calculatorState.water), skipped);
+      setInput(waterRatioInput, calculatorState.waterRatioDisplay, skipped);
+      setInput(temperatureInput, calculatorState.temperature, skipped);
+      alignRatioStep(waterRatioInput, Number(calculatorState.waterRatioDisplay));
+
+      var hasIce = calculatorState.ice !== null;
+      iceRow.hidden = !hasIce;
+      iceRatioPart.hidden = !hasIce;
+      iceInput.disabled = !hasIce;
+      iceRatioInput.disabled = !hasIce;
+      if (hasIce) {
+        setInput(iceInput, amount(calculatorState.ice), skipped);
+        setInput(iceRatioInput, calculatorState.iceRatioDisplay, skipped);
+        alignRatioStep(iceRatioInput, Number(calculatorState.iceRatioDisplay));
+      }
+
+      selectedNote.textContent = calculatorState.tagline;
+      selectedNote.hidden = !calculatorState.tagline;
+      brewerOutput.textContent = calculatorState.brewer;
+      grindOutput.textContent = calculatorState.grind;
+      grindRow.hidden = !calculatorState.grind;
+      announceCalculator();
+    }
+
+    function selectRecipe(key) {
+      var section = recipeSections[key];
+      if (!section) return;
+
+      var coffee = Number(recipeValue(section, "coffee"));
+      var water = Number(recipeValue(section, "water"));
+      var iceValue = recipeValue(section, "ice");
+      var ice = iceValue ? Number(iceValue) : null;
+      var tagline = section.querySelector(":scope > .tagline");
+
+      calculatorState = {
+        section: section,
+        title: section.querySelector(":scope > .heading").textContent.trim(),
+        tagline: tagline ? tagline.textContent.trim() : "",
+        coffee: coffee,
+        water: water,
+        ice: ice,
+        waterRatio: water / coffee,
+        waterRatioDisplay: initialRatio(water / coffee),
+        iceRatio: ice === null ? null : ice / coffee,
+        iceRatioDisplay: ice === null ? "" : initialRatio(ice / coffee),
+        temperature: recipeValue(section, "temperature"),
+        brewer: recipeValue(section, "brewer"),
+        grind: recipeValue(section, "grind"),
+        original: {
+          coffee: coffee,
+          water: water,
+          temperature: recipeValue(section, "temperature")
+        }
+      };
+      renderCalculator(null);
+    }
+
+    function restoreInvalid(input) {
+      input.addEventListener("blur", function () {
+        if (input.type === "number" && readPositive(input) === null) {
+          renderCalculator(null);
+        }
+      });
+    }
+
+    recipeSelect.addEventListener("change", function () {
+      selectRecipe(recipeSelect.value);
+    });
+
+    coffeeInput.addEventListener("input", function () {
+      var next = readPositive(coffeeInput);
+      if (next === null) return;
+      calculatorState.coffee = next;
+      calculatorState.water = next * calculatorState.waterRatio;
+      if (calculatorState.ice !== null) {
+        calculatorState.ice = next * calculatorState.iceRatio;
+      }
+      renderCalculator(coffeeInput);
+    });
+
+    waterInput.addEventListener("input", function () {
+      var next = readPositive(waterInput);
+      if (next === null) return;
+      var scale = next / calculatorState.water;
+      calculatorState.water = next;
+      calculatorState.coffee *= scale;
+      if (calculatorState.ice !== null) calculatorState.ice *= scale;
+      renderCalculator(waterInput);
+    });
+
+    iceInput.addEventListener("input", function () {
+      var next = readPositive(iceInput);
+      if (next === null || calculatorState.ice === null) return;
+      var scale = next / calculatorState.ice;
+      calculatorState.ice = next;
+      calculatorState.coffee *= scale;
+      calculatorState.water *= scale;
+      renderCalculator(iceInput);
+    });
+
+    waterRatioInput.addEventListener("input", function () {
+      var next = readPositive(waterRatioInput);
+      if (next === null) return;
+      calculatorState.waterRatio = next;
+      calculatorState.waterRatioDisplay = waterRatioInput.value;
+      calculatorState.water = calculatorState.coffee * next;
+      renderCalculator(waterRatioInput);
+    });
+
+    iceRatioInput.addEventListener("input", function () {
+      var next = readPositive(iceRatioInput);
+      if (next === null || calculatorState.ice === null) return;
+      calculatorState.iceRatio = next;
+      calculatorState.iceRatioDisplay = iceRatioInput.value;
+      calculatorState.ice = calculatorState.coffee * next;
+      renderCalculator(iceRatioInput);
+    });
+
+    temperatureInput.addEventListener("input", function () {
+      calculatorState.temperature = temperatureInput.value;
+    });
+
+    [coffeeInput, waterInput, iceInput, waterRatioInput, iceRatioInput].forEach(restoreInvalid);
+
+    function replaceLiteral(text, search, replacement) {
+      return search ? text.split(search).join(replacement) : text;
+    }
+
+    function adjustedMethodStep(step) {
+      var text = step.textContent.trim();
+      var time = step.querySelector(".recipe-time");
+      if (time) {
+        var timeText = time.textContent.trim();
+        text = timeText + " " + text.slice(timeText.length).trim();
+      }
+      text = replaceLiteral(text,
+        amount(calculatorState.original.coffee) + "g",
+        amount(calculatorState.coffee) + "g");
+      text = replaceLiteral(text,
+        amount(calculatorState.original.water) + "g",
+        amount(calculatorState.water) + "g");
+      text = replaceLiteral(text,
+        temperatureWithUnit(calculatorState.original.temperature),
+        temperatureWithUnit(calculatorState.temperature));
+      return text;
+    }
+
+    function recipeText() {
+      var lines = [calculatorState.title];
+      if (calculatorState.tagline) lines.push(calculatorState.tagline);
+      lines.push("", "brewer: " + calculatorState.brewer);
+      lines.push("coffee: " + amount(calculatorState.coffee) + "g");
+      lines.push("water: " + amount(calculatorState.water) + "g");
+      if (calculatorState.ice !== null) {
+        lines.push("ice: " + amount(calculatorState.ice) + "g");
+      }
+      var ratioText = "ratio: 1:" + calculatorState.waterRatioDisplay;
+      if (calculatorState.ice !== null) ratioText += ":" + calculatorState.iceRatioDisplay;
+      lines.push(ratioText);
+      lines.push("water temperature: " + temperatureWithUnit(calculatorState.temperature));
+      if (calculatorState.grind) lines.push("grind: " + calculatorState.grind);
+
+      var method = calculatorState.section.querySelector(":scope > .recipe-method");
+      if (method) {
+        lines.push("", "method");
+        method.querySelectorAll(":scope > li").forEach(function (step, index) {
+          lines.push((index + 1) + ". " + adjustedMethodStep(step));
+        });
+      }
+
+      var note = calculatorState.section.querySelector(":scope > .recipe-note");
+      if (note) {
+        var noteCopy = note.cloneNode(true);
+        noteCopy.querySelectorAll(".recipe-note-label").forEach(function (label) { label.remove(); });
+        lines.push("", "note: " + noteCopy.textContent.trim());
+      }
+
+      lines.push("", "from: alex-markin.com/coffee");
+      return lines.join("\n") + "\n";
+    }
+
+    function flashRecipeCopy(label, spokenLabel) {
+      copyRecipeFeedback.textContent = label;
+      copyRecipeButton.classList.add("is-feedback");
+      copyRecipeButton.setAttribute("aria-label", spokenLabel || label);
+      window.clearTimeout(copyRecipeTimer);
+      copyRecipeTimer = window.setTimeout(function () {
+        copyRecipeFeedback.textContent = "";
+        copyRecipeButton.classList.remove("is-feedback");
+        copyRecipeButton.setAttribute("aria-label", "copy recipe");
+      }, 1800);
+    }
+
+    copyRecipeButton.addEventListener("click", function () {
+      writeClipboard(recipeText()).then(function () {
+        flashRecipeCopy("copied", "recipe copied");
+      }).catch(function () {
+        flashRecipeCopy("failed", "copy failed");
+      });
+    });
+
+    selectRecipe(recipeSelect.value);
   }
 })();
