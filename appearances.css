@@ -1124,7 +1124,9 @@ html[data-film-scratches="2"] .film-scratch:nth-child(n + 3) { display: none; }
 html[data-look="70mm"] .film-exposure::after {
   content: "";
   position: absolute;
-  z-index: 6;
+  /* Keep the projected grain as the exposure's top surface: it prints over
+     every live pixel in the frame, including photographs and type. */
+  z-index: 9;
   inset: 0;
   pointer-events: none;
   opacity: var(--grain-opacity);
