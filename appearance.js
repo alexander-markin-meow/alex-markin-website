@@ -98,6 +98,16 @@
     return Number(value.toFixed(decimals || 0));
   }
 
+  /* Type sizes used to consume seeded draws independently in each look.
+     Keep those positions stable so shared historical seeds retain every
+     non-type choice after the scale became responsive and deterministic. */
+  function advanceSeed(random, count) {
+    while (count > 0) {
+      random();
+      count -= 1;
+    }
+  }
+
   function canvasWidth(random) {
     return range(random, 950, 1180, 0) + "px";
   }
@@ -459,8 +469,7 @@
       ];
       var simple = pick(random, simplePalettes);
       edition.vars = paletteVars(simple);
-      edition.vars["--appearance-display-size"] = pick(random, ["42px", "44px", "46px"]);
-      edition.vars["--appearance-body-size"] = pick(random, ["16px", "16.5px", "17px"]);
+      advanceSeed(random, 2);
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
@@ -474,8 +483,7 @@
         { bg: "#f5f0e6", ink: "#25231f", bright: "#11110f", muted: "#625f58", faint: "#6d6961", foot: "#6d6961", accent: "#4f5b4c", hair: "#c0bbb0", rule: "#d2cdc2", border: "#bdb8ae", chip: "#ebe6dc" }
       ];
       edition.vars = paletteVars(pick(random, paperPalettes));
-      edition.vars["--appearance-display-size"] = pick(random, ["44px", "48px", "52px"]);
-      edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "18px"]);
+      advanceSeed(random, 2);
       edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.7]);
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
@@ -538,8 +546,7 @@
           toScale: range(random, 0.94, 1.16, 2)
         });
       }
-      edition.vars["--appearance-display-size"] = pick(random, ["44px", "49px", "54px"]);
-      edition.vars["--appearance-body-size"] = pick(random, blobType.body === fontMono ? ["16px", "16.5px"] : ["15.5px", "16px", "17px"]);
+      advanceSeed(random, 2);
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "390px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px"]);
@@ -587,9 +594,9 @@
       edition.vars["--appearance-body-family"] = fontEno;
       edition.vars["--appearance-display-family"] = fontEno;
       edition.vars["--appearance-annotation-family"] = fontEno;
-      edition.vars["--appearance-display-size"] = pick(random, ["42px", "46px", "50px"]);
+      advanceSeed(random, 1);
       edition.vars["--appearance-display-weight"] = pick(random, [500, 600]);
-      edition.vars["--appearance-body-size"] = pick(random, ["15.5px", "16px", "16.5px"]);
+      advanceSeed(random, 1);
       edition.vars["--appearance-line-height"] = pick(random, [1.58, 1.64, 1.7]);
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
@@ -636,8 +643,7 @@
       edition.vars["--appearance-annotation-family"] = filmType.annotation;
       edition.vars["--appearance-display-weight"] = filmType.displayWeight;
       edition.vars["--appearance-body-weight"] = filmType.bodyWeight;
-      edition.vars["--appearance-display-size"] = pick(random, ["46px", "50px", "54px"]);
-      edition.vars["--appearance-body-size"] = pick(random, ["16.5px", "17px", "17.5px"]);
+      advanceSeed(random, 2);
       edition.vars["--appearance-line-height"] = filmType.lineHeight;
       edition.vars["--film-name-spacing"] = filmType.nameSpacing;
       edition.vars["--page-max"] = canvasWidth(random);
@@ -779,8 +785,6 @@
       edition.vars["--crt-cursor-hotspot"] = crtCellScale + " " + crtCellScale;
       /* The CRT is a physical-pixel treatment, so its source geometry stays on
          whole CSS pixels before the one-device-pixel grille is applied. */
-      edition.vars["--appearance-display-size"] = "60px";
-      edition.vars["--appearance-body-size"] = "22px";
       edition.vars["--appearance-line-height"] = 1.25;
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
@@ -822,8 +826,6 @@
       var terminalType = pick(random, [
         {
           family: '"VT323", "Roboto Mono", monospace',
-          displaySize: ["54px", "58px", "62px"],
-          bodySize: ["20px", "21px", "22px"],
           lineHeight: [1.4, 1.46, 1.52],
           displayWeight: 400,
           nameSpacing: "0.005em",
@@ -831,8 +833,6 @@
         },
         {
           family: '"Fira Mono", "Roboto Mono", monospace',
-          displaySize: ["44px", "46px", "48px"],
-          bodySize: ["18px", "18.5px", "19px"],
           lineHeight: [1.54, 1.6, 1.66],
           displayWeight: pick(random, [400, 500]),
           nameSpacing: "-0.018em",
@@ -840,8 +840,6 @@
         },
         {
           family: '"Roboto Mono", "Fira Mono", monospace',
-          displaySize: ["44px", "46px", "48px"],
-          bodySize: ["18px", "18.5px", "19px"],
           lineHeight: [1.58, 1.64, 1.7],
           displayWeight: pick(random, [400, 500]),
           nameSpacing: "-0.014em",
@@ -849,8 +847,7 @@
         }
       ]);
       edition.vars["--terminal-font-family"] = terminalType.family;
-      edition.vars["--appearance-display-size"] = pick(random, terminalType.displaySize);
-      edition.vars["--appearance-body-size"] = pick(random, terminalType.bodySize);
+      advanceSeed(random, 2);
       edition.vars["--appearance-line-height"] = pick(random, terminalType.lineHeight);
       edition.vars["--terminal-display-weight"] = terminalType.displayWeight;
       edition.vars["--terminal-name-spacing"] = terminalType.nameSpacing;

@@ -5,13 +5,22 @@
    ========================================================================== */
 
 html[data-look] {
+  /* One responsive semantic scale is shared by every appearance. Individual
+     typefaces still bring their own voice, while font-size-adjust normalizes
+     their lowercase x-height so a nominal size reads consistently. */
+  --fs-display: 44px;
+  --fs-body: 17px;
+  --fs-desc: 15.5px;
+  --fs-heading: 13px;
+  --fs-meta: 12.5px;
+  --fs-tag: 12px;
+  --fs-footer: 11.5px;
   --appearance-body-family: var(--serif);
   --appearance-display-family: var(--mono);
   --appearance-annotation-family: var(--mono);
-  --appearance-display-size: 44px;
-  --appearance-display-mobile: 32px;
+  --appearance-display-size: var(--fs-display);
   --appearance-display-weight: 600;
-  --appearance-body-size: 16px;
+  --appearance-body-size: var(--fs-body);
   --appearance-body-weight: 400;
   --appearance-line-height: 1.55;
   --image-contrast: 1.08;
@@ -129,6 +138,7 @@ html[data-look] body {
   background: transparent;
   font-family: var(--appearance-body-family);
   font-size: var(--appearance-body-size);
+  font-size-adjust: 0.5;
   font-weight: var(--appearance-body-weight);
   line-height: var(--appearance-line-height);
 }
@@ -233,7 +243,7 @@ html[data-look] .page--home .columns {
 
 html[data-look] .name {
   font-family: var(--appearance-display-family);
-  font-size: clamp(var(--appearance-display-mobile), 12cqi, var(--appearance-display-size));
+  font-size: var(--appearance-display-size);
   font-weight: var(--appearance-display-weight);
   white-space: nowrap;
 }
@@ -571,7 +581,6 @@ html[data-look="paper"] body {
   --appearance-body-family: var(--serif);
   --appearance-display-family: var(--serif);
   --appearance-annotation-family: var(--serif);
-  --appearance-display-mobile: 36px;
   --appearance-display-weight: 600;
   --grain-blend: multiply;
   letter-spacing: 0.002em;
@@ -593,14 +602,13 @@ html[data-look="paper"] :is(.heading, .recipe-subheading, .meta, .tag, .ago, .da
 }
 
 html[data-look="paper"] :is(.heading, .recipe-subheading) {
-  font-size: 13px;
+  font-size: var(--fs-heading);
   font-weight: 600;
   color: var(--accent);
 }
 
 html[data-look="paper"][data-paper-heading="small-caps"] :is(.heading, .recipe-subheading) {
   font-variant-caps: all-small-caps;
-  font-size: 15px;
   letter-spacing: 0.08em;
 }
 
@@ -620,7 +628,6 @@ html[data-look="paper"] .appearance-option {
    -------------------------------------------------------------------------- */
 
 html[data-look="blobs"] body {
-  --appearance-display-mobile: 38px;
   --appearance-body-weight: 400;
   --grain-blend: screen;
 }
@@ -632,7 +639,7 @@ html[data-look="blobs"] .name {
 
 html[data-look="blobs"] .heading {
   font-family: var(--appearance-display-family);
-  font-size: 13px;
+  font-size: var(--fs-heading);
   font-weight: var(--blob-heading-weight, 700);
   letter-spacing: 0.035em;
 }
@@ -892,7 +899,6 @@ html[data-look="eno"] {
 }
 
 html[data-look="eno"] body {
-  --appearance-display-mobile: 36px;
   --appearance-body-weight: 400;
   --grain-blend: soft-light;
   background: transparent;
@@ -906,7 +912,7 @@ html[data-look="eno"] .name {
 
 html[data-look="eno"] :is(.heading, .recipe-subheading) {
   font-family: var(--appearance-display-family);
-  font-size: 11.5px;
+  font-size: var(--fs-heading);
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -929,7 +935,6 @@ html[data-look="eno"] :is(.copy-markdown, .copy-recipe, .calculator-input, .calc
    -------------------------------------------------------------------------- */
 
 html[data-look="70mm"] body {
-  --appearance-display-mobile: 36px;
   --grain-blend: screen;
 }
 
@@ -1155,7 +1160,7 @@ html[data-look="70mm"] .name {
 
 html[data-look="70mm"] :is(.heading, .recipe-subheading) {
   font-family: var(--appearance-display-family);
-  font-size: 13px;
+  font-size: var(--fs-heading);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-shadow: 0 0 var(--film-bloom-radius) color-mix(in srgb, var(--accent) 30%, transparent);
@@ -1532,7 +1537,6 @@ html[data-look="crt"] body {
   --appearance-body-family: "VT323", var(--mono);
   --appearance-display-family: "VT323", var(--mono);
   --appearance-annotation-family: "VT323", var(--mono);
-  --appearance-display-mobile: 46px;
   --appearance-display-weight: 600;
   --appearance-body-weight: 500;
   --grain-blend: screen;
@@ -1569,21 +1573,21 @@ html[data-look="crt"] .name {
 }
 
 html[data-look="crt"] :is(.heading, .recipe-subheading) {
-  font-size: 18px;
+  font-size: var(--fs-heading);
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
-html[data-look="crt"] :is(.desc, .recipe-method, .recipe-note) { font-size: 21px; }
+html[data-look="crt"] :is(.desc, .recipe-method, .recipe-note) { font-size: var(--fs-desc); }
 
 html[data-look="crt"] :is(.desc, .tagline, .tag, .ago, .meta, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control) {
   font-weight: 500;
 }
 
-html[data-look="crt"] :is(.meta, .tag, .measure) { font-size: 16px; }
-html[data-look="crt"] :is(.ago, .recipe-time, .recipe-note-label) { font-size: 15px; }
-html[data-look="crt"] :is(.footer, .appearance-control) { font-size: 15px; }
+html[data-look="crt"] .meta { font-size: var(--fs-meta); }
+html[data-look="crt"] :is(.tag, .measure, .ago, .recipe-time, .recipe-note-label) { font-size: var(--fs-tag); }
+html[data-look="crt"] :is(.footer, .appearance-control) { font-size: var(--fs-footer); }
 html[data-look="crt"] :is(.meta, .tag, .ago, .measure, .recipe-time, .recipe-note-label, .footer, .appearance-control) { letter-spacing: 1px; }
 
 /* Photographs use a genuinely low-resolution source inside their unchanged
@@ -1621,13 +1625,13 @@ html[data-look="crt"] .appearance-image--portrait .photo {
 html[data-look="crt"] :is(.copy-markdown, .copy-recipe, .calculator-input, .calculator-select, .appearance-option) { border-radius: 0; }
 
 html[data-look="crt"] :is(.calculator-label, .calculator-unit, .calculator-ratio-one, .calculator-ratio-separator, .calculator-measure, .copy-recipe) {
-  font-size: 16px;
+  font-size: var(--fs-tag);
   font-weight: 500;
   letter-spacing: 1px;
 }
 
 html[data-look="crt"] :is(.calculator-input, .calculator-select) {
-  font-size: 18px;
+  font-size: var(--fs-desc);
   font-weight: 500;
   letter-spacing: 1px;
 }
@@ -1715,14 +1719,13 @@ html[data-look="terminal"] body {
   --appearance-body-family: var(--terminal-font-family);
   --appearance-display-family: var(--terminal-font-family);
   --appearance-annotation-family: var(--terminal-font-family);
-  --appearance-display-mobile: 34px;
   --appearance-display-weight: var(--terminal-display-weight);
   --appearance-body-weight: 400;
   --grain-blend: screen;
 }
 
 html[data-look="terminal"] .name {
-  font-size: clamp(var(--appearance-display-mobile), 14cqi, var(--appearance-display-size));
+  font-size: var(--appearance-display-size);
   line-height: 1.05;
   letter-spacing: var(--terminal-name-spacing);
 }
@@ -1772,7 +1775,29 @@ html[data-look="terminal"] a:not(.flickr-photo-link):is(:hover, :focus-visible):
   text-shadow: none;
 }
 
+@media (min-width: 641px) and (max-width: 839px) {
+  html[data-look] {
+    --fs-display: 40px;
+    --fs-body: 16.5px;
+    --fs-desc: 15px;
+    --fs-heading: 12.5px;
+    --fs-meta: 12px;
+    --fs-tag: 11.5px;
+    --fs-footer: 11px;
+  }
+}
+
 @media (max-width: 640px) {
+  html[data-look] {
+    --fs-display: 32px;
+    --fs-body: 16px;
+    --fs-desc: 14.5px;
+    --fs-heading: 12px;
+    --fs-meta: 11.5px;
+    --fs-tag: 11px;
+    --fs-footer: 10.5px;
+  }
+
   html[data-look] .page {
     padding-right: max(24px, calc(env(safe-area-inset-right) + 24px));
     padding-left: max(24px, calc(env(safe-area-inset-left) + 24px));

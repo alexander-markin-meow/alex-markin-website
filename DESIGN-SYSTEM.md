@@ -55,6 +55,15 @@ Scale (don't invent sizes; pick the closest):
 - `--fs-tag` 11px / mono — leader-line tags
 - `--fs-footer` 10.5px / mono / letter-spacing 0.06em — footer
 
+The generative homepage and coffee page use one responsive semantic scale across every
+appearance. Appearance changes may change family, weight, tracking, case treatment, and line
+height, but never a role's size. The scale is `44 / 17 / 15.5 / 13 / 12.5 / 12 / 11.5px`
+for display, body, description, heading, meta, tag, and footer on wide screens (`840px+`);
+`40 / 16.5 / 15 / 12.5 / 12 / 11.5 / 11px` on medium screens (`641–839px`); and
+`32 / 16 / 14.5 / 12 / 11.5 / 11 / 10.5px` on compact screens (`640px` and below).
+The shared `font-size-adjust` target normalizes the x-height of the different appearance
+typefaces so equal semantic sizes remain optically comparable, including 70mm's film serifs.
+
 ## layout
 
 - `.page`: max-width 1100px, centered, padding 36px 48px 12px (36/24/12 mobile). The
@@ -285,10 +294,10 @@ display, and annotation together. Every other appearance keeps headers sans or m
 body may still pair with that non-serif header voice.
 
 - `smpl` (`simple` internally) — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
-  muted terracotta, dusty violet, or aged brass palettes and bounded changes to scale, width,
+  muted terracotta, dusty violet, or aged brass palettes and bounded changes to width,
   and spacing.
 - `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
-  bounded ink temperature, scale, heading treatment, and solid, dotted, or dashed print rules. Its generated
+  bounded ink temperature, heading treatment, and solid, dotted, or dashed print rules. Its generated
   `feTurbulence` grain is always a top layer over the complete edition. A second, much lighter
   seeded SVG stock texture is chosen independently from three families: directional `laid`
   fibres, smooth `vellum` pulp, or softly lit `watercolour` tooth. An explicit layer follows the
@@ -360,7 +369,7 @@ body may still pair with that non-serif header voice.
   Prime, or Roboto Mono; and one of three readable presets that keep the body serif and the
   display and section headings mono. The upper-stock rebate between the appearance controls and the perforation strip
   varies from `8–18px`, keeping the film compact while avoiding a mechanically fixed join. Page
-  width, spacing, display scale, grain, vignette, bloom, red halation radius,
+  width, spacing, grain, vignette, bloom, red halation radius,
   gate falloff distance, perforation pitch, hole geometry, edge halo, leak/streak/stain placement
   and count, scratch count and placement, dust density, and image development vary inside bounded
   brackets. Bright display elements receive a quiet white bloom; link hover/focus and utility-button
@@ -400,11 +409,10 @@ body may still pair with that non-serif header voice.
   flicker or text displacement.
 - `>...` (`terminal` internally) — one seeded technical face is used throughout each edition:
   DEC-inspired VT323, workstation-like Fira Mono, or modern-console Roboto Mono. The family,
-  tuned size, weight, tracking, and line spacing vary together as a bounded preset rather than
-  mixing faces inside one view. Quiet prompt prefixes, solid/dotted/dashed leaders, restrained green/blue/amber
-  palettes, slight grain, and compact column spacing vary independently. Fira Mono and
-  Roboto Mono use an `18–19px` body / `44–48px` display scale; VT323 uses a larger
-  `20–22px` body / `54–62px` display scale to compensate for its raster-style x-height. Text
+  weight, tracking, and line spacing vary together as a bounded preset rather than mixing faces
+  inside one view. The shared responsive scale and x-height adjustment keep its raster and console
+  faces optically aligned with the other appearances. Quiet prompt prefixes, solid/dotted/dashed
+  leaders, restrained green/blue/amber palettes, slight grain, and compact column spacing vary independently. Text
   links invert against the selected terminal accent on hover/focus, using a content-width
   selection block without CRT glow. Its prompt also annotates the desktop edition status, while
   matching square utility controls echo the selected divider treatment.
@@ -456,8 +464,8 @@ answer with an accent border. CRT uses a phosphor selection block, Terminal uses
 inversion, Blob adds its documented seed-colored bloom, and 70mm uses red halation.
 The blob layer never contains content. The homepage column count follows the fixed responsive
 rule above; seeded widths and gaps may change the available measure, so long rows may wrap instead
-of clipping. The display name scales against its actual identity text container so it remains on
-one line. The homepage uses `viewport-fit=cover`: visual layers
+of clipping. The display name uses the shared responsive size and remains on one line. The homepage
+uses `viewport-fit=cover`: visual layers
 paint through mobile safe areas, while page padding incorporates every safe-area inset so content
 remains clear of device controls. The root and `theme-color` remain pure black as a browser-owned
 outer frame; Safari may tint its translucent URL controls from this color, but the page cannot
