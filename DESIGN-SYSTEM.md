@@ -190,7 +190,7 @@ save link; cancellation is silent, and other errors expose a save fallback. Inva
 an active share request is guarded against duplicates, and a picture being prepared disables only that choice.
 
 There is no separate recipe catalogue, appearance chooser, about section, or duplicate page
-copy action. The footer provides brief authorship and a home link. The calculator intentionally
+copy action. The footer provides only a right-aligned home link. The calculator intentionally
 starts at the default preset on reload; saved preferences can be considered after review.
 
 ### section
