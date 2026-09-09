@@ -178,7 +178,7 @@ Keyboard arrows change coffee by 1g, water/ice by 25g, and ratios by 0.5. Invali
 an inline message and prevent sharing until corrected or reset. Reset restores the selected preset.
 Headings are `preset`, `adjust`, and `brew`. The `copy as text` and `share as picture`
 buttons are always visible below the method and note, with no extra share toggle. Text copies directly to the
-clipboard, changes the button label to `copied!` for one second, and retains a legacy clipboard fallback. Pictures use the native
+clipboard, changes the button label to `copied!` for one second without changing its dimensions, and retains a legacy clipboard fallback. Pictures use the native
 Web Share API when supported. Picture sharing prepares a PNG recipe card from current state before the
 choice is clicked, preserving browser user activation. The triggering button stays active while the native share
 sheet is open so platform popovers can retain the control as their anchor; an in-progress guard prevents duplicate

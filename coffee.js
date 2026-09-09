@@ -245,8 +245,8 @@
       if (copied) {
         const button = $('copy-text');
         clearTimeout(copyFeedbackTimer);
-        button.textContent = 'copied!';
-        copyFeedbackTimer = setTimeout(() => { button.textContent = 'copy as text'; }, 1000);
+        $('copy-text-label').textContent = 'copied!';
+        copyFeedbackTimer = setTimeout(() => { $('copy-text-label').textContent = 'copy as text'; }, 1000);
       } else {
         $('share-feedback').textContent = 'copy unavailable. select and copy the recipe text on this page.';
       }

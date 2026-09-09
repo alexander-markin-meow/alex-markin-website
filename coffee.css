@@ -42,6 +42,9 @@
 .brew-button { min-height: 44px; padding: 10px 14px; background: transparent; cursor: pointer; font-family: var(--mono); font-size: var(--fs-heading); }
 .brew-button:hover { border-color: var(--ink-hover); color: var(--ink-hover); }
 .brew-button:disabled { opacity: 0.5; cursor: default; }
+.brew-copy-button { display: inline-grid; }
+.brew-copy-button > span { grid-area: 1 / 1; }
+.brew-copy-width { visibility: hidden; }
 .brew-summary { font-family: var(--mono); font-size: var(--fs-body); line-height: 1.7; margin: 0 0 20px; font-variant-numeric: tabular-nums; }
 .brew-equipment { margin: 0 0 24px; padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
 .brew-equipment > div { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 12px; margin-top: 6px; }
