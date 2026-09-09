@@ -78,7 +78,6 @@
       input.setAttribute('aria-invalid', 'true');
       $('brew-error').textContent = key === 'temperature' ? 'enter 1–100°c, or a range such as 80–83.' : `enter an amount greater than 0 and up to ${input.max}.`;
       syncShareControls();
-      closeShareOptions();
       $('reset-brew').disabled = false;
       return;
     }
@@ -116,13 +115,8 @@
 
   function syncShareControls() {
     const invalid = Object.values(fields).some(field => field.hasAttribute('aria-invalid'));
-    $('share-brew').disabled = $('share-text').disabled = invalid || sharing;
+    $('share-text').disabled = invalid || sharing;
     $('share-picture').disabled = invalid || sharing || !pictureFile;
-  }
-
-  function closeShareOptions() {
-    $('brew-share-options').hidden = true;
-    $('share-brew').setAttribute('aria-expanded', 'false');
   }
 
   function clearDownload() {
@@ -222,7 +216,7 @@
   }
 
   async function shareRecipe(kind) {
-    if (sharing || $('share-brew').disabled || (kind === 'picture' && !pictureFile)) return;
+    if (sharing || $('share-text').disabled || (kind === 'picture' && !pictureFile)) return;
     const title = source.querySelector('.heading').textContent.trim();
     const text = recipeText();
     const file = kind === 'picture' ? pictureFile : new File([text], `coffee-${picker.value}.txt`, {type: 'text/plain'});
@@ -233,20 +227,18 @@
     $('share-feedback').textContent = '';
     if (!supported) {
       offerDownload(file, 'native sharing is unavailable here. your recipe is ready to save.', true);
-      closeShareOptions();
       return;
     }
     sharing = true;
     syncShareControls();
     try {
       await navigator.share(data);
-      closeShareOptions();
     } catch (error) {
       if (error.name !== 'AbortError') offerDownload(file, 'sharing could not open. try again or save your recipe.');
     } finally {
       sharing = false;
       syncShareControls();
-      $('share-brew').focus();
+      $(kind === 'picture' ? 'share-picture' : 'share-text').focus();
     }
   }
 
@@ -269,23 +261,8 @@
     loadPreset();
     $('brew-feedback').textContent = 'preset restored';
   });
-  $('share-brew').addEventListener('click', () => {
-    const open = $('brew-share-options').hidden;
-    $('brew-share-options').hidden = !open;
-    $('share-brew').setAttribute('aria-expanded', String(open));
-    if (open) $('share-text').focus();
-  });
   $('share-text').addEventListener('click', () => shareRecipe('text'));
   $('share-picture').addEventListener('click', () => shareRecipe('picture'));
-  $('brew-share').addEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-      closeShareOptions();
-      $('share-brew').focus();
-    }
-  });
-  document.addEventListener('click', event => {
-    if (!$('brew-share').contains(event.target)) closeShareOptions();
-  });
   loadPreset();
   $('coffee-app').hidden = false;
 })();

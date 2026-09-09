@@ -168,7 +168,7 @@ home restores the homepage's own session appearance. Keep the canonical `/coffee
 Use one preset selector, grouped quantity and ratio/temperature fields, then one live method.
 On desktop the method sits beside the calculator; below 840px it follows the controls.
 Use existing color/type tokens, rem-based type, 44px minimum controls, clear focus outlines,
-and no decorative motion. The primary share button uses the existing ink/background tokens.
+and no decorative motion. Both share buttons use the same outlined button treatment.
 
 Authored recipes live once in inert `<template>` elements. `coffee.js` reads their annotated
 specs and clones only the selected method, substituting current quantities and temperature.
@@ -176,8 +176,8 @@ Defaults remain 15g coffee at each authored ratio (1:10, 1:8:8, 1:16.5). Amount 
 batch; ratio edits keep coffee fixed. Temperature accepts a number or ascending range.
 Keyboard arrows change coffee by 1g, water/ice by 25g, and ratios by 0.5. Invalid entries show
 an inline message and prevent sharing until corrected or reset. Reset restores the selected preset.
-Headings are `preset`, `adjust`, and `brew`. A share disclosure sits below the method and
-note, with `share as text` and `share as picture` buttons. Both use the native Web Share API
+Headings are `preset`, `adjust`, and `brew`. The `share as text` and `share as picture`
+buttons are always visible below the method and note, with no extra share toggle. Both use the native Web Share API
 when supported. Picture sharing prepares a PNG recipe card from current state before the
 choice is clicked, preserving browser user activation. Text and picture include current specs,
 adjusted method, note, and source URL. Unsupported sharing downloads TXT/PNG with a visible

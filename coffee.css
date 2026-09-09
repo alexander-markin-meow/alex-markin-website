@@ -40,9 +40,7 @@
 .brew-input-wrap:has([aria-invalid="true"]) { border-color: var(--ink); border-style: dashed; }
 .brew-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 20px; border-top: 1px solid var(--rule); }
 .brew-button { min-height: 44px; padding: 10px 14px; background: transparent; cursor: pointer; font-family: var(--mono); font-size: var(--fs-heading); }
-.brew-share-toggle { background: var(--ink); color: var(--bg); border-color: var(--ink); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .brew-button:hover { border-color: var(--ink-hover); color: var(--ink-hover); }
-.brew-share-toggle:hover { background: var(--ink-hover); color: var(--bg); }
 .brew-button:disabled { opacity: 0.5; cursor: default; }
 .brew-summary { font-family: var(--mono); font-size: var(--fs-body); line-height: 1.7; margin: 0 0 20px; font-variant-numeric: tabular-nums; }
 .brew-equipment { margin: 0 0 24px; padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
@@ -70,7 +68,7 @@
 }
 
 .brew-share { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--rule); }
-.brew-share-options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.brew-share-options { display: flex; flex-wrap: wrap; gap: 12px; }
 .brew-share-feedback { margin: 12px 0 0; }
 .brew-share-feedback:empty { display: none; }
 .brew-save { display: inline-block; margin-top: 8px; padding: 8px 0; text-decoration: underline; }
