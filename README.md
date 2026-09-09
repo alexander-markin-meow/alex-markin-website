@@ -4,7 +4,7 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 
 ## Files
 - `index.html` — page content and structure
-- `coffee.html` — alex's specialty coffee recipes; inherits the active homepage look and seed
+- `coffee.html`, `coffee.css`, `coffee.js` — the fixed-design coffee calculator; presets, adjustable quantities, live instructions, and native text/picture sharing
 - `louppe/` — legacy redirect to the standalone site at `louppe.eu`
 - `trials/` — the site-native trials index and immersive webdesign experiments
 - `styles.css` — all styling; everything derives from the tokens at the top
@@ -20,7 +20,7 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 - `photo-720.webp` — 62 KB, quality-90 portrait used on the homepage and CV;
   preserves the source aspect ratio and lets CSS own the crop and color
 - `fonts.css`, `fonts/` — local font definitions, files, and licenses for the seven fixed
-  typographic identities on the homepage and coffee page
+  typographic identities on the homepage and the calculator’s fixed serif/mono pairing
 - `favicon.svg`, `apple-touch-icon.png` — tab/home-screen icons
 - `CNAME` — custom domain config for GitHub Pages (contains `alex-markin.com`)
 
@@ -35,9 +35,11 @@ pattern (title, dotted leader, mono tag) — live in `DESIGN-SYSTEM.md`. Don't a
 fonts, hues, or font sizes outside that spec, and extend `styles.css` via its tokens
 rather than hard-coding values or using inline styles.
 
-The homepage and coffee page use fixed fonts per style and share the seeded appearance system: composer, visual
-layers, controls, and status. The active look and seed are held for the current browsing session,
-while their cross-page links also carry the edition for deterministic navigation and sharing.
+The homepage uses fixed fonts per style and the seeded appearance system: composer, visual
+layers, controls, and status. The active look and seed are held for the current browsing session.
+The coffee calculator uses fixed dark styling and separate CSS/JS; returning home restores
+the homepage edition. Text and PNG sharing use the native share menu when available, with
+file downloads as a fallback. It remains static and has no build step.
 Phones use an expandable appearance grid and shuffle control at the shared utility-text size.
 Controls wrap and grow with larger text settings; desktop always keeps the original direct-choice row.
 

@@ -1,8 +1,8 @@
 # alex-markin.com design system
 
-Quiet, typographic, and lowercase, with subtle web-1.0 details. The homepage and coffee page
-share one seeded generative edition for the current browsing session; all other standard pages
-use the original dark serif/mono appearance.
+Quiet, typographic, and lowercase, with subtle web-1.0 details. The homepage uses a seeded generative
+edition for the current browsing session. The coffee calculator and all other standard pages
+use fixed dark serif/mono styling.
 Static HTML + CSS, no build step.
 This file is the source of truth. If you (human or LLM) are editing the site, read this first;
 every visual decision below is deliberate.
@@ -55,7 +55,7 @@ Scale (don't invent sizes; pick the closest):
 - `--fs-tag` 11px / mono — leader-line tags
 - `--fs-footer` 10.5px / mono / letter-spacing 0.06em — footer
 
-The generative homepage and coffee page use one responsive semantic scale across every
+The generative homepage uses one responsive semantic scale across every
 appearance. Each appearance has fixed families, weights, tracking, case treatment, and line
 height; none of these changes when an edition is regenerated. A role's size stays shared. The homepage identity name is the sole exception: its display
 size is a ceiling and may fluidly reduce to remain inside the actual text space beside the
@@ -158,30 +158,35 @@ below, then optional detail lines. Used by both `experience` and `education`.
 - A `.row` does not need a link. Without one it simply loses the full-row hit area —
   used by the cv `skills` list, where the row is a statement, not a destination.
 
-### recipe (`coffee.html`)
-Recipe sections keep a single reading column and use the standard heading, tagline, and dotted
-rows. A `.measure` occupies the right-hand annotation slot for a free-form quantity or brewer
-value; unlike `.tag`, it may contain several words, and unlike `.dates`, it does not imply a
-date range.
+### coffee calculator (`coffee.html`)
 
-Methods use `.recipe-method`, a semantic ordered list in reading text with small mono numerals.
-Timed steps may begin with `.recipe-time`. A closing `.recipe-note` uses description text and a
-mono `.recipe-note-label`. These patterns follow the active appearance and are recognized by
-`copy as markdown`.
+The coffee page is a fixed utility, scoped by `.coffee-page` and loaded only through `coffee.css`, with local
+Source Serif 4 and IBM Plex Mono. It does not load `appearance.js`, visual layers, or
+appearance controls. Incoming look/seed parameters have no visual effect; navigating back
+home restores the homepage's own session appearance. Keep the canonical `/coffee` URL.
 
-The `brew calculator` sits after `about` and before the authored recipe sections. It uses native
-select and input controls in the annotation voice, with the same restrained outline treatment as
-the edition's utility controls. The selected recipe section remains the source of truth: calculator
-defaults are read from its `data-recipe-spec` / `data-recipe-value` annotations rather than copied
-into JavaScript. Every selection starts with a `15g` coffee dose and the exact ratio authored in
-the recipe (`1:10`, `1:8:8`, or `1:16.5`), then calculates water and optional ice. The ratio row
-precedes the amount rows. Editing coffee, water, or ice scales every mass proportionally; editing a
-ratio recalculates its corresponding liquid against coffee; temperature remains independent.
-Coffee steppers move by `1g`, water by `25g`, and ratios by `0.5`, while direct numeric entry may
-use any positive decimal. The right-side controls share a fixed alignment column, including a fixed
-unit slot; recipe metadata is right-aligned to that same edge. `copy recipe` copies the current
-calculated specs, the selected recipe's adjusted method and note, then appends
-`from: alex-markin.com/coffee`. The authored recipes below never change when the calculator does.
+Use one preset selector, grouped quantity and ratio/temperature fields, then one live method.
+On desktop the method sits beside the calculator; below 840px it follows the controls.
+Use existing color/type tokens, rem-based type, 44px minimum controls, clear focus outlines,
+and no decorative motion. The primary share button uses the existing ink/background tokens.
+
+Authored recipes live once in inert `<template>` elements. `coffee.js` reads their annotated
+specs and clones only the selected method, substituting current quantities and temperature.
+Defaults remain 15g coffee at each authored ratio (1:10, 1:8:8, 1:16.5). Amount edits scale the
+batch; ratio edits keep coffee fixed. Temperature accepts a number or ascending range.
+Keyboard arrows change coffee by 1g, water/ice by 25g, and ratios by 0.5. Invalid entries show
+an inline message and prevent sharing until corrected or reset. Reset restores the selected preset.
+Headings are `preset`, `adjust`, and `brew`. A share disclosure sits below the method and
+note, with `share as text` and `share as picture` buttons. Both use the native Web Share API
+when supported. Picture sharing prepares a PNG recipe card from current state before the
+choice is clicked, preserving browser user activation. Text and picture include current specs,
+adjusted method, note, and source URL. Unsupported sharing downloads TXT/PNG with a visible
+save link; cancellation is silent, and other errors expose a save fallback. Invalid inputs
+and an active share request disable sharing; a picture being prepared disables only that choice.
+
+There is no separate recipe catalogue, appearance chooser, about section, or duplicate page
+copy action. The footer provides brief authorship and a home link. The calculator intentionally
+starts at the default preset on reload; saved preferences can be considered after review.
 
 ### section
 ```html
@@ -192,7 +197,7 @@ calculated specs, the selected recipe's adjusted method and note, then appends
 ```
 
 On the homepage, creative work is divided semantically into two separate sections: `projects`
-contains louppe, webdesign trials, and coffee recipes; `publications` contains the authored,
+contains louppe, webdesign trials, and the coffee calculator; `publications` contains the authored,
 edited, or filmed pieces. Do not merge these headings into one list.
 
 ### stacked sections in one column
@@ -277,16 +282,11 @@ under-construction banners. The nostalgia is a seasoning, not the dish.
 ## seeded appearances
 
 The homepage separates content from presentation. `appearance.js` composes an edition before CSS
-paints, and `appearances.css` renders it. `/coffee` loads the same composer and presentation layer
-around its own semantic content. Do not duplicate, reorder, or rewrite content for an appearance.
-
-Both `/` and `/coffee` include the complete appearance control and every required visual layer.
-`appearance.js` stores the active look and seed in `sessionStorage`, so direct navigation,
-reloads, and unpinned back/forward history entries in the same tab restore one shared edition.
-Links between the pages also carry `look` and `seed` through `data-preserve-appearance`, which
-keeps new-tab navigation and explicitly shared URLs deterministic. Query parameters override the
-stored session edition. `site.js` refreshes the cross-page links whenever either page composes a
-new edition.
+paints, and `appearances.css` renders it. Do not duplicate, reorder, or rewrite content for an appearance.
+The homepage includes the complete appearance controls and visual layers. The active look and seed
+live in `sessionStorage`, so reloads and returning from other pages restore the edition. Query
+parameters override the stored session edition. The coffee calculator loads neither appearance
+asset and does not read or change that session state.
 
 Seven appearances have equal default probability.
 
@@ -302,7 +302,7 @@ Seven appearances have equal default probability.
 | crt | VT323, 400 | VT323, 400 (no synthetic bold) |
 | terminal | Fira Mono, 400 | Fira Mono: name/headings 500, annotations 400 |
 
-The homepage and coffee page use local `fonts.css` definitions, retaining font licenses
+The homepage and coffee calculator use local `fonts.css` definitions, retaining font licenses
 in `fonts/`. Unicode ranges and browser font matching load only the active families and
 weights. No Google Fonts request or speculative loading of unused looks is needed.
 Georgia uses the system font; other scripts outside the provided Latin/Latin Extended
@@ -474,7 +474,7 @@ All random values are derived from one edition seed. `?seed=<value>` reproduces 
 `?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases
 (`smpl`, `blob`, `70mm`, `>...`) and the existing internal names remain accepted so old links keep working.
 The first unparameterized generative page loaded in a tab creates a new edition; subsequent
-homepage and coffee loads in that tab restore it. The first utility row on both pages switches immediately, saves the new edition for the
+homepage loads in that tab restore it. The homepage utility row switches immediately, saves the new edition for the
 current tab, and removes pinned parameters. Shuffle generates another look and seed without
 reloading. Desktop always retains the original direct-choice row, wrapping its choices when needed.
 
@@ -534,9 +534,8 @@ use per-file color edits or change image-frame geometry for a look.
 - `/cv` → `cv.html` — the working cv. GitHub Pages resolves the extensionless `/cv` to
   `cv.html` on its own; no redirect or folder is needed. Reachable from the homepage
   `contact` list via the `cv` tag.
-- `/coffee` → `coffee.html` — a narrow catalogue of alex's working coffee recipes and barista
-  context. It includes the same composer, visual layers, and manual control as the homepage and
-  shares the active look and seed for the current browsing session.
+- `/coffee` → `coffee.html` — the fixed-design coffee calculator, with its own `coffee.css`
+  and `coffee.js`. Presets supply editable quantities and a live method, with text/PNG sharing.
 - `/louppe/` → `louppe/index.html` — legacy redirect to the standalone louppe site at
   `https://louppe.eu/`. The homepage project entry links directly to the new domain.
 - `/trials/` → `trials/index.html` — a standalone, one-column catalogue of interactive
@@ -595,7 +594,7 @@ merge it into the deferred shared behaviour in `site.js`.
    do not write new CSS unless a pattern is genuinely missing.
 3. If a new pattern is needed: build it from tokens only, add it to `styles.css` under a
    commented section, and document it in this file.
-4. Keep every page's footer format identical.
+4. Use the shared footer format, except the calculator’s documented authorship/home footer.
 
 ## cache-busting
 
@@ -608,9 +607,9 @@ edit `styles.css`** (keep it in sync with the footer's `upd` date).
 Apply the same dated `?v=` convention to `trials/_shared/trial.css` and `trial-ui.js` on
 every immersive experiment page whenever either shared trial asset changes.
 
-The homepage and coffee page additionally version `appearance.js` and `appearances.css`. Bump
-each asset's own dated query on both pages whenever it changes; neither generative file belongs
-on the other pages.
+The homepage additionally versions `appearance.js` and `appearances.css`. Bump each asset’s
+dated query there whenever it changes. The coffee calculator separately versions `coffee.css`
+and `coffee.js`; neither calculator asset is loaded by any other page.
 The profile photograph uses the same dated query in the visible HTML and structured data; bump
 both occurrences together whenever `photo.jpg` is replaced. Social cards use the independent
 `social-preview.png` asset so its crop and typography can remain stable when the live portrait
@@ -627,4 +626,4 @@ top of the photograph. Version its Open Graph and X metadata URL independently w
   uppercase with CSS only.
 - Don't restyle with inline `style=""` attributes — extend `styles.css` via tokens.
 - Experimental gradients, colors, and motion are allowed inside immersive trial effects and the
-  documented generative homepage and coffee appearances only.
+  documented generative homepage appearances only.

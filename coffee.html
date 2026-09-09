@@ -12,8 +12,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#000000" />
-  <title>coffee recipes — alex markin</title>
-  <meta name="description" content="coffee recipes kept by alex markin, a specialty coffee barista at darcy's kaffe in copenhagen." />
+  <title>coffee calculator — alex markin</title>
+  <meta name="description" content="choose a coffee recipe, adjust the quantities and ratio, and brew it your way. by alex markin." />
   <meta name="author" content="alex markin" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://alex-markin.com/coffee" />
@@ -21,25 +21,25 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-  <meta property="og:title" content="coffee recipes — alex markin" />
-  <meta property="og:description" content="recipes kept by a specialty coffee barista at darcy's kaffe in copenhagen" />
+  <meta property="og:title" content="coffee calculator — alex markin" />
+  <meta property="og:description" content="choose a preset, adjust your brew, and follow the method" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://alex-markin.com/coffee" />
   <meta property="og:site_name" content="alex markin" />
   <meta property="og:locale" content="en_US" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="coffee recipes — alex markin" />
-  <meta name="twitter:description" content="recipes kept by a specialty coffee barista at darcy's kaffe in copenhagen" />
+  <meta name="twitter:title" content="coffee calculator — alex markin" />
+  <meta name="twitter:description" content="choose a preset, adjust your brew, and follow the method" />
 
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "CollectionPage",
+      "@type": "WebPage",
       "@id": "https://alex-markin.com/coffee#collection",
       "url": "https://alex-markin.com/coffee",
-      "name": "coffee recipes — alex markin",
-      "description": "coffee recipes kept by alex markin, a specialty coffee barista at darcy's kaffe in copenhagen.",
+      "name": "coffee calculator — alex markin",
+      "description": "choose a coffee recipe, adjust the quantities and ratio, and brew it your way. by alex markin.",
       "dateModified": "2026-09-09",
       "author": {
         "@type": "Person",
@@ -66,174 +66,96 @@
   </script>
 
   <link rel="stylesheet" href="fonts.css?v=20260909-1" />
-  <!-- Compose the shared edition before CSS paints. Session state and pinned
-       query parameters keep the homepage and coffee in one visual world. -->
-  <script src="appearance.js?v=20260909-3"></script>
   <link rel="stylesheet" href="styles.css?v=20260817-3" />
-  <link rel="stylesheet" href="appearances.css?v=20260909-3" />
+  <link rel="stylesheet" href="coffee.css?v=20260909-1" />
 </head>
-<body>
-  <div class="appearance-base-layer" aria-hidden="true"></div>
-  <div class="paper-texture-layer" aria-hidden="true"></div>
-  <div class="eno-lightbox" aria-hidden="true">
-    <span class="eno-lightbox-state"></span>
-    <span class="eno-lightbox-state"></span>
-    <span class="eno-lightbox-state"></span>
-  </div>
-  <div class="appearance-backdrop" aria-hidden="true">
-    <span class="appearance-blob-track" data-parallax-blob><span class="appearance-blob"></span></span>
-    <span class="appearance-blob-track" data-parallax-blob><span class="appearance-blob"></span></span>
-    <span class="appearance-blob-track" data-parallax-blob><span class="appearance-blob"></span></span>
-    <span class="appearance-blob-track" data-parallax-blob><span class="appearance-blob"></span></span>
-    <span class="appearance-blob-track" data-parallax-blob><span class="appearance-blob"></span></span>
-    <span class="appearance-blob-track" data-parallax-blob><span class="appearance-blob"></span></span>
-    <span class="appearance-blob-track" data-parallax-blob><span class="appearance-blob"></span></span>
-  </div>
-
-  <div class="crt-mask-layer crt-mask-lines" aria-hidden="true"></div>
-  <div class="crt-mask-layer crt-mask-grille" aria-hidden="true"></div>
-  <div class="crt-mask-layer crt-mask-roll" aria-hidden="true"></div>
-  <div class="crt-mask-layer crt-mask-tube" aria-hidden="true"></div>
-
-  <main class="page page--narrow">
-    <div class="film-header">
-      <div class="film-header-inner">
-        <span class="film-edge-print film-edge-print--header" aria-hidden="true"></span>
-        <div class="appearance-control" data-appearance-control>
-          <button class="appearance-option appearance-toggle" type="button" data-appearance-toggle aria-expanded="false" aria-controls="appearance-options">
-            <span class="appearance-toggle-label">appearance: <span data-appearance-label>simple</span></span><span class="appearance-toggle-chevron" aria-hidden="true"></span>
-          </button>
-          <button class="appearance-option appearance-reload" type="button" data-choose-look="random" aria-label="randomize appearance" title="randomize appearance">
-            <span class="appearance-reload-label">appearance</span><span class="appearance-shuffle-label">shuffle</span><span class="appearance-reload-icon" aria-hidden="true">↻</span>
-          </button>
-          <div class="appearance-options" id="appearance-options" role="group" aria-label="choose site appearance">
-            <button class="appearance-option" type="button" data-choose-look="simple" aria-pressed="false" aria-label="simple"><span class="appearance-label-short" aria-hidden="true">smpl</span><span class="appearance-label-full" aria-hidden="true">simple</span></button>
-            <button class="appearance-option" type="button" data-choose-look="paper" aria-pressed="false">paper</button>
-            <button class="appearance-option" type="button" data-choose-look="blobs" aria-pressed="false">blob</button>
-            <button class="appearance-option" type="button" data-choose-look="eno" aria-pressed="false">eno</button>
-            <button class="appearance-option" type="button" data-choose-look="70mm" aria-pressed="false">70mm</button>
-            <button class="appearance-option" type="button" data-choose-look="crt" aria-pressed="false">crt</button>
-            <button class="appearance-option" type="button" data-choose-look="terminal" aria-pressed="false" aria-label="terminal"><span class="appearance-label-short" aria-hidden="true">&gt;...</span><span class="appearance-label-full" aria-hidden="true">terminal</span></button>
-          </div>
-          <span class="appearance-status" data-appearance-status aria-live="polite"></span>
+<body class="coffee-page">
+  <main class="page coffee-workspace">
+    <header class="coffee-header">
+      <h1 class="name">coffee calculator</h1>
+      <p class="tagline">start with a recipe. make it yours.</p>
+    </header>
+    <noscript><p>enable javascript to adjust recipes in the calculator.</p></noscript>
+    <div class="brew-layout" id="coffee-app" hidden>
+      <section class="brew-controls" aria-labelledby="preset-heading">
+        <h2 class="heading" id="preset-heading">preset</h2>
+        <label class="sr-only" for="brew-preset">recipe preset</label>
+        <select id="brew-preset" class="brew-select">
+          <option value="long-soup">oxo long soup</option>
+          <option value="iced-filter">oxo iced filter</option>
+          <option value="aeropress">aeropress</option>
+        </select>
+        <p class="brew-caption" id="preset-description"></p>
+        <div class="brew-section-head">
+          <h2 class="heading" id="adjust-heading">adjust</h2>
+          <span class="brew-state" id="brew-state">preset</span>
         </div>
-      </div>
+        <div role="group" aria-labelledby="adjust-heading">
+          <div class="brew-amounts">
+            <div class="brew-field">
+              <label for="brew-coffee">coffee</label>
+              <div class="brew-input-wrap"><input id="brew-coffee" type="number" inputmode="decimal" min="0" max="1000" step="any" value="15" aria-describedby="scale-hint" /><span>g</span></div>
+            </div>
+            <div class="brew-field">
+              <label for="brew-water">water</label>
+              <div class="brew-input-wrap"><input id="brew-water" type="number" inputmode="decimal" min="0" max="20000" step="any" value="150" aria-describedby="scale-hint" /><span>g</span></div>
+            </div>
+            <div class="brew-field" id="ice-field" hidden>
+              <label for="brew-ice">ice</label>
+              <div class="brew-input-wrap"><input id="brew-ice" type="number" inputmode="decimal" min="0" max="20000" step="any" value="120" aria-describedby="scale-hint" /><span>g</span></div>
+            </div>
+          </div>
+          <p class="brew-hint" id="scale-hint">change either amount to scale the recipe; the ratio stays fixed.</p>
+          <div class="brew-tuning">
+            <div class="brew-field">
+              <label for="brew-ratio">water ratio</label>
+              <div class="brew-input-wrap"><span>1 :</span><input id="brew-ratio" type="number" inputmode="decimal" min="0" max="100" step="any" value="10" aria-describedby="ratio-hint" /></div>
+            </div>
+            <div class="brew-field" id="ice-ratio-field" hidden>
+              <label for="brew-ice-ratio">ice ratio</label>
+              <div class="brew-input-wrap"><span>1 :</span><input id="brew-ice-ratio" type="number" inputmode="decimal" min="0" max="100" step="any" value="8" aria-describedby="ratio-hint" /></div>
+            </div>
+            <div class="brew-field brew-temperature">
+              <label for="brew-temperature">temperature</label>
+              <div class="brew-input-wrap"><input id="brew-temperature" type="text" value="93" aria-describedby="temperature-hint" /><span>°c</span></div>
+            </div>
+          </div>
+          <p class="brew-hint" id="ratio-hint">less water per gram for a stronger cup; more for a lighter one.</p>
+          <span class="sr-only" id="temperature-hint">enter a temperature or range between 1 and 100 degrees celsius.</span>
+          <p class="brew-error" id="brew-error" role="status"></p>
+        </div>
+        <div class="brew-actions">
+          <button class="brew-button" id="reset-brew" type="button">reset to preset</button>
+        </div>
+        <p class="sr-only" id="brew-feedback" role="status" aria-live="polite"></p>
+      </section>
+      <section class="brew-method" aria-labelledby="method-heading">
+        <h2 class="heading" id="method-heading">brew</h2>
+        <p class="brew-summary" id="brew-summary" aria-live="polite" aria-atomic="true"></p>
+        <dl class="brew-equipment">
+          <div><dt>brewer</dt><dd id="brew-equipment"></dd></div>
+          <div id="grind-row"><dt>grind</dt><dd id="brew-grind"></dd></div>
+        </dl>
+        <ol class="recipe-method" id="brew-method"></ol>
+        <p class="recipe-note" id="brew-note"></p>
+        <div class="brew-share" id="brew-share">
+          <button class="brew-button brew-share-toggle" id="share-brew" type="button" aria-expanded="false" aria-controls="brew-share-options">share <span aria-hidden="true">↑</span></button>
+          <div class="brew-share-options" id="brew-share-options" role="group" aria-label="share recipe" hidden>
+            <button class="brew-button" id="share-text" type="button">share as text</button>
+            <button class="brew-button" id="share-picture" type="button" disabled>share as picture</button>
+          </div>
+          <p class="brew-hint brew-share-feedback" id="share-feedback" role="status" aria-live="polite"></p>
+          <a class="brew-save" id="save-share" hidden>save recipe</a>
+        </div>
+      </section>
     </div>
+    <footer class="coffee-footer">
+      <p>recipes by alex markin · barista at darcy’s kaffe, copenhagen</p>
+      <a href="/">alex-markin.com <span aria-hidden="true">→</span></a>
+    </footer>
+  </main>
+  <template id="preset-long-soup">
 
-    <div class="film-perforation film-perforation--top" aria-hidden="true"></div>
-
-    <div class="film-exposure">
-      <div class="film-backdrop" aria-hidden="true">
-        <span class="film-perf-bleed"></span>
-        <div class="film-stains"><span class="film-stain"></span><span class="film-stain"></span></div>
-        <div class="film-lights"><span class="film-light"></span><span class="film-light"></span><span class="film-light"></span></div>
-        <div class="film-streaks"><span class="film-streak"></span><span class="film-streak"></span></div>
-      </div>
-      <div class="film-gate" aria-hidden="true"></div>
-      <div class="film-exposure-inner">
-        <div class="columns">
-      <div class="stack">
-        <header class="catalogue-header">
-          <h1 class="name">coffee</h1>
-          <p class="tagline">recipes i keep and return to</p>
-          <p class="meta">alex markin · barista at darcy's kaffe · copenhagen</p>
-        </header>
-
-        <section>
-          <h2 class="heading">about</h2>
-          <p class="desc">i work at darcy's kaffe in copenhagen. this page is my working notebook for brewers, ratios, temperatures, and methods</p>
-        </section>
-
-        <section class="recipe-calculator" data-recipe-calculator data-copy-page-ignore>
-          <h2 class="heading">brew calculator</h2>
-          <p class="desc calculator-description">choose a recipe, then adjust any amount or ratio</p>
-
-          <div class="calculator-picker">
-            <label class="calculator-label" for="calculator-recipe">recipe</label>
-            <select class="calculator-select" id="calculator-recipe" data-calculator-recipe>
-              <option value="long-soup">oxo long soup</option>
-              <option value="iced-filter">oxo iced filter</option>
-              <option value="aeropress">aeropress</option>
-            </select>
-            <p class="calculator-selection-note" data-calculator-note>full-bodied and balanced</p>
-          </div>
-
-          <div class="calculator-values">
-            <div class="calculator-row">
-              <span class="calculator-label" id="calculator-ratio-label">ratio</span>
-              <span class="leader" aria-hidden="true"></span>
-              <span class="calculator-control calculator-ratio-control" role="group" aria-labelledby="calculator-ratio-label">
-                <span class="calculator-ratio-one">1 :</span>
-                <label class="sr-only" for="calculator-water-ratio">water ratio</label>
-                <input class="calculator-input calculator-ratio-input" id="calculator-water-ratio" data-calculator-water-ratio type="number" min="0.5" step="0.5" inputmode="decimal" value="10" />
-                <span class="calculator-ice-ratio" data-calculator-ice-ratio-part hidden>
-                  <span class="calculator-ratio-separator">:</span>
-                  <label class="sr-only" for="calculator-ice-ratio">ice ratio</label>
-                  <input class="calculator-input calculator-ratio-input" id="calculator-ice-ratio" data-calculator-ice-ratio type="number" min="0.5" step="0.5" inputmode="decimal" value="8" />
-                </span>
-              </span>
-            </div>
-
-            <div class="calculator-row">
-              <label class="calculator-label" for="calculator-coffee">coffee</label>
-              <span class="leader" aria-hidden="true"></span>
-              <span class="calculator-control">
-                <input class="calculator-input" id="calculator-coffee" data-calculator-coffee type="number" min="1" step="1" inputmode="decimal" value="15" />
-                <span class="calculator-unit">g</span>
-              </span>
-            </div>
-
-            <div class="calculator-row">
-              <label class="calculator-label" for="calculator-water">water</label>
-              <span class="leader" aria-hidden="true"></span>
-              <span class="calculator-control">
-                <input class="calculator-input" id="calculator-water" data-calculator-water type="number" min="25" step="25" inputmode="decimal" value="150" />
-                <span class="calculator-unit">g</span>
-              </span>
-            </div>
-
-            <div class="calculator-row" data-calculator-ice-row hidden>
-              <label class="calculator-label" for="calculator-ice">ice</label>
-              <span class="leader" aria-hidden="true"></span>
-              <span class="calculator-control">
-                <input class="calculator-input" id="calculator-ice" data-calculator-ice type="number" min="0.1" step="0.1" inputmode="decimal" value="120" />
-                <span class="calculator-unit">g</span>
-              </span>
-            </div>
-
-            <div class="calculator-row">
-              <label class="calculator-label" for="calculator-temperature">water temperature</label>
-              <span class="leader" aria-hidden="true"></span>
-              <span class="calculator-control">
-                <input class="calculator-input calculator-temperature-input" id="calculator-temperature" data-calculator-temperature type="text" inputmode="decimal" value="93" />
-                <span class="calculator-unit">℃</span>
-              </span>
-            </div>
-          </div>
-
-          <div class="calculator-secondary-specs">
-            <div class="calculator-spec-row">
-              <span class="calculator-label">brewer</span>
-              <span class="leader" aria-hidden="true"></span>
-              <span class="calculator-measure" data-calculator-brewer>oxo rapid brewer</span>
-            </div>
-            <div class="calculator-spec-row" data-calculator-grind-row>
-              <span class="calculator-label">grind</span>
-              <span class="leader" aria-hidden="true"></span>
-              <span class="calculator-measure" data-calculator-grind>pour-over or finer</span>
-            </div>
-          </div>
-
-          <div class="calculator-actions">
-            <button class="copy-recipe" type="button" data-copy-recipe aria-label="copy recipe" aria-live="polite">
-              <span class="copy-recipe-label">copy recipe</span>
-              <span class="copy-recipe-feedback" aria-hidden="true"></span>
-            </button>
-          </div>
-          <p class="sr-only" data-calculator-live aria-live="polite"></p>
-        </section>
-
-        <section class="recipe" data-recipe-key="long-soup">
           <h2 class="heading">oxo long soup (zuppa lunga)</h2>
           <p class="tagline">full-bodied and balanced</p>
           <ul class="links recipe-specs">
@@ -256,9 +178,10 @@
             <li>attach the plunger and push slowly</li>
           </ol>
           <p class="recipe-note"><span class="recipe-note-label">note</span>i keep the paper filter in the transparent chamber and change it once in a while.</p>
-        </section>
 
-        <section class="recipe" data-recipe-key="iced-filter">
+  </template>
+  <template id="preset-iced-filter">
+
           <h2 class="heading">oxo iced filter</h2>
           <p class="tagline">nice and easy cold coffee</p>
           <ul class="links recipe-specs">
@@ -281,9 +204,10 @@
             <li>attach the plunger and push slowly</li>
           </ol>
           <p class="recipe-note"><span class="recipe-note-label">note</span>i keep the paper filter in the transparent chamber and change it once in a while.</p>
-        </section>
 
-        <section class="recipe" data-recipe-key="aeropress">
+  </template>
+  <template id="preset-aeropress">
+
           <h2 class="heading">aeropress</h2>
           <ul class="links recipe-specs">
             <li class="row" data-recipe-spec="brewer"><span>brewer</span><span class="leader"></span><span class="measure" data-recipe-value="aeropress, inverted">aeropress, inverted</span></li>
@@ -305,27 +229,8 @@
             <li><span class="recipe-time">2:00</span>finish the push, avoiding the hiss at the end</li>
           </ol>
           <p class="recipe-note"><span class="recipe-note-label">note</span>i recommend against using a metal filter alone; it produces a lot of mud and fogginess in the cup.</p>
-        </section>
-          </div>
-        </div>
-      </div>
-      <div class="film-emulsion" aria-hidden="true"><span class="film-scratch"></span><span class="film-scratch"></span><span class="film-scratch"></span></div>
-    </div>
 
-    <div class="film-perforation film-perforation--bottom" aria-hidden="true"></div>
-
-    <div class="film-footer">
-      <div class="film-footer-inner">
-        <span class="film-edge-print film-edge-print--footer" aria-hidden="true"></span>
-        <footer class="footer">
-          <a class="footer-date" href="https://github.com/alexander-markin-meow/alex-markin-website" target="_blank" rel="noopener">upd 2026-09-09</a>
-          <button class="copy-markdown" type="button" data-copy-markdown aria-label="copy page as markdown" aria-live="polite"><span class="copy-markdown-label copy-markdown-label--full" aria-hidden="true">copy as markdown</span><span class="copy-markdown-label copy-markdown-label--compact" aria-hidden="true">copy</span><span class="copy-markdown-label copy-markdown-label--icon" aria-hidden="true">⧉</span><span class="copy-markdown-feedback" aria-hidden="true"></span></button>
-          <a class="footer-domain internal-link" href="/" data-preserve-appearance>alex-markin.com</a>
-        </footer>
-      </div>
-    </div>
-  </main>
-
-  <script src="site.js?v=20260817-2"></script>
+  </template>
+  <script src="coffee.js?v=20260909-3"></script>
 </body>
 </html>
