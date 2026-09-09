@@ -38,8 +38,8 @@ rather than hard-coding values or using inline styles.
 The homepage and coffee page use fixed fonts per style and share the seeded appearance system: composer, visual
 layers, controls, and status. The active look and seed are held for the current browsing session,
 while their cross-page links also carry the edition for deterministic navigation and sharing.
-Phones use an expandable appearance chooser and shuffle control at normal body-text size.
-Controls wrap and grow with larger text settings; desktop keeps direct choices where they fit.
+Phones use an expandable appearance grid and shuffle control at the shared utility-text size.
+Controls wrap and grow with larger text settings; desktop always keeps the original direct-choice row.
 
 The trials index uses the main site system. Individual experiments use the scoped
 `trials/_shared/trial.css` and `trial-ui.js` layer so their full-screen rendering and

@@ -948,16 +948,6 @@
     if (!control) return;
     var compact = window.matchMedia("(max-width: 640px)").matches;
     var wasCompact = control.hasAttribute("data-compact");
-    if (!compact) {
-      // Measure the real fonts at their natural desktop widths. Re-check after
-      // fonts load and on resize so text enlargement also gets a usable chooser.
-      control.removeAttribute("data-compact");
-      var options = control.querySelector(".appearance-options");
-      var reload = control.querySelector(".appearance-reload");
-      var status = control.querySelector(".appearance-status");
-      var gap = parseFloat(getComputedStyle(control).columnGap) || 0;
-      compact = options.scrollWidth + reload.offsetWidth + status.offsetWidth + gap * 2 > control.clientWidth;
-    }
     control.toggleAttribute("data-compact", compact);
     if (wasCompact && !compact) {
       var hadToggleFocus = document.activeElement === control.querySelector("[data-appearance-toggle]");
@@ -1059,7 +1049,6 @@
           setChooserOpen(control, false, true);
         }
       });
-      if (window.ResizeObserver) new ResizeObserver(scheduleControlLayout).observe(control);
     }
     updateControls();
     updateBlobMotion();
@@ -1079,8 +1068,6 @@
     }
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(updateDocumentLayerSize);
-      document.fonts.ready.then(scheduleControlLayout);
-      document.fonts.addEventListener("loadingdone", scheduleControlLayout);
     }
   });
 

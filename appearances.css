@@ -425,7 +425,7 @@ html[data-look="70mm"] {
 
 .appearance-options {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: flex-start;
   gap: 3px;
 }
@@ -1882,8 +1882,8 @@ html[data-look="terminal"] a:not(.flickr-photo-link):is(:hover, :focus-visible):
   .crt-mask-roll { display: none !important; }
 }
 
-/* Compact appearance chooser: ordinary body-size text, generous hit areas.
-   JS also enables it when the desktop row cannot fit its container. */
+/* Compact appearance chooser: shared utility text and a short, responsive choice grid.
+   The expandable chooser is used only at phone widths (640px and below). */
 .appearance-toggle,
 .appearance-label-full,
 .appearance-shuffle-label { display: none; }
@@ -1892,12 +1892,12 @@ html[data-look] .appearance-control[data-compact] {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  gap: 8px;
-  font-size: var(--fs-body);
+  gap: 6px;
+  font-size: var(--fs-footer);
   font-weight: 400;
   line-height: 1.35;
   letter-spacing: 0;
-  margin-bottom: 26px;
+  margin-bottom: 18px;
 }
 
 .appearance-control[data-compact] .appearance-toggle,
@@ -1907,8 +1907,8 @@ html[data-look] .appearance-control[data-compact] {
   justify-content: center;
   gap: 0.45em;
   min-width: 0;
-  min-height: 44px;
-  padding: 0.5em 0.65em;
+  min-height: 32px;
+  padding: 0.35em 0.65em;
   white-space: normal;
   overflow-wrap: anywhere;
   text-align: center;
@@ -1946,19 +1946,20 @@ html[data-look] .appearance-control[data-compact] {
   padding-top: 4px;
 }
 .appearance-control[data-compact][data-expanded] .appearance-options {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10em), 1fr));
+  gap: 6px;
 }
 .appearance-control[data-compact] .appearance-options .appearance-option {
   display: flex;
   align-items: center;
   gap: 0.7em;
-  min-height: 44px;
-  padding: 0.5em 0.65em;
+  min-height: 32px;
+  padding: 0.35em 0.65em;
   white-space: normal;
   overflow-wrap: anywhere;
-  text-align: left;
+  justify-content: center;
+  text-align: center;
   line-height: inherit;
   color: var(--ink);
 }

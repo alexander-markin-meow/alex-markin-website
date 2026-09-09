@@ -476,25 +476,26 @@ All random values are derived from one edition seed. `?seed=<value>` reproduces 
 The first unparameterized generative page loaded in a tab creates a new edition; subsequent
 homepage and coffee loads in that tab restore it. The first utility row on both pages switches immediately, saves the new edition for the
 current tab, and removes pinned parameters. Shuffle generates another look and seed without
-reloading. Desktop retains the compact direct-choice row wherever its actual fonts fit.
+reloading. Desktop always retains the original direct-choice row, wrapping its choices when needed.
 
-On phones (640px and below), and whenever the desktop choices cannot fit their container,
+On phones only (640px and below),
 show two controls: `appearance: <full style name>` with a CSS chevron, and `shuffle ↻`.
-Both use the shared normal body size (`--fs-body`, 1rem at the default phone setting),
+Both use the shared utility size (`--fs-footer`, 0.65625rem / 10.5px at the default phone setting),
 regular weight, and centered label/icon groups. The chevron and shuffle icon never grow
-independently of the text. Padding supplies a minimum 44px target; height stays automatic.
+independently of the text. Padding supplies a minimum 32px target; height stays automatic.
 The controls share a row when space permits and stack at enlarged text sizes. They never
 shrink type to make it fit. Labels wrap and remain centered in their buttons.
 
-The appearance toggle opens an in-flow vertical list of all seven full names. Each row
-uses the same body size, a minimum 44px hit area, an aligned circular selection indicator,
+The appearance toggle opens an in-flow responsive grid of all seven full names, usually
+three columns on larger phones, two on narrower phones, and one with enlarged text. Each
+choice uses the same utility size, a minimum 32px hit area, a centered label/selection-indicator group,
 and `aria-pressed`. Selecting a style closes the list and returns focus to the toggle;
-Escape does the same. Shuffle remains available while the list is open. The list grows
+Escape does the same. Shuffle remains available while the list is open. The grid grows
 with its content and the page scrolls normally, with no fixed-height overlay. The toggle
 exposes `aria-expanded` / `aria-controls`; collapsed items are hidden from focus and
 accessibility traversal. Status/seed text is hidden in the compact layout, and the toggle
-always names the active style. Re-evaluate fit after font loading, container resize, and
-appearance changes. Footer copy keeps its own original compact dimensions.
+always names the active style. Re-evaluate the phone breakpoint on viewport resize.
+Never switch desktop to the expandable chooser based on content width or font size. Footer copy keeps its own original compact dimensions.
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.
