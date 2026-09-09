@@ -10,6 +10,7 @@
   let pictureTimer;
   let downloadUrl;
   let sharing = false;
+  let copyFeedbackTimer;
   const format = value => String(Math.round(value * 10) / 10);
   const value = key => source.querySelector(`[data-recipe-spec="${key}"] [data-recipe-value]`)?.dataset.recipeValue || '';
   const hasIce = () => state.iceRatio !== null;
@@ -116,7 +117,9 @@
   function syncShareControls() {
     const invalid = Object.values(fields).some(field => field.hasAttribute('aria-invalid'));
     $('copy-text').disabled = invalid || sharing;
-    $('share-picture').disabled = invalid || sharing || !pictureFile;
+    // Keep the invoking element active while the native share sheet is open so
+    // browsers can retain it as the popover anchor instead of falling back.
+    $('share-picture').disabled = invalid || !pictureFile;
   }
 
   function clearDownload() {
@@ -239,7 +242,14 @@
           copied = document.execCommand('copy');
         } finally { area.remove(); }
       }
-      $('share-feedback').textContent = copied ? 'recipe copied' : 'copy unavailable. select and copy the recipe text on this page.';
+      if (copied) {
+        const button = $('copy-text');
+        clearTimeout(copyFeedbackTimer);
+        button.textContent = 'copied!';
+        copyFeedbackTimer = setTimeout(() => { button.textContent = 'copy as text'; }, 1000);
+      } else {
+        $('share-feedback').textContent = 'copy unavailable. select and copy the recipe text on this page.';
+      }
     } catch (_) {
       $('share-feedback').textContent = 'copy unavailable. select and copy the recipe text on this page.';
     } finally {
@@ -250,7 +260,7 @@
   }
 
   async function shareRecipePicture() {
-    if ($('share-picture').disabled || !pictureFile) return;
+    if (sharing || $('share-picture').disabled || !pictureFile) return;
     const title = source.querySelector('.heading').textContent.trim();
     const file = pictureFile;
     const data = {title, files: [file]};
@@ -263,8 +273,8 @@
       return;
     }
     sharing = true;
-    syncShareControls();
     try {
+      syncShareControls();
       await navigator.share(data);
     } catch (error) {
       if (error.name !== 'AbortError') offerDownload(file, 'sharing could not open. try again or save your recipe.');
