@@ -57,7 +57,9 @@ Scale (don't invent sizes; pick the closest):
 
 The generative homepage and coffee page use one responsive semantic scale across every
 appearance. Appearance changes may change family, weight, tracking, case treatment, and line
-height, but never a role's size. The scale is `44 / 17 / 15.5 / 13 / 12.5 / 12 / 11.5px`
+height, but never a role's size. The homepage identity name is the sole exception: its display
+size is a ceiling and may fluidly reduce to remain inside the actual text space beside the
+portrait. The scale is `44 / 17 / 15.5 / 13 / 12.5 / 12 / 11.5px`
 for display, body, description, heading, meta, tag, and footer on wide screens (`840px+`);
 `40 / 16.5 / 15 / 12.5 / 12 / 11.5 / 11px` on medium screens (`641–839px`); and
 `32 / 16 / 14.5 / 12 / 11.5 / 11 / 10.5px` on compact screens (`640px` and below).
@@ -464,8 +466,9 @@ answer with an accent border. CRT uses a phosphor selection block, Terminal uses
 inversion, Blob adds its documented seed-colored bloom, and 70mm uses red halation.
 The blob layer never contains content. The homepage column count follows the fixed responsive
 rule above; seeded widths and gaps may change the available measure, so long rows may wrap instead
-of clipping. The display name uses the shared responsive size and remains on one line. The homepage
-uses `viewport-fit=cover`: visual layers
+of clipping. The display name uses the shared responsive size as its ceiling and scales against
+its actual identity text container; if container units are unavailable, it wraps safely instead.
+The homepage uses `viewport-fit=cover`: visual layers
 paint through mobile safe areas, while page padding incorporates every safe-area inset so content
 remains clear of device controls. The root and `theme-color` remain pure black as a browser-owned
 outer frame; Safari may tint its translucent URL controls from this color, but the page cannot

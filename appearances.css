@@ -245,12 +245,39 @@ html[data-look] .name {
   font-family: var(--appearance-display-family);
   font-size: var(--appearance-display-size);
   font-weight: var(--appearance-display-weight);
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 html[data-look] .intro-text {
-  min-width: 0;
+  /* Keep the portrait beside a useful text measure, but let the identity copy
+     take a fresh line before flexbox can squeeze it into a sliver. */
+  min-width: min(240px, 100%);
   container-type: inline-size;
+}
+
+/* The identity name is the one exception to the shared semantic type scale:
+   it keeps that scale as its ceiling, then fits its real text container when
+   the portrait and a two-column tablet layout leave less room. Without cqi,
+   the safe wrapping rule above remains the fallback. */
+html[data-look] .page--home .intro-text .name {
+  font-size: min(12cqi, var(--appearance-display-size));
+}
+
+@supports (font-size: 1cqi) {
+  html[data-look] .page--home .intro-text .name {
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
+}
+
+/* Intrinsic widths from a heading or row must never enlarge a generated grid
+   item past the minmax(0, 1fr) track that owns it. */
+html[data-look] .page--home .columns > *,
+html[data-look] .page--home .stack,
+html[data-look] .page--home section {
+  min-width: 0;
 }
 
 /* Long publication rows can wrap inside a narrow generated column. The
