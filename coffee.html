@@ -91,21 +91,6 @@
           <span class="brew-state" id="brew-state">preset</span>
         </div>
         <div role="group" aria-labelledby="adjust-heading">
-          <div class="brew-amounts">
-            <div class="brew-field">
-              <label for="brew-coffee">coffee</label>
-              <div class="brew-input-wrap"><input id="brew-coffee" type="number" inputmode="decimal" min="0" max="1000" step="any" value="15" aria-describedby="scale-hint" /><span>g</span></div>
-            </div>
-            <div class="brew-field">
-              <label for="brew-water">water</label>
-              <div class="brew-input-wrap"><input id="brew-water" type="number" inputmode="decimal" min="0" max="20000" step="any" value="150" aria-describedby="scale-hint" /><span>g</span></div>
-            </div>
-            <div class="brew-field" id="ice-field" hidden>
-              <label for="brew-ice">ice</label>
-              <div class="brew-input-wrap"><input id="brew-ice" type="number" inputmode="decimal" min="0" max="20000" step="any" value="120" aria-describedby="scale-hint" /><span>g</span></div>
-            </div>
-          </div>
-          <p class="brew-hint" id="scale-hint">change either amount to scale the recipe; the ratio stays fixed.</p>
           <div class="brew-tuning">
             <div class="brew-field">
               <label for="brew-ratio">water ratio</label>
@@ -122,6 +107,21 @@
           </div>
           <p class="brew-hint" id="ratio-hint">less water per gram for a stronger cup; more for a lighter one.</p>
           <span class="sr-only" id="temperature-hint">enter a temperature or range between 1 and 100 degrees celsius.</span>
+          <div class="brew-amounts">
+            <div class="brew-field">
+              <label for="brew-coffee">coffee</label>
+              <div class="brew-input-wrap"><input id="brew-coffee" type="number" inputmode="decimal" min="0" max="1000" step="any" value="15" aria-describedby="scale-hint" /><span>g</span></div>
+            </div>
+            <div class="brew-field">
+              <label for="brew-water">water</label>
+              <div class="brew-input-wrap"><input id="brew-water" type="number" inputmode="decimal" min="0" max="20000" step="any" value="150" aria-describedby="scale-hint" /><span>g</span></div>
+            </div>
+            <div class="brew-field" id="ice-field" hidden>
+              <label for="brew-ice">ice</label>
+              <div class="brew-input-wrap"><input id="brew-ice" type="number" inputmode="decimal" min="0" max="20000" step="any" value="120" aria-describedby="scale-hint" /><span>g</span></div>
+            </div>
+          </div>
+          <p class="brew-hint" id="scale-hint">change either amount to scale the recipe; the ratio stays fixed.</p>
           <p class="brew-error" id="brew-error" role="status"></p>
         </div>
         <div class="brew-actions">

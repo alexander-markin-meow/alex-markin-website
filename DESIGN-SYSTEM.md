@@ -165,7 +165,7 @@ Source Serif 4 and IBM Plex Mono. It does not load `appearance.js`, visual layer
 appearance controls. Incoming look/seed parameters have no visual effect; navigating back
 home restores the homepage's own session appearance. Keep the canonical `/coffee` URL.
 
-Use one preset selector, grouped quantity and ratio/temperature fields, then one live method.
+Use one preset selector, grouped ratio/temperature fields followed by quantity fields, then one live method.
 On desktop the method sits beside the calculator; below 840px it follows the controls.
 Use existing color/type tokens, rem-based type, 44px minimum controls, clear focus outlines,
 and no decorative motion. Both action buttons use the same outlined button treatment.
