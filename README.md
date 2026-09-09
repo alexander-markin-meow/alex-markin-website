@@ -4,7 +4,7 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 
 ## Files
 - `index.html` — page content and structure
-- `coffee.html`, `coffee.css`, `coffee.js` — the fixed-design coffee calculator; presets, adjustable quantities, live instructions, and native text/picture sharing
+- `coffee.html`, `coffee.css`, `coffee.js` — the fixed-design coffee calculator; presets, adjustable quantities, live instructions, and text copying and native picture sharing
 - `louppe/` — legacy redirect to the standalone site at `louppe.eu`
 - `trials/` — the site-native trials index and immersive webdesign experiments
 - `styles.css` — all styling; everything derives from the tokens at the top
@@ -38,8 +38,8 @@ rather than hard-coding values or using inline styles.
 The homepage uses fixed fonts per style and the seeded appearance system: composer, visual
 layers, controls, and status. The active look and seed are held for the current browsing session.
 The coffee calculator uses fixed dark styling and separate CSS/JS; returning home restores
-the homepage edition. Text and PNG sharing use the native share menu when available, with
-file downloads as a fallback. It remains static and has no build step.
+the homepage edition. Text copies directly to the clipboard. PNG sharing uses the native share menu when available,
+with file downloads as a fallback. It remains static and has no build step.
 Phones use an expandable appearance grid and shuffle control at the shared utility-text size.
 Controls wrap and grow with larger text settings; desktop always keeps the original direct-choice row.
 

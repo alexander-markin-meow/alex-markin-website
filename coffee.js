@@ -115,7 +115,7 @@
 
   function syncShareControls() {
     const invalid = Object.values(fields).some(field => field.hasAttribute('aria-invalid'));
-    $('share-text').disabled = invalid || sharing;
+    $('copy-text').disabled = invalid || sharing;
     $('share-picture').disabled = invalid || sharing || !pictureFile;
   }
 
@@ -145,7 +145,7 @@
         syncShareControls();
       } catch (_) {
         if (version === pictureVersion) {
-          $('share-feedback').textContent = 'picture unavailable. you can still share as text.';
+          $('share-feedback').textContent = 'picture unavailable. you can still copy as text.';
         }
       }
     }, 120);
@@ -209,20 +209,53 @@
     const link = $('save-share');
     link.href = downloadUrl;
     link.download = file.name;
-    link.textContent = file.type === 'image/png' ? 'save picture' : 'save text';
+    link.textContent = 'save picture';
     link.hidden = false;
     $('share-feedback').textContent = message;
     if (startDownload) link.click();
   }
 
-  async function shareRecipe(kind) {
-    if (sharing || $('share-text').disabled || (kind === 'picture' && !pictureFile)) return;
-    const title = source.querySelector('.heading').textContent.trim();
+  async function copyRecipeText() {
+    if ($('copy-text').disabled) return;
     const text = recipeText();
-    const file = kind === 'picture' ? pictureFile : new File([text], `coffee-${picker.value}.txt`, {type: 'text/plain'});
-    const data = kind === 'picture' ? {title, files: [file]} : {title, text};
+    clearDownload();
+    $('share-feedback').textContent = '';
+    sharing = true;
+    syncShareControls();
+    let copied = false;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        try { await navigator.clipboard.writeText(text); copied = true; }
+        catch (_) { /* try the browser's legacy clipboard path below */ }
+      }
+      if (!copied) {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.className = 'sr-only';
+        document.body.append(area);
+        try {
+          area.focus({preventScroll: true});
+          area.select();
+          copied = document.execCommand('copy');
+        } finally { area.remove(); }
+      }
+      $('share-feedback').textContent = copied ? 'recipe copied' : 'copy unavailable. select and copy the recipe text on this page.';
+    } catch (_) {
+      $('share-feedback').textContent = 'copy unavailable. select and copy the recipe text on this page.';
+    } finally {
+      sharing = false;
+      syncShareControls();
+      $('copy-text').focus({preventScroll: true});
+    }
+  }
+
+  async function shareRecipePicture() {
+    if ($('share-picture').disabled || !pictureFile) return;
+    const title = source.querySelector('.heading').textContent.trim();
+    const file = pictureFile;
+    const data = {title, files: [file]};
     const supported = typeof navigator.share === 'function' &&
-      (kind === 'picture' ? typeof navigator.canShare === 'function' && navigator.canShare({files: [file]}) : !navigator.canShare || navigator.canShare(data));
+      typeof navigator.canShare === 'function' && navigator.canShare({files: [file]});
     clearDownload();
     $('share-feedback').textContent = '';
     if (!supported) {
@@ -238,7 +271,7 @@
     } finally {
       sharing = false;
       syncShareControls();
-      $(kind === 'picture' ? 'share-picture' : 'share-text').focus();
+      $('share-picture').focus({preventScroll: true});
     }
   }
 
@@ -261,8 +294,8 @@
     loadPreset();
     $('brew-feedback').textContent = 'preset restored';
   });
-  $('share-text').addEventListener('click', () => shareRecipe('text'));
-  $('share-picture').addEventListener('click', () => shareRecipe('picture'));
+  $('copy-text').addEventListener('click', copyRecipeText);
+  $('share-picture').addEventListener('click', shareRecipePicture);
   loadPreset();
   $('coffee-app').hidden = false;
 })();
