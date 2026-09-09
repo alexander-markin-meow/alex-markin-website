@@ -41,7 +41,7 @@ Rules for non-generative pages:
 
 ## type tokens
 
-Two families, loaded from Google Fonts:
+The original pages use two families, loaded from Google Fonts:
 - `--serif` = **Source Serif 4** — all reading text (links, descriptions, taglines).
 - `--mono` = **IBM Plex Mono** — the "machine voice": the name, section headings, tags,
   metadata, footer. Anything that annotates rather than reads.
@@ -56,14 +56,15 @@ Scale (don't invent sizes; pick the closest):
 - `--fs-footer` 10.5px / mono / letter-spacing 0.06em — footer
 
 The generative homepage and coffee page use one responsive semantic scale across every
-appearance. Appearance changes may change family, weight, tracking, case treatment, and line
-height, but never a role's size. The homepage identity name is the sole exception: its display
+appearance. Each appearance has fixed families, weights, tracking, case treatment, and line
+height; none of these changes when an edition is regenerated. A role's size stays shared. The homepage identity name is the sole exception: its display
 size is a ceiling and may fluidly reduce to remain inside the actual text space beside the
 portrait. The scale is `44 / 17 / 15.5 / 13 / 12.5 / 12 / 11.5px`
 for display, body, description, heading, meta, tag, and footer on wide screens (`840px+`);
 `40 / 16.5 / 15 / 12.5 / 12 / 11.5 / 11px` on medium screens (`641–839px`); and
 `32 / 16 / 14.5 / 12 / 11.5 / 11 / 10.5px` on compact screens (`640px` and below).
-The shared `font-size-adjust` target normalizes the x-height of the different appearance
+The scale is expressed in `rem`, so the values above describe the default 16px browser
+text setting and grow with a visitor’s text-size preference. The shared `font-size-adjust` target normalizes the x-height of the different appearance
 typefaces so equal semantic sizes remain optically comparable, including 70mm's film serifs.
 
 ## layout
@@ -122,11 +123,11 @@ use the footer's `alex-markin.com` link as their route home.
 ```html
 <!-- generative homepage -->
 <span class="appearance-image appearance-image--portrait">
-  <img class="photo" src="photo-540.webp?v=YYYYMMDD-N" srcset="photo-360.webp?v=YYYYMMDD-N 360w, photo-540.webp?v=YYYYMMDD-N 540w" sizes="(max-width: 640px) 140px, 178px" alt="…" />
+  <img class="photo" src="photo-720.webp?v=YYYYMMDD-N" alt="…" />
 </span>
 
 <!-- non-generative cv -->
-<a class="photo-link" href="/"><img class="photo" src="photo-540.webp?v=YYYYMMDD-N" srcset="photo-360.webp?v=YYYYMMDD-N 360w, photo-540.webp?v=YYYYMMDD-N 540w" sizes="(max-width: 640px) 116px, 148px" alt="…" /></a>
+<a class="photo-link" href="/"><img class="photo" src="photo-720.webp?v=YYYYMMDD-N" alt="…" /></a>
 <h1 class="name"><a href="/">alex markin</a></h1>
 ```
 
@@ -226,11 +227,11 @@ and source-resolution independent. The portrait remains a 148px square (116px mo
 Non-generative pages retain the standard slight `grayscale(0.25)` image treatment.
 
 Keep `photo.jpg` as the full-resolution source and metadata image. Visible portraits use
-360px- and 540px-wide WebP derivatives (quality 85), retaining the complete 2:3 source
-composition without baked-in cropping or color changes. The homepage `sizes` accounts for
-its 120% inner crop (140px mobile / 178px desktop); the CV uses 116px / 148px. These variants
-cover the current display sizes through 3× density. Regenerate both and bump their dated
-URLs together when the source changes; CSS continues to own every appearance treatment.
+`photo-720.webp`: 720 × 1080, WebP quality 90, 62,000 bytes. Preserve the complete source
+composition without baked-in cropping or color changes. The user prefers a 50–70 KB
+portrait for detail retention; do not restore the smaller 16–27 KB variants. The existing
+CSS continues to own the crop, frame dimensions, and every appearance treatment. Regenerate
+and version the derivative when the source changes.
 
 ## web-1.0 flavor — the boundaries
 
@@ -287,7 +288,29 @@ keeps new-tab navigation and explicitly shared URLs deterministic. Query paramet
 stored session edition. `site.js` refreshes the cross-page links whenever either page composes a
 new edition.
 
-Seven appearances have equal default probability:
+Seven appearances have equal default probability.
+
+### fixed typographic identities
+
+| appearance | body | name / headings / annotations |
+|---|---|---|
+| simple | Source Serif 4, 400 | IBM Plex Mono: name 600, headings 500, annotations 400 |
+| paper | Newsreader, 400 | Newsreader: name/headings 600, annotations 400 |
+| blob | DM Sans, 400 | DM Sans: name/headings 700, annotations 400 |
+| eno | Montserrat, 400 | Montserrat: name/headings 600, annotations 400 |
+| 70mm | Georgia, 400 | Courier Prime: name/headings 700, annotations 400 |
+| crt | VT323, 400 | VT323, 400 (no synthetic bold) |
+| terminal | Fira Mono, 400 | Fira Mono: name/headings 500, annotations 400 |
+
+The homepage and coffee page use local `fonts.css` definitions, retaining font licenses
+in `fonts/`. Unicode ranges and browser font matching load only the active families and
+weights. No Google Fonts request or speculative loading of unused looks is needed.
+Georgia uses the system font; other scripts outside the provided Latin/Latin Extended
+subsets use system fallbacks. Non-generative pages retain their original typography.
+The composer consumes the former font-choice random draws without applying them, preserving
+all non-typographic values of historical seeds. Fixed reading line heights are simple/blob/CRT
+1.55, paper 1.62, Eno/70mm 1.64, terminal 1.6. Paper always uses roman headings.
+
 
 Every generated edition also chooses one coherent **rule grammar**. It applies to every link
 leader, the appearance-control divider, and the footer divider together: a fine solid, dotted,
@@ -305,8 +328,8 @@ body may still pair with that non-serif header voice.
 - `smpl` (`simple` internally) — the original Source Serif + IBM Plex Mono layout, with seeded olive, slate blue,
   muted terracotta, dusty violet, or aged brass palettes and bounded changes to width,
   and spacing.
-- `paper` — an all-Source-Serif editorial edition on ivory, cream, or newsprint stock, with
-  bounded ink temperature, heading treatment, and solid, dotted, or dashed print rules. Its generated
+- `paper` — an all-Newsreader editorial edition on ivory, cream, or newsprint stock, with
+  bounded ink temperature and solid, dotted, or dashed print rules. Its generated
   `feTurbulence` grain is always a top layer over the complete edition. A second, much lighter
   seeded SVG stock texture is chosen independently from three families: directional `laid`
   fibres, smooth `vellum` pulp, or softly lit `watercolour` tooth. An explicit layer follows the
@@ -315,10 +338,8 @@ body may still pair with that non-serif header voice.
   paper-white before a `multiply` pass, keeping the sheet bright while selective fibres remain
   legible. Texture opacity stays within `0.10–0.23`; laid stock uses the quietest range, while
   vellum receives larger pulp variation and watercolour the strongest shallow relief.
-- `blob` (`blobs` internally) — bold type over 3–5 diffuse color fields. Each edition selects
-  one readability-tested pairing from sans, Source Serif, and IBM Plex Mono; body, display,
-  and annotations may vary, but no edition contains more than two font families; its headers are
-  always sans or mono. Its accent is
+- `blob` (`blobs` internally) — bold type over 3–5 diffuse color fields. DM Sans supplies the fixed sans-serif identity,
+  with bold names/headings and regular reading text and annotations. Its accent is
   independently chosen from readable violet, blue, mint, coral, rose, gold, or sage families.
   Every blob
   independently varies in hue, saturation, lightness, opacity, size, blur, and autonomous
@@ -373,10 +394,9 @@ body may still pair with that non-serif header voice.
   zero to three faint hairline scratches. Each system rolls its own count and parameters per seed,
   so most editions show a little wear, a few show none, and a few show a lot. It grows with its
   semantic content; no image layer, grain, or light leak may enter the stock regions or overscroll.
-  Every seed independently chooses one restrained tungsten, warm-print, or silver palette; one
-  serif from Source Serif 4, Cormorant Garamond, or Georgia; one mono from IBM Plex Mono, Courier
-  Prime, or Roboto Mono; and one of three readable presets that keep the body serif and the
-  display and section headings mono. The upper-stock rebate between the appearance controls and the perforation strip
+  Every seed independently chooses one restrained tungsten, warm-print, or silver palette.
+  Typography stays fixed: Georgia for reading and Courier Prime for names, headings, and
+  annotations. The upper-stock rebate between the appearance controls and the perforation strip
   varies from `8–18px`, keeping the film compact while avoiding a mechanically fixed join. Page
   width, spacing, grain, vignette, bloom, red halation radius,
   gate falloff distance, perforation pitch, hole geometry, edge halo, leak/streak/stain placement
@@ -416,11 +436,10 @@ body may still pair with that non-serif header voice.
   markdown` utilities receive bounded phosphor glow. A fixed seed-colored signal layer covers
   elastic overscroll outside the document; reduced motion removes the rolling band. Never add
   flicker or text displacement.
-- `>...` (`terminal` internally) — one seeded technical face is used throughout each edition:
-  DEC-inspired VT323, workstation-like Fira Mono, or modern-console Roboto Mono. The family,
-  weight, tracking, and line spacing vary together as a bounded preset rather than mixing faces
-  inside one view. The shared responsive scale and x-height adjustment keep its raster and console
-  faces optically aligned with the other appearances. Quiet prompt prefixes, solid/dotted/dashed
+- `>...` (`terminal` internally) — Fira Mono supplies a fixed workstation identity.
+  Name and headings use medium weight; reading text and annotations use regular.
+  The shared responsive scale and x-height adjustment keep it optically aligned with the
+  other appearances. Quiet prompt prefixes, solid/dotted/dashed
   leaders, restrained green/blue/amber palettes, slight grain, and compact column spacing vary independently. Text
   links invert against the selected terminal accent on hover/focus, using a content-width
   selection block without CRT glow. Its prompt also annotates the desktop edition status, while
@@ -455,15 +474,27 @@ All random values are derived from one edition seed. `?seed=<value>` reproduces 
 `?look=<name>&seed=<value>` pins both its appearance and values. Both the displayed aliases
 (`smpl`, `blob`, `70mm`, `>...`) and the existing internal names remain accepted so old links keep working.
 The first unparameterized generative page loaded in a tab creates a new edition; subsequent
-homepage and coffee loads in that tab restore it. The first utility row on both pages switches
-immediately, saves the new edition for the current tab, and removes pinned parameters. Its reload
-glyph composes a new random appearance and edition without requiring a page refresh. The word
-`appearance` and the reload glyph are one compact outlined button, not separate controls. The
-control's top inset matches the footer's bottom inset. It and `copy as markdown` share the same
-fixed height while their widths remain content-sized and never force either label to wrap.
-On mobile, seed/status text is hidden and all seven style choices form a compact left cluster in
-one row, beginning exactly at the content divider's left edge. The symbol-only randomize button
-is pushed to the opposite side with its right edge aligned exactly to the divider's right edge.
+homepage and coffee loads in that tab restore it. The first utility row on both pages switches immediately, saves the new edition for the
+current tab, and removes pinned parameters. Shuffle generates another look and seed without
+reloading. Desktop retains the compact direct-choice row wherever its actual fonts fit.
+
+On phones (640px and below), and whenever the desktop choices cannot fit their container,
+show two controls: `appearance: <full style name>` with a CSS chevron, and `shuffle ↻`.
+Both use the shared normal body size (`--fs-body`, 1rem at the default phone setting),
+regular weight, and centered label/icon groups. The chevron and shuffle icon never grow
+independently of the text. Padding supplies a minimum 44px target; height stays automatic.
+The controls share a row when space permits and stack at enlarged text sizes. They never
+shrink type to make it fit. Labels wrap and remain centered in their buttons.
+
+The appearance toggle opens an in-flow vertical list of all seven full names. Each row
+uses the same body size, a minimum 44px hit area, an aligned circular selection indicator,
+and `aria-pressed`. Selecting a style closes the list and returns focus to the toggle;
+Escape does the same. Shuffle remains available while the list is open. The list grows
+with its content and the page scrolls normally, with no fixed-height overlay. The toggle
+exposes `aria-expanded` / `aria-controls`; collapsed items are hidden from focus and
+accessibility traversal. Status/seed text is hidden in the compact layout, and the toggle
+always names the active style. Re-evaluate fit after font loading, container resize, and
+appearance changes. Footer copy keeps its own original compact dimensions.
 
 Readability is not random: semantic order, links, click areas, responsive behaviour, accessible
 contrast, and the minimum type sizes stay fixed. Decorative noise never receives pointer events.

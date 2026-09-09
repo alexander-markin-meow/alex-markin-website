@@ -65,14 +65,12 @@
     }
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&amp;family=Courier+Prime:wght@400;700&amp;family=Fira+Mono:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Montserrat:wght@400;500;600&amp;family=Roboto+Mono:wght@400;500&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&amp;family=VT323&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="fonts.css?v=20260909-1" />
   <!-- Compose the shared edition before CSS paints. Session state and pinned
        query parameters keep the homepage and coffee in one visual world. -->
-  <script src="appearance.js?v=20260904-1"></script>
+  <script src="appearance.js?v=20260909-2"></script>
   <link rel="stylesheet" href="styles.css?v=20260817-3" />
-  <link rel="stylesheet" href="appearances.css?v=20260909-1" />
+  <link rel="stylesheet" href="appearances.css?v=20260909-2" />
 </head>
 <body>
   <div class="appearance-base-layer" aria-hidden="true"></div>
@@ -102,17 +100,20 @@
       <div class="film-header-inner">
         <span class="film-edge-print film-edge-print--header" aria-hidden="true"></span>
         <div class="appearance-control" data-appearance-control>
-          <button class="appearance-option appearance-reload" type="button" data-choose-look="random" aria-label="randomize appearance" title="randomize appearance">
-            <span>appearance</span><span class="appearance-reload-icon" aria-hidden="true">↻</span>
+          <button class="appearance-option appearance-toggle" type="button" data-appearance-toggle aria-expanded="false" aria-controls="appearance-options">
+            <span class="appearance-toggle-label">appearance: <span data-appearance-label>simple</span></span><span class="appearance-toggle-chevron" aria-hidden="true"></span>
           </button>
-          <div class="appearance-options" role="group" aria-label="choose site appearance">
-            <button class="appearance-option" type="button" data-choose-look="simple" aria-pressed="false">smpl</button>
+          <button class="appearance-option appearance-reload" type="button" data-choose-look="random" aria-label="randomize appearance" title="randomize appearance">
+            <span class="appearance-reload-label">appearance</span><span class="appearance-shuffle-label">shuffle</span><span class="appearance-reload-icon" aria-hidden="true">↻</span>
+          </button>
+          <div class="appearance-options" id="appearance-options" role="group" aria-label="choose site appearance">
+            <button class="appearance-option" type="button" data-choose-look="simple" aria-pressed="false" aria-label="simple"><span class="appearance-label-short" aria-hidden="true">smpl</span><span class="appearance-label-full" aria-hidden="true">simple</span></button>
             <button class="appearance-option" type="button" data-choose-look="paper" aria-pressed="false">paper</button>
             <button class="appearance-option" type="button" data-choose-look="blobs" aria-pressed="false">blob</button>
             <button class="appearance-option" type="button" data-choose-look="eno" aria-pressed="false">eno</button>
             <button class="appearance-option" type="button" data-choose-look="70mm" aria-pressed="false">70mm</button>
             <button class="appearance-option" type="button" data-choose-look="crt" aria-pressed="false">crt</button>
-            <button class="appearance-option" type="button" data-choose-look="terminal" aria-pressed="false">&gt;...</button>
+            <button class="appearance-option" type="button" data-choose-look="terminal" aria-pressed="false" aria-label="terminal"><span class="appearance-label-short" aria-hidden="true">&gt;...</span><span class="appearance-label-full" aria-hidden="true">terminal</span></button>
           </div>
           <span class="appearance-status" data-appearance-status aria-live="polite"></span>
         </div>

@@ -2,20 +2,6 @@
    Runs before CSS paints, so every edition arrives fully composed. */
 (function () {
   var root = document.documentElement;
-  var fontSans = 'ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-  var fontEno = '"Montserrat", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-  var fontSerif = "var(--serif)";
-  var fontMono = "var(--mono)";
-  var filmSerifs = [
-    '"Source Serif 4", Georgia, serif',
-    '"Cormorant Garamond", Georgia, serif',
-    'Georgia, "Times New Roman", serif'
-  ];
-  var filmMonos = [
-    '"IBM Plex Mono", monospace',
-    '"Courier Prime", "Courier New", monospace',
-    '"Roboto Mono", monospace'
-  ];
   /* Each CRT phosphor family anchors a hue; every edition jitters it and draws
      independent saturation/lightness per token role so no two editions of the
      same family render identically. coolBias lifts text-role lightness for
@@ -98,7 +84,7 @@
     return Number(value.toFixed(decimals || 0));
   }
 
-  /* Type sizes used to consume seeded draws independently in each look.
+  /* Typography used to consume seeded draws independently in each look.
      Keep those positions stable so shared historical seeds retain every
      non-type choice after the scale became responsive and deterministic. */
   function advanceSeed(random, count) {
@@ -483,8 +469,7 @@
         { bg: "#f5f0e6", ink: "#25231f", bright: "#11110f", muted: "#625f58", faint: "#6d6961", foot: "#6d6961", accent: "#4f5b4c", hair: "#c0bbb0", rule: "#d2cdc2", border: "#bdb8ae", chip: "#ebe6dc" }
       ];
       edition.vars = paletteVars(pick(random, paperPalettes));
-      advanceSeed(random, 2);
-      edition.vars["--appearance-line-height"] = pick(random, [1.55, 1.62, 1.7]);
+      advanceSeed(random, 3); // Former size and line-height choices.
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
@@ -494,7 +479,7 @@
       var paperTexture = paperTextureVars(random);
       Object.assign(edition.vars, paperTexture.vars);
       edition.attrs["data-paper-texture"] = paperTexture.type;
-      edition.attrs["data-paper-heading"] = pick(random, ["small-caps", "italic", "roman"]);
+      advanceSeed(random, 1); // Former heading treatment; typography is now fixed.
       Object.assign(edition.vars, imageVars(random, {
         contrast: [1.1, 1.28], brightness: [0.98, 1.08], opacity: [0.86, 0.95]
       }));
@@ -512,21 +497,7 @@
       edition.vars["--blob-link-bloom-near"] = range(random, 56, 78, 0) + "%";
       edition.vars["--blob-link-bloom-far"] = range(random, 24, 42, 0) + "%";
       edition.vars["--blob-link-bloom-radius"] = range(random, 7, 12, 0) + "px";
-      var blobType = pick(random, [
-        { body: fontSans, display: fontSans, annotation: fontMono, displayWeight: 700, headingWeight: 700, nameSpacing: "-0.045em", nameLine: 0.96, lineHeight: 1.55 },
-        { body: fontSerif, display: fontSans, annotation: fontSerif, displayWeight: 700, headingWeight: 700, nameSpacing: "-0.04em", nameLine: 0.97, lineHeight: 1.62 },
-        { body: fontSans, display: fontMono, annotation: fontMono, displayWeight: 600, headingWeight: 600, nameSpacing: "-0.025em", nameLine: 1, lineHeight: 1.58 },
-        { body: fontSerif, display: fontMono, annotation: fontMono, displayWeight: 600, headingWeight: 600, nameSpacing: "-0.02em", nameLine: 1, lineHeight: 1.64 },
-        { body: fontMono, display: fontSans, annotation: fontMono, displayWeight: 600, headingWeight: 600, nameSpacing: "-0.025em", nameLine: 0.98, lineHeight: 1.68 }
-      ]);
-      edition.vars["--appearance-body-family"] = blobType.body;
-      edition.vars["--appearance-display-family"] = blobType.display;
-      edition.vars["--appearance-annotation-family"] = blobType.annotation;
-      edition.vars["--appearance-display-weight"] = blobType.displayWeight;
-      edition.vars["--blob-heading-weight"] = blobType.headingWeight;
-      edition.vars["--blob-name-spacing"] = blobType.nameSpacing;
-      edition.vars["--blob-name-line"] = blobType.nameLine;
-      edition.vars["--appearance-line-height"] = blobType.lineHeight;
+      advanceSeed(random, 1); // Former font pairing.
       for (var b = 0; b < 7; b++) {
         edition.vars["--blob-" + (b + 1) + "-color"] = blobColor(random, blob.blobHues[b % blob.blobHues.length]);
         edition.vars["--blob-" + (b + 1) + "-size"] = range(random, 34, 72, 0) + "vw";
@@ -591,13 +562,7 @@
         ? { bg: enoA[3], ink: "#191522", bright: "#09070d", muted: "#403748", faint: "#53475d", foot: "#53475d", accent: "hsl(" + enoHues[1] + " 55% 28%)", hair: "rgb(25 20 34 / 0.34)", rule: "rgb(25 20 34 / 0.28)", border: "rgb(25 20 34 / 0.38)", chip: "rgb(255 255 255 / 0.18)" }
         : { bg: enoA[3], ink: "#ece9f1", bright: "#ffffff", muted: "#d5cfdb", faint: "#bdb4c5", foot: "#bdb4c5", accent: "hsl(" + enoHues[1] + " 74% 80%)", hair: "rgb(255 255 255 / 0.30)", rule: "rgb(255 255 255 / 0.24)", border: "rgb(255 255 255 / 0.36)", chip: "rgb(0 0 0 / 0.16)" };
       edition.vars = paletteVars(enoPalette);
-      edition.vars["--appearance-body-family"] = fontEno;
-      edition.vars["--appearance-display-family"] = fontEno;
-      edition.vars["--appearance-annotation-family"] = fontEno;
-      advanceSeed(random, 1);
-      edition.vars["--appearance-display-weight"] = pick(random, [500, 600]);
-      advanceSeed(random, 1);
-      edition.vars["--appearance-line-height"] = pick(random, [1.58, 1.64, 1.7]);
+      advanceSeed(random, 4); // Former type size, weight, and line-height choices.
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["360px", "380px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px", "64px"]);
@@ -630,22 +595,9 @@
         { tone: "silver", bg: "#000000", base: "#101010", ink: "#d5d5d1", bright: "#fffefa", muted: "#a09e98", faint: "#797770", foot: "#797770", accent: "#d8d1c2", hair: "#3d3c39", rule: "#272624", border: "#373633", chip: "#131312", halation: "#ef4037", edge: "#d1cbc0", lights: ["#8a302b", "#66645e", "#876b4f"] }
       ];
       var film = pick(random, filmPalettes);
-      var filmSerif = pick(random, filmSerifs);
-      var filmMono = pick(random, filmMonos);
-      var filmType = pick(random, [
-        { body: filmSerif, display: filmMono, annotation: filmMono, displayWeight: 500, bodyWeight: 400, nameSpacing: "0.012em", lineHeight: 1.62 },
-        { body: filmSerif, display: filmMono, annotation: filmSerif, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.025em", lineHeight: 1.66 },
-        { body: filmSerif, display: filmMono, annotation: filmMono, displayWeight: 600, bodyWeight: 400, nameSpacing: "-0.03em", lineHeight: 1.64 }
-      ]);
+      advanceSeed(random, 3); // Former serif, mono, and type preset choices.
       edition.vars = paletteVars(film);
-      edition.vars["--appearance-body-family"] = filmType.body;
-      edition.vars["--appearance-display-family"] = filmType.display;
-      edition.vars["--appearance-annotation-family"] = filmType.annotation;
-      edition.vars["--appearance-display-weight"] = filmType.displayWeight;
-      edition.vars["--appearance-body-weight"] = filmType.bodyWeight;
       advanceSeed(random, 2);
-      edition.vars["--appearance-line-height"] = filmType.lineHeight;
-      edition.vars["--film-name-spacing"] = filmType.nameSpacing;
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["370px", "390px"]);
       edition.vars["--gap-col"] = pick(random, ["48px", "56px", "64px"]);
@@ -823,35 +775,9 @@
         { bg: "#0b0a06", ink: "#ddd7c8", bright: "#f5efdf", muted: "#9e9581", faint: "#837860", foot: "#837860", accent: "#d0ae69", hair: "#403927", rule: "#2c281b", border: "#393321", chip: "#15130c" }
       ];
       edition.vars = paletteVars(pick(random, terminalPalettes));
-      var terminalType = pick(random, [
-        {
-          family: '"VT323", "Roboto Mono", monospace',
-          lineHeight: [1.4, 1.46, 1.52],
-          displayWeight: 400,
-          nameSpacing: "0.005em",
-          headingSpacing: "0.055em"
-        },
-        {
-          family: '"Fira Mono", "Roboto Mono", monospace',
-          lineHeight: [1.54, 1.6, 1.66],
-          displayWeight: pick(random, [400, 500]),
-          nameSpacing: "-0.018em",
-          headingSpacing: "0.035em"
-        },
-        {
-          family: '"Roboto Mono", "Fira Mono", monospace',
-          lineHeight: [1.58, 1.64, 1.7],
-          displayWeight: pick(random, [400, 500]),
-          nameSpacing: "-0.014em",
-          headingSpacing: "0.045em"
-        }
-      ]);
-      edition.vars["--terminal-font-family"] = terminalType.family;
-      advanceSeed(random, 2);
-      edition.vars["--appearance-line-height"] = pick(random, terminalType.lineHeight);
-      edition.vars["--terminal-display-weight"] = terminalType.displayWeight;
-      edition.vars["--terminal-name-spacing"] = terminalType.nameSpacing;
-      edition.vars["--terminal-heading-spacing"] = terminalType.headingSpacing;
+      // The old preset array eagerly drew two weights, then chose a preset,
+      // two sizes, and a line height. Preserve all six positions.
+      advanceSeed(random, 6);
       edition.vars["--page-max"] = canvasWidth(random);
       edition.vars["--col-min"] = pick(random, ["390px", "410px"]);
       edition.vars["--gap-col"] = pick(random, ["44px", "52px"]);
@@ -997,6 +923,47 @@
     });
     var status = control.querySelector("[data-appearance-status]");
     if (status) status.textContent = lookLabels[currentEdition.look] + " · " + currentEdition.seed.slice(0, 7);
+    var label = control.querySelector("[data-appearance-label]");
+    if (label) label.textContent = currentEdition.look === "blobs" ? "blob" : currentEdition.look;
+    scheduleControlLayout();
+  }
+
+  var controlLayoutFrame;
+  function scheduleControlLayout() {
+    if (controlLayoutFrame) window.cancelAnimationFrame(controlLayoutFrame);
+    controlLayoutFrame = window.requestAnimationFrame(updateControlLayout);
+  }
+
+  function setChooserOpen(control, open, restoreFocus) {
+    control.toggleAttribute("data-expanded", open);
+    var toggle = control.querySelector("[data-appearance-toggle]");
+    toggle.setAttribute("aria-expanded", String(open));
+    if (restoreFocus) toggle.focus({ preventScroll: true });
+    updateDocumentLayerSize();
+  }
+
+  function updateControlLayout() {
+    controlLayoutFrame = null;
+    var control = document.querySelector("[data-appearance-control]");
+    if (!control) return;
+    var compact = window.matchMedia("(max-width: 640px)").matches;
+    var wasCompact = control.hasAttribute("data-compact");
+    if (!compact) {
+      // Measure the real fonts at their natural desktop widths. Re-check after
+      // fonts load and on resize so text enlargement also gets a usable chooser.
+      control.removeAttribute("data-compact");
+      var options = control.querySelector(".appearance-options");
+      var reload = control.querySelector(".appearance-reload");
+      var status = control.querySelector(".appearance-status");
+      var gap = parseFloat(getComputedStyle(control).columnGap) || 0;
+      compact = options.scrollWidth + reload.offsetWidth + status.offsetWidth + gap * 2 > control.clientWidth;
+    }
+    control.toggleAttribute("data-compact", compact);
+    if (wasCompact && !compact) {
+      var hadToggleFocus = document.activeElement === control.querySelector("[data-appearance-toggle]");
+      setChooserOpen(control, false, false);
+      if (hadToggleFocus) control.querySelector('[aria-pressed="true"]').focus({ preventScroll: true });
+    }
   }
 
   function clearPinnedUrl() {
@@ -1072,22 +1039,38 @@
     var control = document.querySelector("[data-appearance-control]");
     if (control) {
       control.addEventListener("click", function (event) {
+        if (event.target.closest("[data-appearance-toggle]")) {
+          setChooserOpen(control, !control.hasAttribute("data-expanded"), false);
+          return;
+        }
         var button = event.target.closest("[data-choose-look]");
         if (!button) return;
         clearPinnedUrl();
         var choice = button.dataset.chooseLook;
         var seed = makeSeed();
         apply(compose(seed, choice === "random" ? null : choice));
+        if (choice !== "random" && control.hasAttribute("data-compact")) {
+          setChooserOpen(control, false, true);
+        }
       });
+      control.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && control.hasAttribute("data-expanded")) {
+          event.preventDefault();
+          setChooserOpen(control, false, true);
+        }
+      });
+      if (window.ResizeObserver) new ResizeObserver(scheduleControlLayout).observe(control);
     }
     updateControls();
     updateBlobMotion();
     updateParallax();
     updateDocumentLayerSize();
+    updateControlLayout();
     window.addEventListener("scroll", updateParallax, { passive: true });
     window.addEventListener("resize", function () {
       updateParallax();
       updateDocumentLayerSize();
+      scheduleControlLayout();
     });
     window.addEventListener("load", updateDocumentLayerSize);
     if (window.ResizeObserver) {
@@ -1096,6 +1079,8 @@
     }
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(updateDocumentLayerSize);
+      document.fonts.ready.then(scheduleControlLayout);
+      document.fonts.addEventListener("loadingdone", scheduleControlLayout);
     }
   });
 

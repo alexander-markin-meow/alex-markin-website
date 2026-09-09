@@ -17,24 +17,29 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 - `CLAUDE.md` — instructs any editor (human or LLM) to read `DESIGN-SYSTEM.md` first.
 - `photo.jpg` — black-and-white portrait source; square-framed with a 20% closer inner crop
   and blended with the real appearance backdrop beneath it (148px desktop, 116px mobile)
-- `photo-360.webp`, `photo-540.webp` — responsive portrait derivatives used on the homepage
-  and CV; preserve the source aspect ratio and let the existing CSS own the crop and color
+- `photo-720.webp` — 62 KB, quality-90 portrait used on the homepage and CV;
+  preserves the source aspect ratio and lets CSS own the crop and color
+- `fonts.css`, `fonts/` — local font definitions, files, and licenses for the seven fixed
+  typographic identities on the homepage and coffee page
 - `favicon.svg`, `apple-touch-icon.png` — tab/home-screen icons
 - `CNAME` — custom domain config for GitHub Pages (contains `alex-markin.com`)
 
 ## Design
-Dark, serif, quiet, with subtle web-1.0 details. Two font families loaded from Google
-Fonts: **Source Serif 4** for reading text and **IBM Plex Mono** for the "machine voice"
-(name, section headings, tags, footer). Warm grey on pure black with a single olive accent.
+The original appearance is dark, serif, and quiet, with subtle web-1.0 details:
+**Source Serif 4** for reading text and **IBM Plex Mono** for the "machine voice"
+(name, section headings, tags, footer). The seven generative styles each have their own
+fixed type identity, documented in `DESIGN-SYSTEM.md`, and load fonts locally on demand.
 
 All the specifics — color tokens, type scale, layout grid, and the signature link-row
 pattern (title, dotted leader, mono tag) — live in `DESIGN-SYSTEM.md`. Don't add new
 fonts, hues, or font sizes outside that spec, and extend `styles.css` via its tokens
 rather than hard-coding values or using inline styles.
 
-The homepage and coffee page share the complete seeded appearance system: composer, visual
+The homepage and coffee page use fixed fonts per style and share the seeded appearance system: composer, visual
 layers, controls, and status. The active look and seed are held for the current browsing session,
 while their cross-page links also carry the edition for deterministic navigation and sharing.
+Phones use an expandable appearance chooser and shuffle control at normal body-text size.
+Controls wrap and grow with larger text settings; desktop keeps direct choices where they fit.
 
 The trials index uses the main site system. Individual experiments use the scoped
 `trials/_shared/trial.css` and `trial-ui.js` layer so their full-screen rendering and
