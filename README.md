@@ -17,6 +17,8 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 - `CLAUDE.md` — instructs any editor (human or LLM) to read `DESIGN-SYSTEM.md` first.
 - `photo.jpg` — black-and-white portrait source; square-framed with a 20% closer inner crop
   and blended with the real appearance backdrop beneath it (148px desktop, 116px mobile)
+- `photo-360.webp`, `photo-540.webp` — responsive portrait derivatives used on the homepage
+  and CV; preserve the source aspect ratio and let the existing CSS own the crop and color
 - `favicon.svg`, `apple-touch-icon.png` — tab/home-screen icons
 - `CNAME` — custom domain config for GitHub Pages (contains `alex-markin.com`)
 

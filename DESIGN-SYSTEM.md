@@ -122,11 +122,11 @@ use the footer's `alex-markin.com` link as their route home.
 ```html
 <!-- generative homepage -->
 <span class="appearance-image appearance-image--portrait">
-  <img class="photo" src="photo.jpg?v=YYYYMMDD-N" alt="…" />
+  <img class="photo" src="photo-540.webp?v=YYYYMMDD-N" srcset="photo-360.webp?v=YYYYMMDD-N 360w, photo-540.webp?v=YYYYMMDD-N 540w" sizes="(max-width: 640px) 140px, 178px" alt="…" />
 </span>
 
 <!-- non-generative cv -->
-<a class="photo-link" href="/"><img class="photo" src="photo.jpg?v=YYYYMMDD-N" alt="…" /></a>
+<a class="photo-link" href="/"><img class="photo" src="photo-540.webp?v=YYYYMMDD-N" srcset="photo-360.webp?v=YYYYMMDD-N 360w, photo-540.webp?v=YYYYMMDD-N 540w" sizes="(max-width: 640px) 116px, 148px" alt="…" /></a>
 <h1 class="name"><a href="/">alex markin</a></h1>
 ```
 
@@ -224,6 +224,13 @@ Source photographs are black-and-white. On generative homepage images, wrap the 
 owns the standard 1px `--border`, 2px radius, and crop, while the image stays semantically real
 and source-resolution independent. The portrait remains a 148px square (116px mobile).
 Non-generative pages retain the standard slight `grayscale(0.25)` image treatment.
+
+Keep `photo.jpg` as the full-resolution source and metadata image. Visible portraits use
+360px- and 540px-wide WebP derivatives (quality 85), retaining the complete 2:3 source
+composition without baked-in cropping or color changes. The homepage `sizes` accounts for
+its 120% inner crop (140px mobile / 178px desktop); the CV uses 116px / 148px. These variants
+cover the current display sizes through 3× density. Regenerate both and bump their dated
+URLs together when the source changes; CSS continues to own every appearance treatment.
 
 ## web-1.0 flavor — the boundaries
 
