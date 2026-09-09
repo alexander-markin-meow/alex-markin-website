@@ -167,6 +167,8 @@ home restores the homepage's own session appearance. Keep the canonical `/coffee
 
 Use one preset selector, grouped ratio/temperature fields followed by quantity fields, then one live method.
 On desktop the method sits beside the calculator; below 840px it follows the controls.
+Keep the desktop rhythm dense enough for the complete default recipe, actions, and footer to fit in one
+common laptop viewport without reducing type or control sizes. Compact screens may scroll naturally.
 Use existing color/type tokens, rem-based type, 44px minimum controls, clear focus outlines,
 and no decorative motion. Both action buttons use the same outlined button treatment.
 
