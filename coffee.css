@@ -21,8 +21,6 @@
 .brew-select, .brew-input-wrap, .brew-button { border: 1px solid var(--hairline); border-radius: 0; color: var(--ink); }
 .brew-select { width: 100%; min-height: 48px; padding: 10px 12px; font: inherit; background: var(--chip-bg); }
 .brew-caption { margin: 8px 0 20px; min-height: 1.55em; color: var(--muted); font-size: var(--fs-desc); }
-.brew-section-head { display: flex; gap: 12px; justify-content: space-between; align-items: baseline; }
-.brew-state { font-family: var(--mono); font-size: var(--fs-tag); color: var(--muted); }
 .brew-amounts, .brew-tuning { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: 12px; }
 .brew-amounts { margin-top: 16px; }
 .brew-amounts:has(#ice-field:not([hidden])) { grid-template-columns: repeat(auto-fit, minmax(min(100%, 5.5rem), 1fr)); }

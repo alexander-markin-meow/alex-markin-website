@@ -177,10 +177,13 @@ and no decorative motion. Both action buttons use the same outlined button treat
 Authored recipes live once in inert `<template>` elements. `coffee.js` reads their annotated
 specs and clones only the selected method, substituting current quantities and temperature.
 Defaults remain 15g coffee at each authored ratio (1:10, 1:8:8, 1:16.5). Amount edits scale the
-batch; ratio edits keep coffee fixed. Temperature accepts a number or ascending range.
-Keyboard arrows change coffee by 1g, water/ice by 25g, and ratios by 0.5. Invalid entries show
-an inline message and prevent sharing until corrected or reset. Reset restores the selected preset.
-Headings are `preset`, `adjust`, and `brew`. The `copy as text` and `share as picture`
+batch; ratio edits keep coffee fixed. Zero is valid for amounts, ratios, and temperature.
+Temperature accepts a number or ascending range and has no helper or validation copy.
+Keyboard arrows change coffee by 1g, water/ice by 25g, and ratios by 0.5. Invalid amount entries
+show an inline message; all invalid entries prevent sharing until corrected or reset. Reset restores
+the selected preset.
+Headings are `preset`, `adjust`, and `brew`; the `adjust` heading has no adjacent state qualifier.
+The `copy as text` and `share as picture`
 buttons are always visible below the method and note, with no extra share toggle. Text copies directly to the
 clipboard, changes the button label to `copied!` for one second without changing its dimensions, and retains a legacy clipboard fallback. Pictures use the native
 Web Share API when supported. Picture sharing prepares a PNG recipe card from current state before the

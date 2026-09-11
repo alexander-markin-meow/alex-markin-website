@@ -41,11 +41,10 @@
 
   function render(skip) {
     const amounts = masses();
-    const values = {...amounts, ratio: state.ratio, 'ice-ratio': state.iceRatio || 8, temperature: state.temperature};
+    const values = {...amounts, ratio: state.ratio, 'ice-ratio': state.iceRatio ?? 8, temperature: state.temperature};
     Object.entries(fields).forEach(([key, input]) => {
       if (input !== skip) input.value = key === 'temperature' ? values[key] : format(values[key]);
     });
-    $('brew-state').textContent = dirty() ? 'adjusted' : 'preset';
     $('reset-brew').disabled = !dirty() && !Object.values(fields).some(field => field.hasAttribute('aria-invalid'));
     $('brew-summary').textContent = `${format(amounts.coffee)}g coffee · ${format(amounts.water)}g water${hasIce() ? ` · ${format(amounts.ice)}g ice` : ''} · ${state.temperature}°c`;
     // Replace original quantities in a single pass, preventing cascading replacements.
@@ -66,16 +65,20 @@
   function validTemperature(text) {
     if (!/^\d+(?:\.\d+)?(?:\s*[–-]\s*\d+(?:\.\d+)?)?$/.test(text)) return false;
     const parts = text.split(/[–-]/).map(Number);
-    return parts.every(n => n >= 1 && n <= 100) && (parts.length === 1 || parts[0] <= parts[1]);
+    return parts.every(n => n >= 0 && n <= 100) && (parts.length === 1 || parts[0] <= parts[1]);
   }
 
   function update(key, input) {
     const text = input.value.trim();
     const number = Number(text);
-    const valid = key === 'temperature' ? validTemperature(text) : text !== '' && Number.isFinite(number) && number > 0 && number <= Number(input.max);
+    const zeroRatioConflict = (key === 'water' && state.ratio === 0 && number !== 0) ||
+      (key === 'ice' && state.iceRatio === 0 && number !== 0);
+    const valid = key === 'temperature' ? validTemperature(text) :
+      text !== '' && Number.isFinite(number) && number >= 0 && number <= Number(input.max) && !zeroRatioConflict;
     if (!valid) {
       input.setAttribute('aria-invalid', 'true');
-      $('brew-error').textContent = key === 'temperature' ? 'enter 1–100°c, or a range such as 80–83.' : `enter an amount greater than 0 and up to ${input.max}.`;
+      $('brew-error').textContent = key === 'temperature' ? '' : zeroRatioConflict ?
+        `${key} must be 0 when its ratio is 0.` : `enter a value from 0 to ${input.max}.`;
       syncShareControls();
       $('reset-brew').disabled = false;
       return;
@@ -83,8 +86,8 @@
     input.removeAttribute('aria-invalid');
     if (!Object.values(fields).some(field => field.hasAttribute('aria-invalid'))) clearErrors();
     if (key === 'coffee') state.coffee = number;
-    if (key === 'water') state.coffee = number / state.ratio;
-    if (key === 'ice') state.coffee = number / state.iceRatio;
+    if (key === 'water') state.coffee = state.ratio === 0 ? 0 : number / state.ratio;
+    if (key === 'ice') state.coffee = state.iceRatio === 0 ? 0 : number / state.iceRatio;
     if (key === 'ratio') state.ratio = number;
     if (key === 'ice-ratio') state.iceRatio = number;
     if (key === 'temperature') state.temperature = text.replace(/\s*[–-]\s*/, '–');
@@ -291,7 +294,7 @@
       event.preventDefault();
       const increment = {coffee: 1, water: 25, ice: 25, ratio: 0.5, 'ice-ratio': 0.5}[key];
       const next = Number(input.value) + (event.key === 'ArrowUp' ? increment : -increment);
-      if (next > 0 && next <= Number(input.max)) {
+      if (next >= 0 && next <= Number(input.max)) {
         input.value = format(next);
         update(key, input);
       }

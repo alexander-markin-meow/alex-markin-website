@@ -67,7 +67,7 @@
 
   <link rel="stylesheet" href="fonts.css?v=20260909-1" />
   <link rel="stylesheet" href="styles.css?v=20260817-3" />
-  <link rel="stylesheet" href="coffee.css?v=20260911" />
+  <link rel="stylesheet" href="coffee.css?v=20260911-1" />
 </head>
 <body class="coffee-page">
   <main class="page coffee-workspace">
@@ -86,10 +86,7 @@
           <option value="aeropress">aeropress</option>
         </select>
         <p class="brew-caption" id="preset-description"></p>
-        <div class="brew-section-head">
-          <h2 class="heading" id="adjust-heading">adjust</h2>
-          <span class="brew-state" id="brew-state">preset</span>
-        </div>
+        <h2 class="heading" id="adjust-heading">adjust</h2>
         <div role="group" aria-labelledby="adjust-heading">
           <div class="brew-tuning">
             <div class="brew-field">
@@ -102,10 +99,9 @@
             </div>
             <div class="brew-field brew-temperature">
               <label for="brew-temperature">temperature</label>
-              <div class="brew-input-wrap"><input id="brew-temperature" type="text" value="93" aria-describedby="temperature-hint" /><span>°c</span></div>
+              <div class="brew-input-wrap"><input id="brew-temperature" type="text" value="93" /><span>°c</span></div>
             </div>
           </div>
-          <span class="sr-only" id="temperature-hint">enter a temperature or range between 1 and 100 degrees celsius.</span>
           <div class="brew-amounts">
             <div class="brew-field">
               <label for="brew-coffee">coffee</label>
@@ -224,6 +220,6 @@
           <p class="recipe-note"><span class="recipe-note-label">note</span>i recommend against using a metal filter alone; it produces a lot of mud and fogginess in the cup.</p>
 
   </template>
-  <script src="coffee.js?v=20260911"></script>
+  <script src="coffee.js?v=20260911-1"></script>
 </body>
 </html>
