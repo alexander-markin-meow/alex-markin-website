@@ -167,8 +167,10 @@ home restores the homepage's own session appearance. Keep the canonical `/coffee
 
 Use one preset selector, grouped ratio/temperature fields followed by quantity fields, then one live method.
 On desktop the method sits beside the calculator; below 840px it follows the controls.
-Keep the desktop rhythm dense enough for the complete default recipe, actions, and footer to fit in one
+Keep the desktop rhythm dense enough for the complete default recipe and actions to fit in one
 common laptop viewport without reducing type or control sizes. Compact screens may scroll naturally.
+Center the calculator title at the top with the home link immediately below it. The coffee page has no
+tagline, adjustment helper copy, or footer; its only route home is the link below the title.
 Use existing color/type tokens, rem-based type, 44px minimum controls, clear focus outlines,
 and no decorative motion. Both action buttons use the same outlined button treatment.
 
@@ -190,7 +192,7 @@ save link; cancellation is silent, and other errors expose a save fallback. Inva
 an active share request is guarded against duplicates, and a picture being prepared disables only that choice.
 
 There is no separate recipe catalogue, appearance chooser, about section, or duplicate page
-copy action. The footer provides only a right-aligned home link. The calculator intentionally
+copy action. The calculator intentionally
 starts at the default preset on reload; saved preferences can be considered after review.
 
 ### section
@@ -599,7 +601,7 @@ merge it into the deferred shared behaviour in `site.js`.
    do not write new CSS unless a pattern is genuinely missing.
 3. If a new pattern is needed: build it from tokens only, add it to `styles.css` under a
    commented section, and document it in this file.
-4. Use the shared footer format, except the calculator’s documented authorship/home footer.
+4. Use the shared footer format, except the calculator, which has no footer.
 
 ## cache-busting
 

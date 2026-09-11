@@ -40,7 +40,7 @@
       "url": "https://alex-markin.com/coffee",
       "name": "coffee calculator — alex markin",
       "description": "choose a coffee recipe, adjust the quantities and ratio, and brew it your way. by alex markin.",
-      "dateModified": "2026-09-09",
+      "dateModified": "2026-09-11",
       "author": {
         "@type": "Person",
         "@id": "https://alex-markin.com/#alex-markin",
@@ -67,13 +67,13 @@
 
   <link rel="stylesheet" href="fonts.css?v=20260909-1" />
   <link rel="stylesheet" href="styles.css?v=20260817-3" />
-  <link rel="stylesheet" href="coffee.css?v=20260909-5" />
+  <link rel="stylesheet" href="coffee.css?v=20260911" />
 </head>
 <body class="coffee-page">
   <main class="page coffee-workspace">
     <header class="coffee-header">
       <h1 class="name">coffee calculator</h1>
-      <p class="tagline">start with a recipe. make it yours.</p>
+      <a class="coffee-home" href="/">alex-markin.com <span aria-hidden="true">→</span></a>
     </header>
     <noscript><p>enable javascript to adjust recipes in the calculator.</p></noscript>
     <div class="brew-layout" id="coffee-app" hidden>
@@ -94,34 +94,32 @@
           <div class="brew-tuning">
             <div class="brew-field">
               <label for="brew-ratio">water ratio</label>
-              <div class="brew-input-wrap"><span>1 :</span><input id="brew-ratio" type="number" inputmode="decimal" min="0" max="100" step="any" value="10" aria-describedby="ratio-hint" /></div>
+              <div class="brew-input-wrap"><span>1 :</span><input id="brew-ratio" type="number" inputmode="decimal" min="0" max="100" step="any" value="10" /></div>
             </div>
             <div class="brew-field" id="ice-ratio-field" hidden>
               <label for="brew-ice-ratio">ice ratio</label>
-              <div class="brew-input-wrap"><span>1 :</span><input id="brew-ice-ratio" type="number" inputmode="decimal" min="0" max="100" step="any" value="8" aria-describedby="ratio-hint" /></div>
+              <div class="brew-input-wrap"><span>1 :</span><input id="brew-ice-ratio" type="number" inputmode="decimal" min="0" max="100" step="any" value="8" /></div>
             </div>
             <div class="brew-field brew-temperature">
               <label for="brew-temperature">temperature</label>
               <div class="brew-input-wrap"><input id="brew-temperature" type="text" value="93" aria-describedby="temperature-hint" /><span>°c</span></div>
             </div>
           </div>
-          <p class="brew-hint" id="ratio-hint">less water per gram for a stronger cup; more for a lighter one.</p>
           <span class="sr-only" id="temperature-hint">enter a temperature or range between 1 and 100 degrees celsius.</span>
           <div class="brew-amounts">
             <div class="brew-field">
               <label for="brew-coffee">coffee</label>
-              <div class="brew-input-wrap"><input id="brew-coffee" type="number" inputmode="decimal" min="0" max="1000" step="any" value="15" aria-describedby="scale-hint" /><span>g</span></div>
+              <div class="brew-input-wrap"><input id="brew-coffee" type="number" inputmode="decimal" min="0" max="1000" step="any" value="15" /><span>g</span></div>
             </div>
             <div class="brew-field">
               <label for="brew-water">water</label>
-              <div class="brew-input-wrap"><input id="brew-water" type="number" inputmode="decimal" min="0" max="20000" step="any" value="150" aria-describedby="scale-hint" /><span>g</span></div>
+              <div class="brew-input-wrap"><input id="brew-water" type="number" inputmode="decimal" min="0" max="20000" step="any" value="150" /><span>g</span></div>
             </div>
             <div class="brew-field" id="ice-field" hidden>
               <label for="brew-ice">ice</label>
-              <div class="brew-input-wrap"><input id="brew-ice" type="number" inputmode="decimal" min="0" max="20000" step="any" value="120" aria-describedby="scale-hint" /><span>g</span></div>
+              <div class="brew-input-wrap"><input id="brew-ice" type="number" inputmode="decimal" min="0" max="20000" step="any" value="120" /><span>g</span></div>
             </div>
           </div>
-          <p class="brew-hint" id="scale-hint">change either amount to scale the recipe; the ratio stays fixed.</p>
           <p class="brew-error" id="brew-error" role="status"></p>
         </div>
         <div class="brew-actions">
@@ -148,9 +146,6 @@
         </div>
       </section>
     </div>
-    <footer class="coffee-footer">
-      <a href="/">alex-markin.com <span aria-hidden="true">→</span></a>
-    </footer>
   </main>
   <template id="preset-long-soup">
 
@@ -229,6 +224,6 @@
           <p class="recipe-note"><span class="recipe-note-label">note</span>i recommend against using a metal filter alone; it produces a lot of mud and fogginess in the cup.</p>
 
   </template>
-  <script src="coffee.js?v=20260909-7"></script>
+  <script src="coffee.js?v=20260911"></script>
 </body>
 </html>

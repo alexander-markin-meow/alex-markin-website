@@ -29,8 +29,6 @@
     $('brew-note').textContent = source.querySelector('.recipe-note')?.textContent.trim().replace(/^note\s*/, '') || '';
     $('ice-field').hidden = $('ice-ratio-field').hidden = !hasIce();
     fields.ice.disabled = fields['ice-ratio'].disabled = !hasIce();
-    $('scale-hint').textContent = `change ${hasIce() ? 'any' : 'either'} amount to scale the recipe; the ratio stays fixed.`;
-    $('ratio-hint').textContent = hasIce() ? 'ratios are per gram of coffee. adjust water or ice without changing the coffee dose.' : 'less water per gram for a stronger cup; more for a lighter one.';
     clearErrors();
     render();
   }

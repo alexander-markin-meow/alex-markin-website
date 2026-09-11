@@ -10,10 +10,11 @@
   color-scheme: dark;
 }
 .coffee-page [hidden] { display: none !important; }
-.coffee-workspace { padding-top: 16px; }
-.coffee-header { margin-bottom: 20px; }
+.coffee-workspace { padding-top: 24px; }
+.coffee-header { margin-bottom: 20px; text-align: center; }
 .coffee-header .name { margin-bottom: 8px; overflow-wrap: anywhere; }
-.coffee-header .tagline { font-size: var(--fs-body); }
+.coffee-home { display: inline-block; color: var(--muted); font-size: var(--fs-desc); }
+.coffee-home:hover { color: var(--ink-hover); }
 .brew-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; }
 .brew-controls, .brew-method { min-width: 0; }
 .brew-method { border-left: 1px solid var(--rule); padding-left: 32px; }
@@ -23,6 +24,7 @@
 .brew-section-head { display: flex; gap: 12px; justify-content: space-between; align-items: baseline; }
 .brew-state { font-family: var(--mono); font-size: var(--fs-tag); color: var(--muted); }
 .brew-amounts, .brew-tuning { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: 12px; }
+.brew-amounts { margin-top: 16px; }
 .brew-amounts:has(#ice-field:not([hidden])) { grid-template-columns: repeat(auto-fit, minmax(min(100%, 5.5rem), 1fr)); }
 
 .brew-field { min-width: 0; }
@@ -33,12 +35,12 @@
 .brew-input-wrap span { flex-shrink: 0; font-family: var(--mono); font-size: var(--fs-desc); color: var(--muted); }
 .brew-input-wrap:focus-within { outline: 2px solid var(--ink); outline-offset: 3px; }
 .brew-input-wrap input:focus { outline: none; }
-.brew-select:focus-visible, .brew-button:focus-visible, .coffee-footer a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.brew-select:focus-visible, .brew-button:focus-visible, .coffee-home:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .brew-hint { color: var(--muted); font-size: var(--fs-desc); margin: 8px 0 16px; }
-.brew-error { min-height: 1.55em; margin: -8px 0 10px; font-size: var(--fs-desc); color: var(--ink); }
-.brew-error:empty { margin: -8px 0 0; min-height: 0; }
+.brew-error { min-height: 1.55em; margin: 8px 0 10px; font-size: var(--fs-desc); color: var(--ink); }
+.brew-error:empty { margin: 0; min-height: 0; }
 .brew-input-wrap:has([aria-invalid="true"]) { border-color: var(--ink); border-style: dashed; }
-.brew-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.brew-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--rule); }
 .brew-button { min-height: 44px; padding: 10px 14px; background: transparent; cursor: pointer; font-family: var(--mono); font-size: var(--fs-heading); }
 .brew-button:hover { border-color: var(--ink-hover); color: var(--ink-hover); }
 .brew-button:disabled { opacity: 0.5; cursor: default; }
@@ -53,11 +55,8 @@
 .brew-method .recipe-method { font-size: var(--fs-body); gap: 4px; padding-left: 1.7em; }
 .brew-method .recipe-method li::marker, .brew-method .recipe-time { color: var(--muted); }
 .brew-method .recipe-note { margin-top: 12px; }
-.coffee-footer { display: flex; justify-content: flex-end; margin-top: 16px; padding: 12px 0; border-top: 1px solid var(--rule); color: var(--muted); font-size: var(--fs-desc); }
-.coffee-footer a { min-height: 24px; color: var(--muted); }
-.coffee-footer a:hover { color: var(--ink-hover); }
 @media (max-width: 839px) {
-  .coffee-workspace { max-width: var(--page-narrow); padding-top: 16px; }
+  .coffee-workspace { max-width: var(--page-narrow); }
   .brew-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .brew-method { padding: 22px 0 0; border-left: 0; border-top: 1px solid var(--rule); }
 }
