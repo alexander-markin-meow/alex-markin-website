@@ -178,8 +178,8 @@ Authored recipes live once in inert `<template>` elements. `coffee.js` reads the
 specs and clones only the selected method, substituting current quantities and temperature.
 Defaults remain 15g coffee at each authored ratio (1:10, 1:8:8, 1:16.6). Amount edits scale the
 batch; ratio edits keep coffee fixed. Zero is valid for amounts, ratios, and temperature.
-The V60 preset calculates its bloom as 2–3× the coffee dose and each later pour as half of the
-corresponding remaining-water range.
+The V60 preset calculates its bloom as 2.5× the coffee dose and splits the remaining water evenly
+between the two later pours.
 Temperature accepts a number or ascending range and has no helper or validation copy.
 Keyboard arrows change coffee by 1g, water/ice by 25g, and ratios by 0.5. Invalid amount entries
 show an inline message; all invalid entries prevent sharing until corrected or reset. Reset restores

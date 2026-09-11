@@ -12,10 +12,6 @@
   let sharing = false;
   let copyFeedbackTimer;
   const format = value => String(Math.round(value * 10) / 10);
-  const formatRange = (low, high) => {
-    const start = format(low), end = format(high);
-    return start === end ? `${start}g` : `${start}–${end}g`;
-  };
   const value = key => source.querySelector(`[data-recipe-spec="${key}"] [data-recipe-value]`)?.dataset.recipeValue || '';
   const hasIce = () => state.iceRatio !== null;
   const dirty = () => Object.keys(defaults).some(key => state[key] !== defaults[key]);
@@ -47,11 +43,10 @@
 
   function render(skip) {
     const amounts = masses();
-    const bloomLow = Math.min(amounts.water, amounts.coffee * 2);
-    const bloomHigh = Math.min(amounts.water, amounts.coffee * 3);
+    const bloom = Math.min(amounts.water, amounts.coffee * 2.5);
     const calculations = {
-      bloom: formatRange(bloomLow, bloomHigh),
-      'remaining-half': formatRange((amounts.water - bloomHigh) / 2, (amounts.water - bloomLow) / 2)
+      bloom: `${format(bloom)}g`,
+      'remaining-half': `${format((amounts.water - bloom) / 2)}g`
     };
     const values = {...amounts, ratio: state.ratio, 'ice-ratio': state.iceRatio ?? 8, temperature: state.temperature};
     Object.entries(fields).forEach(([key, input]) => {
