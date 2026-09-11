@@ -60,7 +60,8 @@
       "hasPart": [
         { "@type": "CreativeWork", "name": "oxo long soup (zuppa lunga)" },
         { "@type": "CreativeWork", "name": "oxo iced filter" },
-        { "@type": "CreativeWork", "name": "aeropress" }
+        { "@type": "CreativeWork", "name": "aeropress" },
+        { "@type": "CreativeWork", "name": "v60" }
       ]
     }
   </script>
@@ -84,6 +85,7 @@
           <option value="long-soup">oxo long soup</option>
           <option value="iced-filter">oxo iced filter</option>
           <option value="aeropress">aeropress</option>
+          <option value="v60">v60</option>
         </select>
         <p class="brew-caption" id="preset-description"></p>
         <h2 class="heading" id="adjust-heading">adjust</h2>
@@ -220,6 +222,27 @@
           <p class="recipe-note"><span class="recipe-note-label">note</span>i recommend against using a metal filter alone; it produces a lot of mud and fogginess in the cup.</p>
 
   </template>
-  <script src="coffee.js?v=20260911-1"></script>
+  <template id="preset-v60">
+
+          <h2 class="heading">v60</h2>
+          <p class="tagline">three-pour filter</p>
+          <ul class="links recipe-specs">
+            <li class="row" data-recipe-spec="brewer"><span>brewer</span><span class="leader"></span><span class="measure" data-recipe-value="v60 or similar">v60 or similar</span></li>
+            <li class="row" data-recipe-spec="coffee"><span>coffee</span><span class="leader"></span><span class="measure" data-recipe-value="15">15g</span></li>
+            <li class="row" data-recipe-spec="water"><span>water</span><span class="leader"></span><span class="measure" data-recipe-value="247.5">247.5g</span></li>
+            <li class="row" data-recipe-spec="ratio"><span>ratio</span><span class="leader"></span><span class="measure" data-recipe-value="16.5">1:16.5</span></li>
+            <li class="row" data-recipe-spec="temperature"><span>water temperature</span><span class="leader"></span><span class="measure" data-recipe-value="93">93℃</span></li>
+            <li class="row" data-recipe-spec="grind"><span>grind</span><span class="leader"></span><span class="measure" data-recipe-value="middle">middle</span></li>
+          </ul>
+          <h3 class="recipe-subheading">method</h3>
+          <ol class="recipe-method">
+            <li>damp the filter and check it sits well</li>
+            <li><span class="recipe-time">0:00</span>pour <span data-recipe-calculation="bloom"></span> with high agitation</li>
+            <li><span class="recipe-time">1:00</span>pour <span data-recipe-calculation="remaining-half"></span> round to center</li>
+            <li><span class="recipe-time">1:30</span>pour <span data-recipe-calculation="remaining-half"></span> round to center and swirl</li>
+          </ol>
+
+  </template>
+  <script src="coffee.js?v=20260911-2"></script>
 </body>
 </html>

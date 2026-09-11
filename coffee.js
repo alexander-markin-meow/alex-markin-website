@@ -12,6 +12,10 @@
   let sharing = false;
   let copyFeedbackTimer;
   const format = value => String(Math.round(value * 10) / 10);
+  const formatRange = (low, high) => {
+    const start = format(low), end = format(high);
+    return start === end ? `${start}g` : `${start}–${end}g`;
+  };
   const value = key => source.querySelector(`[data-recipe-spec="${key}"] [data-recipe-value]`)?.dataset.recipeValue || '';
   const hasIce = () => state.iceRatio !== null;
   const dirty = () => Object.keys(defaults).some(key => state[key] !== defaults[key]);
@@ -26,7 +30,9 @@
     $('brew-equipment').textContent = value('brewer');
     $('brew-grind').textContent = value('grind');
     $('grind-row').hidden = !value('grind');
-    $('brew-note').textContent = source.querySelector('.recipe-note')?.textContent.trim().replace(/^note\s*/, '') || '';
+    const note = source.querySelector('.recipe-note')?.textContent.trim().replace(/^note\s*/, '') || '';
+    $('brew-note').textContent = note;
+    $('brew-note').hidden = !note;
     $('ice-field').hidden = $('ice-ratio-field').hidden = !hasIce();
     fields.ice.disabled = fields['ice-ratio'].disabled = !hasIce();
     clearErrors();
@@ -41,6 +47,12 @@
 
   function render(skip) {
     const amounts = masses();
+    const bloomLow = Math.min(amounts.water, amounts.coffee * 2);
+    const bloomHigh = Math.min(amounts.water, amounts.coffee * 3);
+    const calculations = {
+      bloom: formatRange(bloomLow, bloomHigh),
+      'remaining-half': formatRange((amounts.water - bloomHigh) / 2, (amounts.water - bloomLow) / 2)
+    };
     const values = {...amounts, ratio: state.ratio, 'ice-ratio': state.iceRatio ?? 8, temperature: state.temperature};
     Object.entries(fields).forEach(([key, input]) => {
       if (input !== skip) input.value = key === 'temperature' ? values[key] : format(values[key]);
@@ -51,6 +63,9 @@
     const replacements = {[value('coffee') + 'g']: format(amounts.coffee) + 'g', [value('water') + 'g']: format(amounts.water) + 'g', [value('temperature') + '℃']: state.temperature + '°c'};
     const steps = [...source.querySelectorAll('.recipe-method > li')].map(step => {
       const clone = step.cloneNode(true);
+      clone.querySelectorAll('[data-recipe-calculation]').forEach(slot => {
+        slot.textContent = calculations[slot.dataset.recipeCalculation] || '';
+      });
       const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
       let node;
       while ((node = walker.nextNode())) node.textContent = node.textContent.replace(/\d+(?:\.\d+)?(?:[–-]\d+(?:\.\d+)?)?(?:g|℃)/g, match => replacements[match] || match);
