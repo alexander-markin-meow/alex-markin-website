@@ -53,12 +53,11 @@
     catch (error) { /* no durable choice; ask again on a later visit */ }
     panel.hidden = true;
     control.setAttribute("aria-expanded", "false");
+    updatePanel();
     if (allowed) {
-      off.hidden = false;
       loadAnalytics();
     } else {
       clearAnalyticsCookies();
-      off.hidden = true;
       if (wasAllowed) location.reload();
     }
   }
@@ -71,13 +70,6 @@
   control.setAttribute("aria-expanded", String(showPanel));
   control.textContent = "privacy";
 
-  var off = document.createElement("button");
-  off.type = "button";
-  off.className = "privacy-off copy-markdown";
-  off.textContent = "analytics off";
-  off.setAttribute("aria-label", "turn off analytics");
-  off.hidden = !(choice && choice.allowed);
-
   var copy = document.querySelector(".footer [data-copy-markdown]");
   if (copy) {
     var utilities = document.createElement("div");
@@ -85,13 +77,11 @@
     copy.parentNode.insertBefore(utilities, copy);
     utilities.appendChild(copy);
     utilities.appendChild(control);
-    utilities.appendChild(off);
     document.body.classList.add("privacy-has-footer");
   } else {
     var tools = document.createElement("div");
     tools.className = "privacy-tools";
     tools.appendChild(control);
-    tools.appendChild(off);
     document.body.appendChild(tools);
   }
 
@@ -99,9 +89,20 @@
   panel.id = "analytics-choice";
   panel.className = "privacy-panel";
   panel.setAttribute("aria-label", "privacy and analytics");
-  panel.innerHTML = '<p>allow google analytics to count visits?</p>' +
+  panel.innerHTML = '<p class="privacy-question">allow google analytics to count visits?</p>' +
     '<details class="privacy-more"><summary>details</summary><p>google gets your page, ip and device details and sets <code>_ga</code>/<code>_ga_*</code> cookies (six months). alex markin · <a href="mailto:a@alex-markin.com">a@alex-markin.com</a> (controller). github pages logs ip for security (legitimate interest; <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">policy</a>). choice: 180 days; site look: this session. analytics data: up to 14 months; google may process outside the eea (<a href="https://policies.google.com/privacy/frameworks">safeguards</a>). withdraw anytime. email for access, correction, deletion, restriction, objection or portability; complain to <a href="https://www.datatilsynet.dk/borger/klage">datatilsynet</a>.</p></details>' +
     '<div class="privacy-actions"><button type="button" data-choice="no">no thanks</button><button type="button" data-choice="yes">allow analytics</button></div>';
+  var noButton = panel.querySelector('[data-choice="no"]');
+  var yesButton = panel.querySelector('[data-choice="yes"]');
+  function updatePanel() {
+    var allowed = !!(choice && choice.allowed);
+    panel.querySelector(".privacy-question").textContent = allowed
+      ? "google analytics is on. turn it off?"
+      : "allow google analytics to count visits?";
+    noButton.textContent = allowed ? "turn off analytics" : "no thanks";
+    yesButton.textContent = allowed ? "keep analytics on" : "allow analytics";
+  }
+  updatePanel();
   panel.hidden = !showPanel;
   document.body.appendChild(panel);
 
@@ -109,9 +110,8 @@
     panel.hidden = !panel.hidden;
     control.setAttribute("aria-expanded", String(!panel.hidden));
   });
-  off.addEventListener("click", function () { save(false); });
-  panel.querySelector('[data-choice="no"]').addEventListener("click", function () { save(false); });
-  panel.querySelector('[data-choice="yes"]').addEventListener("click", function () { save(true); });
+  noButton.addEventListener("click", function () { save(false); });
+  yesButton.addEventListener("click", function () { save(true); });
 
   if (choice && choice.allowed) loadAnalytics();
 })();

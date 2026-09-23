@@ -74,8 +74,6 @@ body.privacy-has-footer .privacy-panel { bottom: 16px; }
 }
 .privacy-control:hover,
 .privacy-control:focus-visible,
-.privacy-off:hover,
-.privacy-off:focus-visible,
 .privacy-actions button:hover,
 .privacy-actions button:focus-visible { color: var(--ink-hover, var(--fg)); border-color: currentColor; }
 

@@ -229,7 +229,8 @@ site repository at left, the document utilities centered, and an optional affili
 link at right. The trials catalogue uses `alex-markin.com` to return home. Update the date when
 you ship a change. Footer links
 inherit the muted footer color and turn white on hover. The privacy button sits beside
-`copy as markdown`; `privacy.js` groups the controls in the center. The copy control uses a
+`copy as markdown`; `privacy.js` groups the controls in the center. Once analytics is enabled,
+the privacy pop-up offers `turn off analytics` in place of `no thanks`. The copy control uses a
 thin `--border` outline with no fill; the outline, pointer cursor, and color-only hover make it
 legible as clickable without drawing focus. On mobile it reads `copy`, then switches to a copy
 glyph only when the measured footer cannot fit all three groups on one line; a narrow viewport
