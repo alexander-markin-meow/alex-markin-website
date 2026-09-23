@@ -99,8 +99,8 @@
   panel.id = "analytics-choice";
   panel.className = "privacy-panel";
   panel.setAttribute("aria-label", "privacy and analytics");
-  panel.innerHTML = '<p>allow google analytics to count visits? google gets your page, ip and device details and sets <code>_ga</code>/<code>_ga_*</code> cookies (six months).</p>' +
-    '<details class="privacy-more"><summary>details</summary><p>alex markin · <a href="mailto:a@alex-markin.com">a@alex-markin.com</a> (controller). github pages logs ip for security (legitimate interest; <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">policy</a>). choice: 180 days; site look: this session. analytics data: up to 14 months; google may process outside the eea (<a href="https://policies.google.com/privacy/frameworks">safeguards</a>). withdraw anytime. email for access, correction, deletion, restriction, objection or portability; complain to <a href="https://www.datatilsynet.dk/borger/klage">datatilsynet</a>.</p></details>' +
+  panel.innerHTML = '<p>allow google analytics to count visits?</p>' +
+    '<details class="privacy-more"><summary>details</summary><p>google gets your page, ip and device details and sets <code>_ga</code>/<code>_ga_*</code> cookies (six months). alex markin · <a href="mailto:a@alex-markin.com">a@alex-markin.com</a> (controller). github pages logs ip for security (legitimate interest; <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">policy</a>). choice: 180 days; site look: this session. analytics data: up to 14 months; google may process outside the eea (<a href="https://policies.google.com/privacy/frameworks">safeguards</a>). withdraw anytime. email for access, correction, deletion, restriction, objection or portability; complain to <a href="https://www.datatilsynet.dk/borger/klage">datatilsynet</a>.</p></details>' +
     '<div class="privacy-actions"><button type="button" data-choice="no">no thanks</button><button type="button" data-choice="yes">allow analytics</button></div>';
   panel.hidden = !showPanel;
   document.body.appendChild(panel);
