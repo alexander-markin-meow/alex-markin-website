@@ -41,7 +41,7 @@ Rules for non-generative pages:
 
 ## type tokens
 
-The original pages use two families, loaded from Google Fonts:
+The original pages use two locally hosted families:
 - `--serif` = **Source Serif 4** — all reading text (links, descriptions, taglines).
 - `--mono` = **IBM Plex Mono** — the "machine voice": the name, section headings, tags,
   metadata, footer. Anything that annotates rather than reads.
@@ -256,15 +256,10 @@ Allowed (subtle, typographic): dotted leaders, mono tags and timestamps,
 "upd" footer, optional visitor-counter chip
 (`<span class="counter-chip">004821</span>`).
 
-**Live "how long ago" timestamp (`.ago`)** — a mono `--faint` span placed inside a
-`.row` between the link and the `.leader`, filled from the GitHub API on load by the
-inline script at the end of `index.html`. Reads as machine annotation (e.g. `upd 3
-days ago`). Drive it with a data attribute, never hard-code the text:
-`data-repo="owner/name"` → repo `pushed_at`; `data-user="login"` → latest public event.
-GitHub-backed spans also carry `data-fallback-updated="<ISO timestamp>"`. `site.js` renders
-the latest successful value cached in local storage, otherwise this authored timestamp,
-before requesting fresh API data. A rate limit or offline request must never make a previously
-known update label disappear; refresh authored fallbacks whenever the site itself is shipped.
+**"How long ago" timestamp (`.ago`)** — a mono `--faint` span placed inside a
+`.row` between the link and the `.leader`. `site.js` formats its authored
+`data-fallback-updated="<ISO timestamp>"` without contacting another service.
+Refresh that timestamp when the site is shipped.
 Minute values use the compact `min` abbreviation for both singular and plural (e.g.
 `upd 1 min ago`, `upd 3 min ago`), never `minute` or `minutes`. Live update statuses use
 the compact `upd` prefix, never `updated`; the footer uses `upd YYYY-MM-DD`.
@@ -276,18 +271,9 @@ filled by the same inline script in compact 12-hour form (for example ` · 1:13p
 and berlin share a timezone) and re-ticked every 30s. Inherits the meta line's mono olive;
 add no color. Empty (and invisible) if `Intl` is unavailable.
 
-The flickr `.ago` (id `flickr-ago`, `data-flickr="NSID"`) remains tied to the general public
-photostream. Its JSONP callback fills the span from the newest public upload's `published`
-date.
-
-The `.flickr-latest` section is independent and uses the public album feed configured by
-`data-flickr-set` and `data-flickr-nsid`. A separate JSONP callback takes the first album-feed
-item and refreshes the photo, link, and title. The HTML includes the newest known album item
-as a crawlable fallback, so a feed failure still leaves a working image and non-JavaScript
-crawlers can understand the photography. Refresh that fallback whenever the site itself is
-updated; adding a photo to the configured album remains the only action needed to update the
-displayed image for visitors. The displayed image follows the standard content-photo border,
-radius, and grayscale treatment.
+The `.flickr-latest` section uses a locally hosted photograph and links to its Flickr page.
+Refresh the photograph and caption manually when the site is updated. The displayed image
+follows the standard content-photo border, radius, and grayscale treatment.
 Not allowed: bevels, marquees, animated gifs, table layouts, coloured link-visited states,
 under-construction banners. The nostalgia is a seasoning, not the dish.
 
@@ -572,17 +558,17 @@ To protect the experiment and the rest of the site from each other:
   reset syncing, keyboard focus, and disabled states remain consistent across experiments.
 - Use the minimal `← trials` link back to the collection. The standard identity header
   and footer are intentionally omitted on these full-screen or effect-led pages.
-- Use the main favicon, fonts, analytics id, canonical metadata, and lowercase voice.
+- Use the main favicon, local fonts, `privacy.js`, canonical metadata, and lowercase voice.
 - Keep experimental colors inside the effect. Site chrome and controls stay within the
   main palette.
 
 ## shared behaviour (`site.js`)
 
-All page behaviour lives in one file loaded by every page: the live `.ago` timestamps,
-the header clock, both flickr feeds, and `copy as markdown`. Each block no-ops when its
-elements are absent, so the same file is safe on any page — a page without a flickr
-section simply skips it. Do not re-inline this script into a page; add to `site.js`
-instead, and bump its `?v=` alongside the stylesheet's.
+Standard page behaviour lives in `site.js`: the authored `.ago` timestamps,
+the header clock, and `copy as markdown`. Each block no-ops when its elements
+are absent. Do not re-inline this script into a page; add to `site.js` instead,
+and bump its `?v=` when it changes. `privacy.js` handles analytics consent on every
+page, including immersive experiments.
 
 `copy as markdown` walks the live semantic HTML, so a new page is handled automatically
 provided it uses the documented patterns. It reads a row's right-hand annotation from
@@ -600,8 +586,8 @@ merge it into the deferred shared behaviour in `site.js`.
 
 ## adding a new page
 
-1. Copy `cv.html`'s standard `<head>` (fonts + `styles.css`) and `.page` shell, and load
-   `site.js` at the end of `<body>`.
+1. Copy `cv.html`'s standard `<head>` (fonts + `styles.css` + `privacy.css`) and `.page`
+   shell, and load `site.js` and `privacy.js` at the end of `<body>`.
 2. Reuse `.columns` / `.heading` / `.row` patterns, and `.intro` only for identity pages —
    do not write new CSS unless a pattern is genuinely missing.
 3. If a new pattern is needed: build it from tokens only, add it to `styles.css` under a

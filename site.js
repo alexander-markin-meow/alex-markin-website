@@ -18,53 +18,9 @@
     return "just now";
   }
 
-  function cacheKey(el) {
-    if (el.dataset.repo) return "alex-markin:ago:repo:" + el.dataset.repo;
-    if (el.dataset.user) return "alex-markin:ago:user:" + el.dataset.user;
-    return "";
-  }
-
-  function readCachedTime(key) {
-    if (!key) return null;
-    try { return window.localStorage.getItem(key); }
-    catch (error) { return null; }
-  }
-
-  function writeCachedTime(key, value) {
-    if (!key || !value) return;
-    try { window.localStorage.setItem(key, value); }
-    catch (error) { /* storage may be disabled; the authored fallback remains */ }
-  }
-
-  function showTime(el, prefix, value) {
-    if (value && !Number.isNaN(new Date(value).getTime())) {
-      el.textContent = prefix + ago(value);
-    }
-  }
-
-  function fill(el, url, prefix, pick) {
-    var key = cacheKey(el);
-    showTime(el, prefix, readCachedTime(key) || el.dataset.fallbackUpdated);
-    fetch(url)
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-      .then(function (data) {
-        var ts = pick(data);
-        if (ts) {
-          showTime(el, prefix, ts);
-          writeCachedTime(key, ts);
-        }
-      })
-      .catch(function () { /* keep the cached or authored fallback visible */ });
-  }
-
-  document.querySelectorAll(".ago").forEach(function (el) {
-    if (el.dataset.repo) {
-      fill(el, "https://api.github.com/repos/" + el.dataset.repo,
-        "upd ", function (d) { return d.pushed_at; });
-    } else if (el.dataset.user) {
-      fill(el, "https://api.github.com/users/" + el.dataset.user + "/events/public?per_page=1",
-        "upd ", function (d) { return d.length ? d[0].created_at : null; });
-    }
+  document.querySelectorAll(".ago[data-fallback-updated]").forEach(function (el) {
+    var value = el.dataset.fallbackUpdated;
+    if (!Number.isNaN(new Date(value).getTime())) el.textContent = "upd " + ago(value);
   });
 
   // live local clock — copenhagen and berlin share one timezone
@@ -78,47 +34,6 @@
     };
     tick();
     setInterval(tick, 30000);
-  }
-
-  // General Flickr photostream update time via JSONP. This deliberately
-  // remains independent from the curated album used for the photo below.
-  var flickrAgo = document.getElementById("flickr-ago");
-  if (flickrAgo && flickrAgo.dataset.flickr) {
-    window.jsonFlickrFeed = function (data) {
-      var item = data && data.items && data.items[0];
-      if (item && item.published) flickrAgo.textContent = "upd " + ago(item.published);
-    };
-    var streamFeed = document.createElement("script");
-    streamFeed.src = "https://www.flickr.com/services/feeds/photos_public.gne?id=" +
-      encodeURIComponent(flickrAgo.dataset.flickr) + "&format=json&lang=en-us";
-    document.body.appendChild(streamFeed);
-  }
-
-  // Latest photo from the curated Flickr album via a separate JSONP callback.
-  var flickrLatest = document.querySelector("[data-flickr-set]");
-  if (flickrLatest) {
-    window.jsonFlickrAlbumFeed = function (data) {
-      var item = data && data.items && data.items[0];
-      if (!item || !item.media || !item.media.m || !item.link) return;
-
-      var title = item.title || "untitled";
-      var photo = flickrLatest.querySelector("[data-flickr-photo]");
-      var links = flickrLatest.querySelectorAll("[data-flickr-photo-link], [data-flickr-photo-title]");
-      var photoTitle = flickrLatest.querySelector("[data-flickr-photo-title]");
-      var largePhoto = item.media.m.replace(/_m(\.[a-z]+)$/i, "_z$1");
-
-      photo.src = largePhoto;
-      photo.alt = title;
-      photoTitle.textContent = title;
-      links.forEach(function (link) { link.href = item.link; });
-      flickrLatest.hidden = false;
-    };
-    var albumFeed = document.createElement("script");
-    albumFeed.src = "https://www.flickr.com/services/feeds/photoset.gne?set=" +
-      encodeURIComponent(flickrLatest.dataset.flickrSet) + "&nsid=" +
-      encodeURIComponent(flickrLatest.dataset.flickrNsid) +
-      "&format=json&lang=en-us&jsoncallback=jsonFlickrAlbumFeed";
-    document.body.appendChild(albumFeed);
   }
 
   // Selected internal routes carry the active generated edition with them.

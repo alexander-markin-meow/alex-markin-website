@@ -1,0 +1,73 @@
+.privacy-tools,
+.privacy-panel {
+  font-family: var(--appearance-annotation-family, var(--mono));
+  font-size: var(--fs-footer, 11px);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+}
+
+.privacy-tools {
+  position: fixed;
+  z-index: 1000;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.privacy-control,
+.privacy-tools a {
+  padding: 6px 8px;
+  border: 1px solid var(--border, var(--line));
+  background: var(--bg);
+  color: var(--ink, var(--fg));
+  font: inherit;
+  text-decoration: none;
+}
+
+.privacy-control {
+  cursor: pointer;
+}
+
+.privacy-panel {
+  position: fixed;
+  z-index: 1001;
+  left: 16px;
+  bottom: 52px;
+  width: min(420px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid var(--border, var(--line));
+  background: var(--bg);
+  color: var(--ink, var(--fg));
+}
+
+.privacy-panel[hidden] { display: none; }
+.privacy-panel p { margin: 0 0 12px; }
+.privacy-panel a { color: inherit; text-decoration: underline; }
+.privacy-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.privacy-actions button {
+  flex: 1;
+  min-width: 130px;
+  min-height: 36px;
+  border: 1px solid var(--border, var(--line));
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.privacy-control:hover,
+.privacy-control:focus-visible,
+.privacy-tools a:hover,
+.privacy-tools a:focus-visible,
+.privacy-actions button:hover,
+.privacy-actions button:focus-visible { color: var(--ink-hover, var(--fg)); border-color: currentColor; }
+
+.privacy-page { max-width: 680px; padding-bottom: 96px; }
+.privacy-page .name { margin: 30px 0 36px; }
+.privacy-page section { margin: 0 0 30px; }
+.privacy-page p { margin: 8px 0; line-height: 1.55; }
+.privacy-page p a,
+.privacy-back { color: var(--ink); text-decoration: underline; }
+.privacy-page code { font-family: var(--mono); font-size: 0.9em; }

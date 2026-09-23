@@ -8,6 +8,8 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 - `louppe/` — legacy redirect to the standalone site at `louppe.eu`
 - `trials/` — the site-native trials index and immersive webdesign experiments
 - `styles.css` — all styling; everything derives from the tokens at the top
+- `privacy.html`, `privacy.css`, `privacy.js` — short privacy notice and opt-in analytics on every page
+- `flickr-photo.jpg` — locally hosted homepage photo, updated manually
 - `robots.txt` — crawler permissions and sitemap discovery
 - `sitemap.xml` — canonical, indexable pages submitted to search engines
 - `llms.txt` — concise identity and work index for answer engines
@@ -19,8 +21,7 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
   and blended with the real appearance backdrop beneath it (148px desktop, 116px mobile)
 - `photo-720.webp` — 62 KB, quality-90 portrait used on the homepage and CV;
   preserves the source aspect ratio and lets CSS own the crop and color
-- `fonts.css`, `fonts/` — local font definitions, files, and licenses for the seven fixed
-  typographic identities on the homepage and the calculator’s fixed serif/mono pairing
+- `fonts.css`, `fonts/` — local font definitions, files, and licenses used throughout the site
 - `favicon.svg`, `apple-touch-icon.png` — tab/home-screen icons
 - `CNAME` — custom domain config for GitHub Pages (contains `alex-markin.com`)
 
