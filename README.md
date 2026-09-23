@@ -8,7 +8,8 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 - `louppe/` — legacy redirect to the standalone site at `louppe.eu`
 - `trials/` — the site-native trials index and immersive webdesign experiments
 - `styles.css` — all styling; everything derives from the tokens at the top
-- `privacy.html`, `privacy.css`, `privacy.js` — short privacy notice and opt-in analytics on every page
+- `privacy.css`, `privacy.js` — compact privacy pop-up and opt-in analytics on every page
+- `privacy.html` — redirects old links to the pop-up
 - `flickr-photo.jpg` — locally hosted homepage photo, updated manually
 - `robots.txt` — crawler permissions and sitemap discovery
 - `sitemap.xml` — canonical, indexable pages submitted to search engines

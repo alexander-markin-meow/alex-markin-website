@@ -225,14 +225,15 @@ Wrap them in `.stack`; it stacks with the standard `--gap-row` (44px) between th
 
 ### footer
 Solid `--rule` top border and a three-column mono grid: an `upd YYYY-MM-DD` link to the
-site repository at left, the document utility centered, and an optional affiliation or return
+site repository at left, the document utilities centered, and an optional affiliation or return
 link at right. The trials catalogue uses `alex-markin.com` to return home. Update the date when
 you ship a change. Footer links
-inherit the muted footer color and turn white on hover. The `copy as markdown` control uses a
+inherit the muted footer color and turn white on hover. The privacy button sits beside
+`copy as markdown`; `privacy.js` groups the controls in the center. The copy control uses a
 thin `--border` outline with no fill; the outline, pointer cursor, and color-only hover make it
 legible as clickable without drawing focus. On mobile it reads `copy`, then switches to a copy
-glyph only when the measured footer cannot fit all three items on one line; an exceptionally
-narrow viewport uses a deliberate second row rather than allowing text to collide. It builds its
+glyph only when the measured footer cannot fit all three groups on one line; a narrow viewport
+uses a deliberate second row rather than allowing text to collide. It builds its
 output from the live semantic HTML at click time; do not add or maintain a separate Markdown copy
 of the page.
 
