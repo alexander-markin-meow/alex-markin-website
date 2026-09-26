@@ -387,8 +387,10 @@ body may still pair with that non-serif header voice.
   Stock, perforation, and the unexposed frame base are three progressively lighter blacks, so the
   punched edge and the image area both read against a genuinely darker rebate rather than three
   indistinguishable blacks. The frame fades to dead black at its own top and bottom edge before
-  meeting the stock — a soft, non-linear falloff ending in a hard one-pixel frame line — so the
-  join reads as a projector gate rather than a hard-edged crop. The exposed frame alone holds the
+  meeting the stock through a soft, non-linear falloff into a black rebate, with no visible
+  horizontal seam. The topmost grain has its own intersected alpha masks matching the vertical
+  and horizontal gate falloff, so texture fades smoothly on all four edges and corners. Mask
+  only the decorative grain; keep semantic content and photographs unmasked. The exposed frame alone holds the
   generated palette, image development, vignette, and high-resolution grain, plus independent,
   mostly-absent analog damage systems: three blurred radial light fields anchored to the frame
   edge; zero to two elongated linear streaks, the directional counterpart to the radial leaks;

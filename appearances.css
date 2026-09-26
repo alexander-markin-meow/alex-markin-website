@@ -1038,14 +1038,14 @@ html[data-look="70mm"] .film-exposure {
 }
 
 /* The gate is where emulsion falls off into dead black before meeting the
-   stock: a soft non-linear fade ending in a hard 1px frame line, folding in
-   the extra rebate margin so the perforation row sits inside a black field
-   rather than forming its edge. */
+   stock: a soft non-linear fade into a black rebate, so the perforation row
+   sits inside a black field rather than forming its edge. The topmost grain
+   receives a matching alpha fade below; this overlay cannot cover that layer. */
 .film-gate {
   display: none;
   position: absolute;
-  /* The gate sits above the film surface but below semantic content. This
-     softens grain and damage at the frame edge without dimming the page. */
+  /* Fade the backdrop and damage below semantic content. Grain sits above
+     content and uses its own matching mask, keeping type and images clear. */
   z-index: 7;
   inset: 0;
   pointer-events: none;
@@ -1180,6 +1180,29 @@ html[data-look="70mm"] .film-exposure::after {
   background-size: min(var(--grain-size), 100%) var(--grain-size);
   filter: contrast(var(--grain-contrast)) brightness(var(--grain-brightness));
   animation: appearance-film-grain-shift var(--grain-rate) steps(1) infinite;
+  /* Grain is above the gate and content, so it must fade independently.
+     Intersect the inverse gate gradients: zero grain on the black rebate,
+     smoothly increasing into the exposure, including the corners. Mask only
+     this decorative layer, never the text, photos, or complete film frame. */
+  --film-grain-fade:
+    linear-gradient(to bottom,
+      transparent 0, transparent var(--film-gate-line),
+      rgb(0 0 0 / 0.45) calc(var(--film-gate-line) + 0.4 * var(--film-gate-fall)),
+      #000 calc(var(--film-gate-line) + var(--film-gate-fall)),
+      #000 calc(100% - var(--film-gate-line) - var(--film-gate-fall)),
+      rgb(0 0 0 / 0.45) calc(100% - var(--film-gate-line) - 0.4 * var(--film-gate-fall)),
+      transparent calc(100% - var(--film-gate-line)), transparent 100%),
+    linear-gradient(to right,
+      transparent 0,
+      rgb(0 0 0 / 0.45) calc(0.4 * var(--film-gate-fall-x)),
+      #000 var(--film-gate-fall-x),
+      #000 calc(100% - var(--film-gate-fall-x)),
+      rgb(0 0 0 / 0.45) calc(100% - 0.4 * var(--film-gate-fall-x)),
+      transparent 100%);
+  -webkit-mask-image: var(--film-grain-fade);
+  mask-image: var(--film-grain-fade);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
   /* Keep this paint-driven. Promoting or translating a screen-blended layer
      reintroduces the WebKit backing-store clipping fixed above. */
 }
