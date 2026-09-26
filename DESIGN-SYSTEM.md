@@ -381,6 +381,9 @@ body may still pair with that non-serif header voice.
   (a frame counter, a keykode-style line) that may render uppercase even though authored content
   stays lowercase. Full-width perforation strips divide stock from frame: holes are a dim, seeded
   warm or neutral fill rather than black, with a soft edge halo allowed to spill past the strip.
+  Each aperture is one flat rounded rectangle with four equal corners and no bright top-edge lip
+  (the approved clean-punched treatment). Its subdued fill blends the stock hue toward silver
+  before dimming to 30–38%; the existing gate fade and halo keep the stock-to-frame join soft.
   Stock, perforation, and the unexposed frame base are three progressively lighter blacks, so the
   punched edge and the image area both read against a genuinely darker rebate rather than three
   indistinguishable blacks. The frame fades to dead black at its own top and bottom edge before

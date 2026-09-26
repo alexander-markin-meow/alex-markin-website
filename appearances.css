@@ -1399,8 +1399,8 @@ html[data-look="70mm"] .film-backdrop .film-perf-bleed { display: block; }
 
 /* Holes are the light, not an object with a glow behind an opaque rectangle:
    a blurred warm bleed (allowed to spill past the strip, since nothing here
-   clips it) sits under a crisp dim-warm hole fill with its own top-edge catch
-   light, both cut from the same seeded rounded-rect SVG tile. */
+   clips it) sits under a flat, evenly rounded aperture with no top-edge lip.
+   Both layers use the same seeded SVG tile; the soft film-gate fade is separate. */
 .film-perforation {
   display: none;
   position: relative;

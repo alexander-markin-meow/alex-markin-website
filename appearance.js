@@ -192,13 +192,11 @@
     var rasterScale = 4;
     var holeX = Math.round((pitch - holeWidth) / 2 * 10) / 10;
     var holeY = Math.round((bandHeight - holeHeight) / 2 * 10) / 10;
-    var fill = mixHex(edgeColor, "#000000", range(random, 18, 30, 0));
-    var highlight = mixHex(edgeColor, "#000000", 78);
-    var highlightHeight = Math.max(1, Math.round(holeHeight * 0.08 * 10) / 10);
+    // One flat aperture: keep all four corners intact, with no raised top lip.
+    var fill = mixHex(mixHex(edgeColor, "#d1cbc0", 65), "#000000", range(random, 30, 38, 0));
     var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + (pitch * rasterScale) + "' height='" + (bandHeight * rasterScale) +
       "' viewBox='0 0 " + pitch + " " + bandHeight + "'>" +
       "<rect x='" + holeX + "' y='" + holeY + "' width='" + holeWidth + "' height='" + holeHeight + "' rx='" + radius + "' fill='" + fill + "'/>" +
-      "<rect x='" + holeX + "' y='" + holeY + "' width='" + holeWidth + "' height='" + highlightHeight + "' rx='" + radius + "' fill='" + highlight + "'/>" +
       "</svg>";
     return {
       "--film-perf-pitch": pitch + "px",
