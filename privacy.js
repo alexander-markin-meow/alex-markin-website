@@ -10,6 +10,8 @@
   } catch (error) { choice = null; }
 
   function loadAnalytics() {
+    // Preview and copied deployments must never send traffic to the live property.
+    if (location.hostname !== "alex-markin.com" || location.protocol !== "https:") return;
     if (document.querySelector("script[data-analytics]")) return;
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
@@ -114,4 +116,13 @@
   yesButton.addEventListener("click", function () { save(true); });
 
   if (choice && choice.allowed) loadAnalytics();
+
+  document.addEventListener("click", function (event) {
+    var link = event.target.closest && event.target.closest("a[href]");
+    if (!link || !choice || !choice.allowed || typeof window.gtag !== "function" ||
+        location.hostname !== "alex-markin.com" || location.protocol !== "https:") return;
+    if (link.getAttribute("href").indexOf("mailto:") !== 0) return;
+    // Count intent without sending the email address or message contents.
+    window.gtag("event", "contact_click", { send_to: measurementId });
+  });
 })();
