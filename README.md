@@ -49,6 +49,18 @@ The trials index uses the main site system. Individual experiments use the scope
 `trials/_shared/trial.css` and `trial-ui.js` layer so their full-screen rendering and
 controls cannot affect the homepage or CV. The site remains build-free.
 
+## Analytics
+
+`privacy.js` loads GA4 `G-6JZ3GQEVFL` only on HTTPS `alex-markin.com` after consent.
+Local previews and other hostnames never load the tag. Consented email-link clicks
+send `contact_click`, marked as a GA4 key event; email addresses are not included.
+
+Historical data in `alex-markin-personal` also includes local previews and Louppe
+traffic. Use the saved `alex-markin.com only` comparison for personal-site history,
+or `louppe.eu historical traffic` for Louppe's older records. New Louppe traffic is
+in the separate `Louppe Media Culler` property. Key-event configuration applies
+to future events and does not rewrite history.
+
 ## Hosting
 Served by **GitHub Pages** from the `main` branch of this repo. Every push to `main`
 redeploys automatically — no build step, no manual deploy.
