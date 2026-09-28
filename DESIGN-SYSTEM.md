@@ -296,7 +296,7 @@ Seven appearances have equal default probability.
 |---|---|---|
 | simple | Source Serif 4, 400 | IBM Plex Mono: name 600, headings 500, annotations 400 |
 | paper | Newsreader, 400 | Newsreader: name/headings 600, annotations 400 |
-| blob | DM Sans, 400 | DM Sans: name/headings 700, annotations 400 |
+| blob | Jost Book, 400 | Jost Medium: name/headings 500, annotations 400 |
 | eno | Montserrat, 400 | Montserrat: name/headings 600, annotations 400 |
 | 70mm | Georgia, 400 | Courier Prime: name/headings 700, annotations 400 |
 | crt | VT323, 400 | VT323, 400 (no synthetic bold) |
@@ -338,8 +338,8 @@ body may still pair with that non-serif header voice.
   paper-white before a `multiply` pass, keeping the sheet bright while selective fibres remain
   legible. Texture opacity stays within `0.10–0.23`; laid stock uses the quietest range, while
   vellum receives larger pulp variation and watercolour the strongest shallow relief.
-- `blob` (`blobs` internally) — bold type over 3–5 diffuse color fields. DM Sans supplies the fixed sans-serif identity,
-  with bold names/headings and regular reading text and annotations. Its accent is
+- `blob` (`blobs` internally) — Jost Book reading text over 3–5 diffuse color fields.
+  Jost Medium supplies the name and headings, while annotations remain Book. Its accent is
   independently chosen from readable violet, blue, mint, coral, rose, gold, or sage families.
   Every blob
   independently varies in hue, saturation, lightness, opacity, size, blur, and autonomous

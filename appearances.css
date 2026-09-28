@@ -647,10 +647,10 @@ html[data-look="paper"] .appearance-option {
    -------------------------------------------------------------------------- */
 
 html[data-look="blobs"] body {
-  --appearance-body-family: "DM Sans", sans-serif;
-  --appearance-display-family: "DM Sans", sans-serif;
-  --appearance-annotation-family: "DM Sans", sans-serif;
-  --appearance-display-weight: 700;
+  --appearance-body-family: "Jost", sans-serif;
+  --appearance-display-family: "Jost", sans-serif;
+  --appearance-annotation-family: "Jost", sans-serif;
+  --appearance-display-weight: 500;
   --appearance-line-height: 1.55;
   --appearance-body-weight: 400;
   --grain-blend: screen;
@@ -664,7 +664,7 @@ html[data-look="blobs"] .name {
 html[data-look="blobs"] :is(.heading, .recipe-subheading) {
   font-family: var(--appearance-display-family);
   font-size: var(--fs-heading);
-  font-weight: var(--blob-heading-weight, 700);
+  font-weight: 500;
   letter-spacing: 0.035em;
 }
 
