@@ -40,9 +40,9 @@ html[data-look] {
   --paper-texture-contrast: 1;
   --paper-texture-brightness: 1;
   --paper-texture-blend: multiply;
-  --terminal-font-family: "Fira Mono", monospace;
-  --terminal-display-weight: 500;
-  --terminal-name-spacing: -0.018em;
+  --terminal-font-family: "Departure Mono", "Fira Mono", monospace;
+  --terminal-display-weight: 400;
+  --terminal-name-spacing: 0;
   --terminal-heading-spacing: 0.035em;
   --edition-divider-style: solid;
   --edition-leader-style: dotted;
@@ -1780,6 +1780,7 @@ html[data-look="terminal"] body {
   --appearance-line-height: 1.6;
   --appearance-body-weight: 400;
   --grain-blend: screen;
+  font-synthesis-weight: none;
 }
 
 html[data-look="terminal"] .name {
@@ -1789,7 +1790,7 @@ html[data-look="terminal"] .name {
 }
 
 html[data-look="terminal"] :is(.heading, .recipe-subheading) {
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: var(--terminal-heading-spacing);
 }
 

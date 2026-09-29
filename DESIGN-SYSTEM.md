@@ -300,7 +300,7 @@ Seven appearances have equal default probability.
 | eno | Montserrat, 400 | Montserrat: name/headings 600, annotations 400 |
 | 70mm | Georgia, 400 | Courier Prime: name/headings 700, annotations 400 |
 | crt | VT323, 400 | VT323, 400 (no synthetic bold) |
-| terminal | Fira Mono, 400 | Fira Mono: name/headings 500, annotations 400 |
+| terminal | Departure Mono, 400 | Departure Mono: name/headings/annotations 400 (no synthetic bold) |
 
 The homepage and coffee calculator use local `fonts.css` definitions, retaining font licenses
 in `fonts/`. Unicode ranges and browser font matching load only the active families and
@@ -441,8 +441,8 @@ body may still pair with that non-serif header voice.
   markdown` utilities receive bounded phosphor glow. A fixed seed-colored signal layer covers
   elastic overscroll outside the document; reduced motion removes the rolling band. Never add
   flicker or text displacement.
-- `>...` (`terminal` internally) — Fira Mono supplies a fixed workstation identity.
-  Name and headings use medium weight; reading text and annotations use regular.
+- `>...` (`terminal` internally) — Departure Mono supplies a fixed early-computing identity.
+  Name, headings, reading text, and annotations use its regular face without synthetic bold.
   The shared responsive scale and x-height adjustment keep it optically aligned with the
   other appearances. Quiet prompt prefixes, solid/dotted/dashed
   leaders, restrained green/blue/amber palettes, slight grain, and compact column spacing vary independently. Text
