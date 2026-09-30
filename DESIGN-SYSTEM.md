@@ -273,9 +273,13 @@ filled by the same inline script in compact 12-hour form (for example ` · 1:13p
 and berlin share a timezone) and re-ticked every 30s. Inherits the meta line's mono olive;
 add no color. Empty (and invisible) if `Intl` is unavailable.
 
-The `.flickr-latest` section uses a locally hosted photograph and links to its Flickr page.
-Refresh the photograph and caption manually when the site is updated. The displayed image
-follows the standard content-photo border, radius, and grayscale treatment.
+The `.flickr-latest` section chooses a random locally hosted photograph from `flickr-photos.json`
+on each homepage load, independently of the appearance seed. The image, caption, alt text,
+dimensions, and both Flickr links update together after the chosen image loads. The authored
+`flickr-photo.jpg` remains a fallback when JavaScript or loading fails. Refresh the album snapshot
+with `python3 scripts/sync-flickr-photos.py` after changing the album, then commit and push it.
+Visitors make no requests to Flickr. The displayed image follows the standard content-photo
+border, radius, and grayscale treatment.
 Not allowed: bevels, marquees, animated gifs, table layouts, coloured link-visited states,
 under-construction banners. The nostalgia is a seasoning, not the dish.
 
@@ -590,7 +594,7 @@ visible on the experiment; no visitor text or uploaded images are accepted here.
 ## shared behaviour (`site.js`)
 
 Standard page behaviour lives in `site.js`: the authored `.ago` timestamps,
-the header clock, and `copy as markdown`. Each block no-ops when its elements
+the header clock, random album photograph, and `copy as markdown`. Each block no-ops when its elements
 are absent. Do not re-inline this script into a page; add to `site.js` instead,
 and bump its `?v=` when it changes. `privacy.js` handles analytics consent on every
 page, including immersive experiments.

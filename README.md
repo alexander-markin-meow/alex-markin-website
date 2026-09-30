@@ -10,7 +10,9 @@ Personal site for alex markin. Static HTML + CSS, no build step, no framework.
 - `styles.css` — all styling; everything derives from the tokens at the top
 - `privacy.css`, `privacy.js` — compact privacy pop-up and opt-in analytics on every page
 - `privacy.html` — redirects old links to the pop-up
-- `flickr-photo.jpg` — locally hosted homepage photo, updated manually
+- `flickr-photo.jpg` — homepage photo fallback for unavailable JavaScript or image loads
+- `flickr-photos.json`, `flickr-photos/` — locally hosted album snapshot; one photo is chosen randomly on each homepage load
+- `scripts/sync-flickr-photos.py` — refresh the snapshot after changing the linked Flickr album with `python3 scripts/sync-flickr-photos.py`, then commit and push the result
 - `robots.txt` — crawler permissions and sitemap discovery
 - `sitemap.xml` — canonical, indexable pages submitted to search engines
 - `llms.txt` — concise identity and work index for answer engines

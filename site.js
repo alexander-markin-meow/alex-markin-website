@@ -36,6 +36,32 @@
     setInterval(tick, 30000);
   }
 
+  // Choose independently of the appearance seed on every homepage load.
+  // Keep the authored fallback until the selected local photograph has loaded.
+  var flickrPhoto = document.querySelector("[data-flickr-photo]");
+  if (flickrPhoto) {
+    var flickrFigure = flickrPhoto.closest("figure");
+    var flickrLinks = flickrFigure.querySelectorAll("[data-flickr-photo-link], [data-flickr-photo-title]");
+    var flickrTitle = flickrFigure.querySelector("[data-flickr-photo-title]");
+    fetch("flickr-photos.json").then(function (response) {
+      if (!response.ok) throw new Error("Photo selection unavailable");
+      return response.json();
+    }).then(function (photos) {
+      if (!Array.isArray(photos) || !photos.length) return;
+      var selected = photos[Math.floor(Math.random() * photos.length)];
+      var preview = new Image();
+      preview.onload = function () {
+        flickrPhoto.width = selected.width;
+        flickrPhoto.height = selected.height;
+        flickrPhoto.src = selected.src;
+        flickrPhoto.alt = selected.title;
+        flickrTitle.textContent = selected.title;
+        flickrLinks.forEach(function (link) { link.href = selected.href; });
+      };
+      preview.src = selected.src;
+    }).catch(function () { /* the local fallback remains visible */ });
+  }
+
   // Selected internal routes carry the active generated edition with them.
   // Watching the root keeps their URLs current after the homepage control
   // composes a new look without reloading the document.
