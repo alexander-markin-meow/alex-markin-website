@@ -49,6 +49,17 @@ The trials index uses the main site system. Individual experiments use the scope
 `trials/_shared/trial.css` and `trial-ui.js` layer so their full-screen rendering and
 controls cannot affect the homepage or CV. The site remains build-free.
 
+`/trials/photo-desk/` is a public collaborative tabletop with original SVG placeholder
+prints, a contact sheet, a note, coffee, and a lamp. The vendored MIT playhtml 2.15.0
+client connects to `api.playhtml.fun` for persisted object state and temporary cursors.
+Selection stays local; positions, angles, sizes, layers, flips, and switches are shared.
+Pointer writes are paced at 20/sec, with a final write on release. Proportional positions
+and rotated footprint bounds adapt to mobile. Controls and keyboard access reach covered
+objects. Reset-all asks for confirmation because it resets the arrangement for everyone.
+Connection failures show a local preview; after the first sync, disconnected writes queue
+in the current tab. The page describes public storage and browser visitor identity.
+Vendor source, license, and the local stylesheet patch are documented alongside the bundle.
+
 ## Analytics
 
 `privacy.js` loads GA4 `G-6JZ3GQEVFL` only on HTTPS `alex-markin.com` after consent.

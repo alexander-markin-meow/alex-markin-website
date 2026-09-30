@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <title>photo desk — webdesign trials — alex markin</title>
+  <meta name="description" content="a shared desk of placeholder prints, a contact sheet, coffee, and a little light. rearrange it for the next visitor.">
+  <meta name="author" content="alex markin">
+  <link rel="canonical" href="https://alex-markin.com/trials/photo-desk/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta property="og:title" content="photo desk — webdesign trials">
+  <meta property="og:description" content="move a print, turn on the light, leave the desk for someone else.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alex-markin.com/trials/photo-desk/">
+  <meta property="og:site_name" content="alex markin">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="/fonts.css?v=20260929-2">
+  <link rel="stylesheet" href="../_shared/trial.css?v=20260804-1">
+  <link rel="stylesheet" href="photo-desk.css?v=20260930-1">
+  <link rel="stylesheet" href="/privacy.css?v=20260923-3">
+</head>
+<body>
+  <main class="desk-page">
+    <header class="desk-header">
+      <a class="back" href="../">← trials</a>
+      <div class="desk-intro">
+        <h1 class="trial-heading">photo desk</h1>
+        <p class="note">move a print, turn on the light, leave the desk for someone else.</p>
+      </div>
+      <p class="connection" id="connection" role="status">connecting to the shared desk…</p>
+    </header>
+
+    <div class="desk" id="desk" aria-label="shared photo desk">
+      <div class="desk-light" aria-hidden="true"></div>
+      <span class="desk-caption" aria-hidden="true">a few things left out</span>
+
+      <div class="object print print--harbour" id="desk-harbour" tabindex="0" role="button" aria-label="harbour print" aria-describedby="desk-help" data-kind="print" data-name="harbour print" data-x=".08" data-y=".15" data-angle="-9" data-z="2">
+        <div class="object-surface">
+          <div class="print-front"><img src="images/harbour.svg" alt="placeholder study of buildings along a harbour" draggable="false"><span class="print-label">harbour / placeholder</span></div>
+          <div class="print-back"><span>harbour</span><p>a place for a photograph.<br>for now, a study in grey.</p><span>print 01</span></div>
+        </div>
+      </div>
+
+      <div class="object print print--stairs" id="desk-stairs" tabindex="0" role="button" aria-label="stairs print" aria-describedby="desk-help" data-kind="print" data-name="stairs print" data-x=".36" data-y=".23" data-angle="7" data-z="3">
+        <div class="object-surface">
+          <div class="print-front"><img src="images/stairs.svg" alt="placeholder study of light falling across stairs" draggable="false"><span class="print-label">stairs / placeholder</span></div>
+          <div class="print-back"><span>stairs</span><p>light, shadow,<br>somewhere to go.</p><span>print 02</span></div>
+        </div>
+      </div>
+
+      <div class="object print print--window" id="desk-window" tabindex="0" role="button" aria-label="window print" aria-describedby="desk-help" data-kind="print" data-name="window print" data-x=".61" data-y=".5" data-angle="-5" data-z="4">
+        <div class="object-surface">
+          <div class="print-front"><img src="images/window.svg" alt="placeholder study of a window and its shadow" draggable="false"><span class="print-label">window / placeholder</span></div>
+          <div class="print-back"><span>window</span><p>an afternoon<br>without a date.</p><span>print 03</span></div>
+        </div>
+      </div>
+
+      <div class="object contact-sheet" id="desk-contact" tabindex="0" role="button" aria-label="contact sheet" aria-describedby="desk-help" data-kind="print" data-name="contact sheet" data-x=".12" data-y=".76" data-angle="4" data-z="5">
+        <div class="object-surface">
+          <div class="print-front"><div class="contact-frames"><img src="images/harbour.svg" alt="" draggable="false"><img src="images/stairs.svg" alt="" draggable="false"><img src="images/window.svg" alt="" draggable="false"><img src="images/window.svg" alt="" draggable="false"><img src="images/harbour.svg" alt="" draggable="false"><img src="images/stairs.svg" alt="" draggable="false"></div><span class="print-label">test roll / 6 frames</span></div>
+          <div class="print-back"><span>contact sheet</span><p>six small possibilities.</p><span>test roll</span></div>
+        </div>
+      </div>
+
+      <div class="object desk-note" id="desk-note" tabindex="0" role="button" aria-label="paper note" aria-describedby="desk-help" data-kind="print" data-name="paper note" data-x=".66" data-y=".12" data-angle="6" data-z="6">
+        <div class="object-surface">
+          <div class="print-front"><span class="note-pin" aria-hidden="true"></span><p>nothing here<br>is quite finished.</p><p>make yourself<br>at home.</p><span class="print-label">— alex</span></div>
+          <div class="print-back"><p>you were here.<br>someone else<br>will be, too.</p></div>
+        </div>
+      </div>
+
+      <div class="object coffee-cup" id="desk-coffee" tabindex="0" role="button" aria-label="coffee cup" aria-describedby="desk-help" data-kind="cup" data-name="coffee cup" data-x=".91" data-y=".8" data-angle="-14" data-z="7">
+        <div class="object-surface"><span class="cup-handle" aria-hidden="true"></span><span class="saucer" aria-hidden="true"><span class="cup"><span class="coffee"></span></span></span></div>
+      </div>
+
+      <div class="object desk-lamp" id="desk-lamp" tabindex="0" role="button" aria-label="desk lamp" aria-describedby="desk-help" data-kind="lamp" data-name="desk lamp" data-x=".92" data-y=".07" data-angle="-10" data-z="1">
+        <div class="object-surface"><span class="lamp-base" aria-hidden="true"></span><span class="lamp-arm" aria-hidden="true"></span><span class="lamp-shade" aria-hidden="true"></span><span class="lamp-switch" aria-hidden="true"></span></div>
+      </div>
+    </div>
+
+    <section class="desk-controls" aria-label="object controls">
+      <div class="selection-row">
+        <label for="object-picker">object</label>
+        <select id="object-picker" aria-label="select an object">
+          <option value="desk-harbour">harbour print</option><option value="desk-stairs">stairs print</option><option value="desk-window">window print</option><option value="desk-contact">contact sheet</option><option value="desk-note">paper note</option><option value="desk-coffee">coffee cup</option><option value="desk-lamp">desk lamp</option>
+        </select>
+        <span id="selection-detail" class="selection-detail">drag to move</span>
+      </div>
+      <div class="action-row">
+        <div class="action-group"><button type="button" data-action="left" aria-label="rotate selected object left">↶</button><button type="button" data-action="right" aria-label="rotate selected object right">↷</button></div>
+        <div class="action-group"><button type="button" data-action="smaller" aria-label="make selected object smaller">−</button><button type="button" data-action="larger" aria-label="make selected object larger">+</button></div>
+        <button type="button" data-action="flip" id="flip-object">flip print</button>
+        <button type="button" data-action="front">bring to front</button>
+        <button type="button" data-action="reset">reset object</button>
+        <button type="button" id="reset-desk">reset desk</button>
+      </div>
+      <p class="desk-help" id="desk-help">drag an object or select it and use arrow keys. r rotates, + / − resizes, f flips or switches. double-click to flip or switch.</p>
+      <p class="desk-disclosure">a shared experiment with placeholder images. changes are public and saved for the next visitor. <a href="https://playhtml.fun" target="_blank" rel="noopener">made with playhtml</a>.</p>
+      <details class="desk-details"><summary>about this desk</summary><p>object positions, rotation, size, and switches are stored by playhtml’s service and shared with everyone on this page. live cursors are temporary. playhtml also saves a random visitor identity in your browser. shared room data is public and unencrypted; keep personal information off the desk. if the connection drops, changes wait in this tab until it reconnects. all pictures here are drawn placeholders.</p></details>
+    </section>
+    <p class="sr-only" id="announcement" role="status"></p>
+  </main>
+
+  <dialog id="reset-dialog">
+    <form method="dialog"><h2>reset the shared desk?</h2><p>this puts every object back in its starting place for everyone.</p><div class="dialog-actions"><button value="cancel" autofocus>keep the arrangement</button><button value="reset">reset for everyone</button></div></form>
+  </dialog>
+  <noscript><p class="no-script">javascript is needed to move objects and join the shared desk.</p></noscript>
+  <script src="../_shared/trial-ui.js?v=20260804-1"></script>
+  <script type="module" src="photo-desk.js?v=20260930-1"></script>
+  <script src="/privacy.js?v=20260926-1"></script>
+</body>
+</html>

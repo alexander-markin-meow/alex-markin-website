@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="420" viewBox="0 0 560 420">
+  <defs><linearGradient id="room" x2="1" y2="1"><stop stop-color="#70766b"/><stop offset="1" stop-color="#222a23"/></linearGradient></defs>
+  <rect width="560" height="420" fill="url(#room)"/><path d="M0 289H560V420H0" fill="#7f8376"/><path d="M327 65h126v195H327Z" fill="#c9cebc"/><path d="M339 77h101v169H339Z" fill="#ebecdc"/>
+  <path d="M389 77v171m-49-99h100" stroke="#555d50" stroke-width="8"/><path d="m333 259-190 161h156l146-161Z" fill="#dddccc"/><path d="m390 261-178 159m106-104h57" stroke="#737b69" stroke-width="10"/>
+  <path d="M101 268v94m-38-40h85m-86 0v98m86-98v98M59 268h95v54H59Z" stroke="#2b332c" stroke-width="9" fill="#3f493b"/><path d="M0 289h560" stroke="#565f51" stroke-width="2"/>
+</svg>

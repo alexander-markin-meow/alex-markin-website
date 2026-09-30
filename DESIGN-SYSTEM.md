@@ -569,6 +569,24 @@ To protect the experiment and the rest of the site from each other:
 - Keep experimental colors inside the effect. Site chrome and controls stay within the
   main palette.
 
+### photo desk (`/trials/photo-desk/`)
+
+A shared tabletop experiment uses the immersive trial shell, with a compact header,
+the desk as the main artwork, and object controls below it. Site chrome keeps the
+standard palette and type; paper stock, shadows, the coffee cup, and the switchable
+lamp belong only to the tabletop artwork. Drawn SVG placeholders are original assets.
+
+Object positions are proportional to their available travel inside the desk. The
+rotated/scaled footprint remains reachable on mobile; a picker makes every object
+accessible even when covered. Pointer dragging, keyboard arrows, rotation, resizing,
+flipping, layering, and reset operate on the same shared state. Selection is local.
+Resetting the complete desk uses a dialog explaining that it affects everyone.
+
+The locally served MIT playhtml 2.15.0 distribution supplies persistence and live
+cursors through its public service. Its automatic stylesheet link is pinned locally,
+as documented beside the vendor files. Keep connection state and public-data details
+visible on the experiment; no visitor text or uploaded images are accepted here.
+
 ## shared behaviour (`site.js`)
 
 Standard page behaviour lives in `site.js`: the authored `.ago` timestamps,
